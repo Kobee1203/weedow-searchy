@@ -1,5 +1,6 @@
 package com.weedow.spring.data.search.example.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.neovisionaries.i18n.CountryCode
 import javax.persistence.*
 
@@ -18,6 +19,7 @@ class Address(
         val country: CountryCode,
 
         @ManyToMany(mappedBy = "addressEntities")
+        @JsonIgnoreProperties("addressEntities")
         val persons: Set<Person>
 
 ) : JpaPersistable<Long>() {

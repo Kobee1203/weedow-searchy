@@ -1,12 +1,16 @@
-package com.weedow.spring.data.search.alias
+package com.weedow.spring.data.search.autoconfigure
 
+import com.weedow.spring.data.search.alias.AliasResolver
+import com.weedow.spring.data.search.alias.AliasResolverRegistry
 import com.weedow.spring.data.search.config.SearchConfigurer
 import org.apache.commons.lang3.StringUtils
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.context.annotation.Configuration
 import java.lang.reflect.Field
 
 @Configuration
-class DefaultAliasConfigurer : SearchConfigurer {
+@ConditionalOnClass(SearchConfigurer::class)
+class DataSearchDefaultAliasConfigurerAutoConfiguration : SearchConfigurer {
 
     override fun addAliasResolvers(registry: AliasResolverRegistry) {
         registry.addAliasResolver(DefaultAliasResolver())

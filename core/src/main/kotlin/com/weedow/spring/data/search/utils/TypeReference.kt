@@ -14,7 +14,7 @@ import java.lang.reflect.Type
  * TypeReference ref = new TypeReference&lt;List&lt;Integer&gt;&gt;() { };
  * ```
  */
-abstract class TypeReference<T> protected constructor() : Comparable<TypeReference<T>?> {
+abstract class TypeReference<T> protected constructor() : Comparable<TypeReference<T>> {
     val type: Type
 
     init {
@@ -36,7 +36,7 @@ abstract class TypeReference<T> protected constructor() : Comparable<TypeReferen
     /**
      * The only reason we define this method (and require implementation of `Comparable`) is to prevent constructing a reference without type information.
      */
-    override operator fun compareTo(other: TypeReference<T>?): Int {
+    override operator fun compareTo(other: TypeReference<T>): Int {
         // just need an implementation, not a good one... hence ^^^
         return 0
     }

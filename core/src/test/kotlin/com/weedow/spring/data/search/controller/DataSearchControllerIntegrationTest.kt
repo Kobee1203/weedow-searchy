@@ -4,8 +4,10 @@ import com.nhaarman.mockitokotlin2.*
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
 import com.weedow.spring.data.search.example.model.Person
+import com.weedow.spring.data.search.expression.ExpressionMapper
+import com.weedow.spring.data.search.expression.ExpressionUtils
+import com.weedow.spring.data.search.expression.RootExpressionImpl
 import com.weedow.spring.data.search.field.FieldInfo
-import com.weedow.spring.data.search.field.FieldMapper
 import com.weedow.spring.data.search.service.DataSearchService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +28,7 @@ class DataSearchControllerIntegrationTest {
     lateinit var searchDescriptorService: SearchDescriptorService
 
     @MockBean
-    lateinit var fieldMapper: FieldMapper
+    lateinit var expressionMapper: ExpressionMapper
 
     @MockBean
     lateinit var dataSearchService: DataSearchService
@@ -43,13 +45,12 @@ class DataSearchControllerIntegrationTest {
         val searchDescriptor = createSearchDescriptor()
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
 
-        val fieldInfos = mutableListOf(
-                FieldInfo(fieldPath, rootClass, rootClass.getDeclaredField("firstName"), String::class.java, mutableListOf(fieldValue))
-        )
-        whenever(fieldMapper.toFieldInfos(any(), eq(rootClass))).thenReturn(fieldInfos)
+        val fieldInfo = FieldInfo(fieldPath, rootClass, rootClass.getDeclaredField("firstName"), String::class.java)
+        val rootExpression = RootExpressionImpl<Person>(ExpressionUtils.equals(fieldInfo, fieldValue))
+        whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
 
         val personInfos = createPerson(firstName, lastName)
-        whenever(dataSearchService.findAll(fieldInfos, searchDescriptor)).thenReturn(listOf(personInfos.first))
+        whenever(dataSearchService.findAll(rootExpression, searchDescriptor)).thenReturn(listOf(personInfos.first))
 
         mockMvc.get("/search/$searchDescriptorId") {
             param(fieldPath, firstName)
@@ -70,11 +71,11 @@ class DataSearchControllerIntegrationTest {
         val searchDescriptor = createSearchDescriptor()
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
 
-        val fieldInfos = emptyList<FieldInfo>()
-        whenever(fieldMapper.toFieldInfos(any(), eq(rootClass))).thenReturn(fieldInfos)
+        val rootExpression = RootExpressionImpl<Person>()
+        whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
 
         val personInfos = createPerson(firstName, lastName)
-        whenever(dataSearchService.findAll(fieldInfos, searchDescriptor)).thenReturn(listOf(personInfos.first))
+        whenever(dataSearchService.findAll(rootExpression, searchDescriptor)).thenReturn(listOf(personInfos.first))
 
         mockMvc.get("/search/$searchDescriptorId") {
         }.andExpect {
@@ -87,18 +88,22 @@ class DataSearchControllerIntegrationTest {
     @Test
     fun search_with_empty_result() {
         val rootClass = Person::class.java
+        val firstName = "John"
         val searchDescriptorId = "person"
+        val fieldPath = "firstName"
+        val fieldValue = firstName
 
         val searchDescriptor = createSearchDescriptor()
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
 
-        val fieldInfos = emptyList<FieldInfo>()
-        whenever(fieldMapper.toFieldInfos(any(), eq(rootClass))).thenReturn(fieldInfos)
+        val fieldInfo = FieldInfo(fieldPath, rootClass, rootClass.getDeclaredField("firstName"), String::class.java)
+        val rootExpression = RootExpressionImpl<Person>(ExpressionUtils.equals(fieldInfo, fieldValue))
+        whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
 
-        whenever(dataSearchService.findAll(fieldInfos, searchDescriptor)).thenReturn(emptyList())
+        whenever(dataSearchService.findAll(rootExpression, searchDescriptor)).thenReturn(emptyList())
 
         mockMvc.get("/search/$searchDescriptorId") {
-            param("firstName", "John")
+            param(fieldPath, firstName)
         }.andExpect {
             status { isOk }
             content { contentType(MediaType.APPLICATION_JSON) }
@@ -119,7 +124,7 @@ class DataSearchControllerIntegrationTest {
             content { string("") }
         }
 
-        verifyZeroInteractions(fieldMapper)
+        verifyZeroInteractions(expressionMapper)
         verifyZeroInteractions(dataSearchService)
     }
 

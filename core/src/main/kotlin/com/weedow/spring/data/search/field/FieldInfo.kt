@@ -6,6 +6,5 @@ data class FieldInfo(
         val fieldPath: String,
         val parentClass: Class<*>,
         val field: Field,
-        val fieldClass: Class<*>,
-        val fieldValues: List<*>
+        val fieldClass: Class<*>
 )

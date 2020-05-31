@@ -1,15 +1,14 @@
 package com.weedow.spring.data.search.sample.model
 
+import org.apache.commons.lang3.builder.ToStringBuilder
 import org.springframework.data.domain.Persistable
 import java.io.Serializable
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.MappedSuperclass
-import javax.persistence.Transient
+import java.time.OffsetDateTime
+import javax.persistence.*
+
 
 @MappedSuperclass
-abstract class JpaPersistable<T : Serializable> : Persistable<T>
-{
+abstract class JpaPersistable<ID : Serializable> : Persistable<ID> {
 
     companion object {
         private val serialVersionUID = -1L
@@ -17,10 +16,35 @@ abstract class JpaPersistable<T : Serializable> : Persistable<T>
 
     @Id
     @GeneratedValue
-    private var id: T? = null
+    private var id: ID? = null
 
-    override fun getId(): T? {
+    @Column(nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private var createdOn: OffsetDateTime? = null
+
+    @Column(nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private var updatedOn: OffsetDateTime? = null
+
+    @PrePersist
+    fun prePersist() {
+        createdOn = OffsetDateTime.now()
+        updatedOn = OffsetDateTime.now()
+    }
+
+    @PreUpdate
+    fun preUpdate() {
+        updatedOn = OffsetDateTime.now()
+    }
+
+    override fun getId(): ID? {
         return id
+    }
+
+    fun getCreatedOn(): OffsetDateTime? {
+        return createdOn
+    }
+
+    fun getUpdatedOn(): OffsetDateTime? {
+        return updatedOn
     }
 
     /**
@@ -47,7 +71,7 @@ abstract class JpaPersistable<T : Serializable> : Persistable<T>
     }
 
     override fun toString(): String {
-        return "Identifier(id=$id)"
+        return ToStringBuilder.reflectionToString(this)
     }
 
 }
