@@ -7,22 +7,25 @@ import com.weedow.spring.data.search.dto.DefaultDtoMapper
 import com.weedow.spring.data.search.example.dto.PersonDtoMapper
 import com.weedow.spring.data.search.example.model.Person
 import com.weedow.spring.data.search.example.repository.PersonRepositoryImpl
-import com.weedow.spring.data.search.join.DefaultEntityJoinHandler
+import com.weedow.spring.data.search.join.handler.DefaultEntityJoinHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 import javax.persistence.EntityManager
 import javax.persistence.metamodel.EntityType
 import javax.persistence.metamodel.Metamodel
 
+@ExtendWith(MockitoExtension::class)
 internal class SearchDescriptorBuilderTest {
 
     @Test
     fun build_SearchDescriptor_with_default_values_and_JpaSpecificationExecutorFactory_initialized() {
         val entityClass = Person::class.java
 
-        val entityManager = mockEntityManager(entityClass)
+        val entityManager = mockEntityManager(entityClass, true)
 
         JpaSpecificationExecutorFactory.init(entityManager)
         try {
@@ -56,7 +59,7 @@ internal class SearchDescriptorBuilderTest {
         val entityClass = Person::class.java
 
         val dtoMapper1 = PersonDtoMapper()
-        val specificationExecutor1 = PersonRepositoryImpl(entityClass, mockEntityManager(entityClass))
+        val specificationExecutor1 = PersonRepositoryImpl(entityClass, mockEntityManager(entityClass, false))
         val entityJoinHandlers1 = DefaultEntityJoinHandler<Person>()
         val searchDescriptor1 = SearchDescriptorBuilder.builder<Person>()
                 .id("person1")
@@ -72,7 +75,7 @@ internal class SearchDescriptorBuilderTest {
         assertThat(searchDescriptor1.entityJoinHandlers).containsExactly(entityJoinHandlers1)
 
         val dtoMapper2 = PersonDtoMapper()
-        val specificationExecutor2 = PersonRepositoryImpl(entityClass, mockEntityManager(entityClass))
+        val specificationExecutor2 = PersonRepositoryImpl(entityClass, mockEntityManager(entityClass, false))
         val entityJoinHandlers2 = DefaultEntityJoinHandler<Person>()
         val searchDescriptor2 = SearchDescriptorBuilder(entityClass)
                 .id("person2")
@@ -99,7 +102,7 @@ internal class SearchDescriptorBuilderTest {
                 .hasMessage("JPA SpecificationExecutor is required. JpaSpecificationExecutorFactory is not initialized with an EntityManager. Use 'jpaSpecificationExecutor' method.")
     }
 
-    private fun mockEntityManager(entityClass: Class<Person>): EntityManager {
+    private fun mockEntityManager(entityClass: Class<Person>, open: Boolean): EntityManager {
         val entityManager = mock<EntityManager>()
         val metamodel = mock<Metamodel>()
         val type = mock<EntityType<Person>>()
@@ -107,7 +110,9 @@ internal class SearchDescriptorBuilderTest {
         whenever(metamodel.managedType(entityClass)).thenReturn(type)
         whenever(type.name).thenReturn(Person::class.java.simpleName)
         whenever(entityManager.delegate).thenReturn(mock())
-        whenever(entityManager.isOpen).thenReturn(true)
+        if (open) {
+            whenever(entityManager.isOpen).thenReturn(open)
+        }
         return entityManager
     }
 

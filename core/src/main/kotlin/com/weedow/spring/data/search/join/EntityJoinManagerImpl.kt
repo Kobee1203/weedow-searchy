@@ -1,14 +1,16 @@
 package com.weedow.spring.data.search.join
 
+import com.weedow.spring.data.search.descriptor.SearchDescriptor
+import com.weedow.spring.data.search.join.handler.DefaultEntityJoinHandler
+import com.weedow.spring.data.search.join.handler.EntityJoinHandler
+import com.weedow.spring.data.search.utils.EntityUtils
 import com.weedow.spring.data.search.utils.klogger
 import org.apache.commons.lang3.reflect.FieldUtils
 import java.util.*
-import javax.persistence.criteria.From
-import javax.persistence.criteria.Root
 
 class EntityJoinManagerImpl : EntityJoinManager {
 
-    private val joinsByEntity: MutableMap<Class<*>, List<FieldJoin>> = HashMap()
+    private val joinsBySearchDescriptorId: MutableMap<String, EntityJoins> = HashMap()
 
     companion object {
         private val log by klogger()
@@ -18,54 +20,50 @@ class EntityJoinManagerImpl : EntityJoinManager {
         if (log.isDebugEnabled) log.debug("Initialized EntityJoinManager: {}", this)
     }
 
-    override fun <T> computeJoinMap(root: Root<T>, entityClass: Class<T>, entityJoinHandlers: List<EntityJoinHandler<T>>): Map<String, From<*, *>> {
-        val joinMap = mutableMapOf<String, From<*, *>>()
-
-        val fieldJoins = joinsByEntity.getOrPut(entityClass) { initFieldJoins(entityClass, entityJoinHandlers) }
-
-        fieldJoins.forEach { fieldJoin ->
-            val fieldName: String = fieldJoin.fieldName
-            val from = joinMap.getOrElse(fieldJoin.parentClass.canonicalName) { root }
-
-            val join = if (fieldJoin.fetched) {
-                if (log.isDebugEnabled) log.debug("Creating a fetch join to the ${fieldJoin.parentClass.canonicalName}.$fieldName field using the join type ${fieldJoin.joinType}")
-                from.fetch<Any, Any>(fieldName, fieldJoin.joinType) as From<*, *>
-            } else {
-                if (log.isDebugEnabled) log.debug("Creating a join to the ${fieldJoin.parentClass.canonicalName}.$fieldName field using the join type ${fieldJoin.joinType}")
-                from.join<Any, Any>(fieldName, fieldJoin.joinType)
-            }
-            joinMap[fieldJoin.joinName] = join
-        }
-
-        return joinMap
+    override fun <T> computeEntityJoins(searchDescriptor: SearchDescriptor<T>): EntityJoins {
+        return joinsBySearchDescriptorId.getOrPut(searchDescriptor.id) { initEntityJoins(searchDescriptor) }
     }
 
-    private fun <T> initFieldJoins(entityClass: Class<T>, entityJoinHandlers: List<EntityJoinHandler<T>>): List<FieldJoin> {
-        val fieldJoins = mutableListOf<FieldJoin>()
-        doInitFieldJoins(entityClass, entityClass, entityJoinHandlers, fieldJoins)
-        return fieldJoins
+    private fun <T> initEntityJoins(searchDescriptor: SearchDescriptor<T>): EntityJoins {
+        val entityJoinHandlers = mutableListOf(*searchDescriptor.entityJoinHandlers.toTypedArray())
+        entityJoinHandlers.add(DefaultEntityJoinHandler())
+
+        val entityJoins = EntityJoinsImpl(searchDescriptor.entityClass)
+        doInitEntityJoins(searchDescriptor.entityClass, "", entityJoins, entityJoinHandlers)
+
+        return entityJoins
     }
 
-    private fun <T> doInitFieldJoins(rootClass: Class<T>, entityClass: Class<*>, entityJoinHandlers: List<EntityJoinHandler<T>>, fieldJoins: MutableList<FieldJoin>) {
+    private fun doInitEntityJoins(entityClass: Class<*>, parentPath: String, entityJoins: EntityJoinsImpl, entityJoinHandlers: List<EntityJoinHandler<*>>) {
         for (field in FieldUtils.getAllFieldsList(entityClass)) {
-            FieldJoinInfo(rootClass, entityClass, field)
-                    .canHandleJoins(fieldJoins) { fieldJoinInfo ->
-                        doInitFieldJoins(fieldJoinInfo, entityJoinHandlers, fieldJoins)
+            val joinAnnotation: Annotation? = EntityUtils.getJoinAnnotationClass(field)?.let { field.getAnnotation(it) }
+
+            // Ignore joins for a field without a Join Annotation
+            if (joinAnnotation != null) {
+                // Ignore joins for a field having the same class as the root class or an entity already processed
+                if (entityJoins.alreadyProcessed(entityClass, field)) {
+                    continue
+                }
+
+                val fieldClass = EntityUtils.getFieldClass(field)
+
+                for (entityJoinHandler in entityJoinHandlers) {
+                    if (entityJoinHandler.supports(entityClass, fieldClass, field.name, joinAnnotation)) {
+                        val joinInfo = entityJoinHandler.handle(entityClass, fieldClass, field.name, joinAnnotation)
+
+                        val entityJoin = EntityJoin(entityClass, parentPath, field, joinInfo.joinType, joinInfo.fetched)
+                        entityJoins.add(entityJoin)
+
+                        // Recursive loop to handle nested joins, except ElementCollection fields
+                        if (!EntityUtils.isElementCollection(field)) {
+                            doInitEntityJoins(fieldClass, entityJoin.fieldPath, entityJoins, entityJoinHandlers)
+                        }
+
+                        break
                     }
-        }
-    }
-
-    private fun <T> doInitFieldJoins(fieldJoinInfo: FieldJoinInfo<T>, entityJoinHandlers: List<EntityJoinHandler<T>>, fieldJoins: MutableList<FieldJoin>) {
-        entityJoinHandlers.forEach { entityJoinHandler ->
-            if (entityJoinHandler.supports(fieldJoinInfo)) {
-                val fieldJoin = entityJoinHandler.handle(fieldJoinInfo)
-                fieldJoins.add(fieldJoin)
-
-                // Recursive loop to handle the children entities
-                doInitFieldJoins(fieldJoinInfo.rootClass, fieldJoinInfo.fieldClass, entityJoinHandlers, fieldJoins)
-
-                return
+                }
             }
         }
     }
+
 }

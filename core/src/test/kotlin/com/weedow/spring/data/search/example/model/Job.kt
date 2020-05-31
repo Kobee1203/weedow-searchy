@@ -1,5 +1,6 @@
 package com.weedow.spring.data.search.example.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.OffsetDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -14,12 +15,13 @@ class Job(
         val company: String,
 
         @Column(nullable = false)
-        val salary: Integer,
+        val salary: Int,
 
         @Column(nullable = false)
         val hireDate: OffsetDateTime,
 
         @OneToOne(optional = false)
+        @JsonIgnoreProperties("jobEntity")
         val person: Person
 
 ) : JpaPersistable<Long>() {

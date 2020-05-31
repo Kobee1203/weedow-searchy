@@ -10,8 +10,8 @@ import com.weedow.spring.data.search.example.dto.PersonDto
 import com.weedow.spring.data.search.example.dto.PersonDtoMapper
 import com.weedow.spring.data.search.example.model.Person
 import com.weedow.spring.data.search.exception.SearchDescriptorNotFound
-import com.weedow.spring.data.search.field.FieldInfo
-import com.weedow.spring.data.search.field.FieldMapper
+import com.weedow.spring.data.search.expression.ExpressionMapper
+import com.weedow.spring.data.search.expression.RootExpression
 import com.weedow.spring.data.search.service.DataSearchService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -31,7 +31,7 @@ internal class DataSearchControllerTest {
     lateinit var searchDescriptorService: SearchDescriptorService
 
     @Mock
-    lateinit var fieldMapper: FieldMapper
+    lateinit var expressionMapper: ExpressionMapper
 
     @Mock
     lateinit var dataSearchService: DataSearchService
@@ -50,19 +50,17 @@ internal class DataSearchControllerTest {
         val params = LinkedMultiValueMap<String, String>()
         params.add(fieldPath, fieldValue)
 
-        val searchDescriptor: SearchDescriptor<Person> = mock {
+        val searchDescriptor = mock<SearchDescriptor<Person>> {
             on { this.entityClass }.doReturn(rootClass)
             on { this.dtoMapper }.doReturn(PersonDtoMapper())
         }
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
 
-        val fieldInfos = mutableListOf(
-                FieldInfo(fieldPath, rootClass, rootClass.getDeclaredField("firstName"), String::class.java, mutableListOf(fieldValue))
-        )
-        whenever(fieldMapper.toFieldInfos(params, rootClass)).thenReturn(fieldInfos)
+        val rootExpression = mock<RootExpression<Person>>()
+        whenever(expressionMapper.toExpression(params, rootClass)).thenReturn(rootExpression)
 
         val person = Person(firstName, lastName)
-        whenever(dataSearchService.findAll(fieldInfos, searchDescriptor)).thenReturn(listOf(person))
+        whenever(dataSearchService.findAll(rootExpression, searchDescriptor)).thenReturn(listOf(person))
 
         val responseEntity = dataSearchController.search(searchDescriptorId, params)
 
@@ -85,7 +83,7 @@ internal class DataSearchControllerTest {
                 .isInstanceOf(SearchDescriptorNotFound::class.java)
                 .hasMessage("Could not found the Search Descriptor with Id $searchDescriptorId")
 
-        verifyZeroInteractions(fieldMapper)
+        verifyZeroInteractions(expressionMapper)
         verifyZeroInteractions(dataSearchService)
     }
 }

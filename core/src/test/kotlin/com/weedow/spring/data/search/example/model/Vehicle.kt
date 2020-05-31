@@ -1,5 +1,6 @@
 package com.weedow.spring.data.search.example.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import javax.persistence.*
 
 @Entity
@@ -14,11 +15,11 @@ class Vehicle(
         @Column(nullable = false)
         val model: String,
 
-        @ManyToOne
+        @ManyToOne(optional = false)
+        @JsonIgnoreProperties("vehicles")
         val person: Person
 
 ) : JpaPersistable<Long>() {
-
 
 }
 
