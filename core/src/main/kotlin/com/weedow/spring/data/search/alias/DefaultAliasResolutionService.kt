@@ -5,8 +5,13 @@ import java.util.*
 
 class DefaultAliasResolutionService : ConfigurableAliasResolutionService {
 
+    companion object {
+        private const val ALIAS_SEPARATOR = "."
+    }
+
     private val aliasResolvers: MutableList<AliasResolver> = ArrayList()
     private val processedEntityClasses: MutableList<Class<*>> = ArrayList()
+
     private val aliases: MutableMap<String, String> = HashMap()
 
     override fun addAliasResolver(aliasResolver: AliasResolver) {
@@ -18,7 +23,7 @@ class DefaultAliasResolutionService : ConfigurableAliasResolutionService {
             initAliases(parentClass)
             processedEntityClasses.add(parentClass)
         }
-        return aliases.getOrDefault(parentClass.simpleName + "." + alias, alias)
+        return aliases.getOrDefault(parentClass.simpleName + ALIAS_SEPARATOR + alias, alias)
     }
 
     private fun initAliases(entityClass: Class<*>) {
@@ -28,7 +33,7 @@ class DefaultAliasResolutionService : ConfigurableAliasResolutionService {
                 if (aliasResolver.supports(entityClass, field)) {
                     val aliases: List<String?> = aliasResolver.resolve(entityClass, field)
                     if (!aliases.isNullOrEmpty()) {
-                        aliases.forEach { alias -> this.aliases[entityClass.simpleName + "." + alias] = fieldName }
+                        aliases.forEach { alias -> this.aliases[entityClass.simpleName + ALIAS_SEPARATOR + alias] = fieldName }
                     }
                 }
             }

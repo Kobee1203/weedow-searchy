@@ -3,7 +3,7 @@ package com.weedow.spring.data.search.descriptor
 import com.weedow.spring.data.search.config.JpaSpecificationExecutorFactory
 import com.weedow.spring.data.search.dto.DefaultDtoMapper
 import com.weedow.spring.data.search.dto.DtoMapper
-import com.weedow.spring.data.search.join.EntityJoinHandler
+import com.weedow.spring.data.search.join.handler.EntityJoinHandler
 import com.weedow.spring.data.search.utils.TypeReference
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import java.lang.reflect.ParameterizedType
@@ -13,14 +13,12 @@ class SearchDescriptorBuilder<T>(
         private val entityClass: Class<T>
 ) {
 
-    private var id: String
+    private var id: String = this.entityClass.simpleName.decapitalize()
     private var dtoMapper: DtoMapper<T, *> = DefaultDtoMapper()
     private lateinit var specificationExecutor: JpaSpecificationExecutor<T>
     private var entityJoinHandlers: MutableList<EntityJoinHandler<T>> = mutableListOf()
 
     init {
-        this.id = this.entityClass.simpleName.decapitalize()
-
         if (JpaSpecificationExecutorFactory.isInitialized()) {
             this.specificationExecutor = JpaSpecificationExecutorFactory.getJpaSpecificationExecutor(entityClass)
         }

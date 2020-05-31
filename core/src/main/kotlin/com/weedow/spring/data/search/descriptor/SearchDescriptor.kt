@@ -2,7 +2,7 @@ package com.weedow.spring.data.search.descriptor
 
 import com.weedow.spring.data.search.dto.DefaultDtoMapper
 import com.weedow.spring.data.search.dto.DtoMapper
-import com.weedow.spring.data.search.join.EntityJoinHandler
+import com.weedow.spring.data.search.join.handler.EntityJoinHandler
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
 interface SearchDescriptor<T> {

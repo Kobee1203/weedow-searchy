@@ -1,16 +1,18 @@
-package com.weedow.spring.data.search.alias
+package com.weedow.spring.data.search.autoconfigure
 
+import com.weedow.spring.data.search.alias.AliasResolver
+import com.weedow.spring.data.search.alias.AliasResolverRegistry
 import com.weedow.spring.data.search.example.model.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class DefaultAliasConfigurerTest {
+internal class DataSearchDefaultAliasConfigurerAutoConfigurationTest {
 
     @Test
     fun addAliasResolvers() {
         val registry = TestAliasResolverRegistry()
 
-        val defaultAliasConfigurer = DefaultAliasConfigurer()
+        val defaultAliasConfigurer = DataSearchDefaultAliasConfigurerAutoConfiguration()
         defaultAliasConfigurer.addAliasResolvers(registry)
 
         assertThat(registry.aliasResolvers).hasSize(1)

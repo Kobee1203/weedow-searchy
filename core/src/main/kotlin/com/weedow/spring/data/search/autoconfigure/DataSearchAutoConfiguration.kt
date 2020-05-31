@@ -5,16 +5,16 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
 import com.weedow.spring.data.search.alias.AliasResolutionService
 import com.weedow.spring.data.search.config.DelegatingSearchConfiguration
 import com.weedow.spring.data.search.config.SearchConfigurer
-import com.weedow.spring.data.search.field.FieldMapper
-import com.weedow.spring.data.search.field.FieldMapperImpl
+import com.weedow.spring.data.search.expression.ExpressionMapper
+import com.weedow.spring.data.search.expression.ExpressionMapperImpl
 import com.weedow.spring.data.search.field.FieldPathResolver
 import com.weedow.spring.data.search.field.FieldPathResolverImpl
 import com.weedow.spring.data.search.join.EntityJoinManager
 import com.weedow.spring.data.search.join.EntityJoinManagerImpl
-import com.weedow.spring.data.search.specification.JpaSpecificationService
-import com.weedow.spring.data.search.specification.JpaSpecificationServiceImpl
 import com.weedow.spring.data.search.service.DataSearchService
 import com.weedow.spring.data.search.service.DataSearchServiceImpl
+import com.weedow.spring.data.search.specification.JpaSpecificationService
+import com.weedow.spring.data.search.specification.JpaSpecificationServiceImpl
 import com.weedow.spring.data.search.utils.klogger
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -50,14 +50,14 @@ class DataSearchAutoConfiguration : DelegatingSearchConfiguration() {
 
         @Bean
         @ConditionalOnMissingBean
-        fun fieldMapper(fieldPathResolver: FieldPathResolver, searchConversionService: ConversionService): FieldMapper {
-            return FieldMapperImpl(fieldPathResolver, searchConversionService)
+        fun expressionMapper(fieldPathResolver: FieldPathResolver, searchConversionService: ConversionService): ExpressionMapper {
+            return ExpressionMapperImpl(fieldPathResolver, searchConversionService)
         }
 
         @Bean
         @ConditionalOnMissingBean
-        fun dataSearchService(jpaSpecificationService: JpaSpecificationService): DataSearchService {
-            return DataSearchServiceImpl(jpaSpecificationService)
+        fun dataSearchService(jpaSpecificationService: JpaSpecificationService, entityJoinManager: EntityJoinManager): DataSearchService {
+            return DataSearchServiceImpl(jpaSpecificationService, entityJoinManager)
         }
 
         @Bean
@@ -68,8 +68,8 @@ class DataSearchAutoConfiguration : DelegatingSearchConfiguration() {
 
         @Bean
         @ConditionalOnMissingBean
-        fun jpaSpecificationService(entityJoinManager: EntityJoinManager): JpaSpecificationService {
-            return JpaSpecificationServiceImpl(entityJoinManager)
+        fun jpaSpecificationService(): JpaSpecificationService {
+            return JpaSpecificationServiceImpl()
         }
     }
 
@@ -78,18 +78,27 @@ class DataSearchAutoConfiguration : DelegatingSearchConfiguration() {
     internal class DataSearchHibernateSerializationAutoConfiguration {
 
         /**
-         * Add-on module for Jackson JSON processor which handles Hibernate (http://www.hibernate.org/) datatypes; and specifically aspects of lazy-loading
+         * Add-on module for Jackson JSON processor which handles Hibernate (http://www.hibernate.org/) datatypes; and specifically aspects of lazy-loading.
          *
-         * Can be useful when we use [com.weedow.spring.data.search.dto.DefaultDtoMapper] while serializing the result of entities to JSON, and manage lazy-loading.
+         * Can be useful when we use [com.weedow.spring.data.search.dto.DefaultDtoMapper] while serializing the result of entities to JSON, and manage lazy-loading automatically.
+         *
+         * To prevent the Jackson infinite recursion problem with bidirectional relationships, please use one of the following solutions:
+         * - [@JsonManagedReference][com.fasterxml.jackson.annotation.JsonManagedReference] and [@JsonBackReference][com.fasterxml.jackson.annotation.JsonBackReference]
+         * - [@JsonIdentityInfo][com.fasterxml.jackson.annotation.JsonIdentityInfo]
+         * - [@JsonIgnoreProperties][com.fasterxml.jackson.annotation.JsonIgnoreProperties]
+         * - [@JsonIgnore][com.fasterxml.jackson.annotation.JsonIgnore]
          *
          * @see com.weedow.spring.data.search.dto.DefaultDtoMapper
-         * @see com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature to know all toggleable features.
+         * @see com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature
          * @see <a href="https://github.com/FasterXML/jackson-datatype-hibernate">jackson-datatype-hibernate Github</a>
+         * @see <a href="https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations">Jackson Annotations</a>
          */
         @Bean
         @ConditionalOnMissingBean
         fun hibernateModule(): Module {
             return Hibernate5Module()
+                    .enable(Hibernate5Module.Feature.FORCE_LAZY_LOADING)
+                    .enable(Hibernate5Module.Feature.WRITE_MISSING_ENTITIES_AS_NULL)
         }
     }
 }

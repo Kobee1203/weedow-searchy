@@ -1,77 +1,184 @@
 package com.weedow.spring.data.search.join
 
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
-import com.weedow.spring.data.search.example.model.Address
-import com.weedow.spring.data.search.example.model.Job
-import com.weedow.spring.data.search.example.model.Person
-import com.weedow.spring.data.search.example.model.Vehicle
+import com.weedow.spring.data.search.descriptor.SearchDescriptor
+import com.weedow.spring.data.search.join.handler.EntityJoinHandler
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.entry
-import org.hibernate.query.criteria.internal.JoinImplementor
 import org.junit.jupiter.api.Test
-import javax.persistence.criteria.Join
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.junit.jupiter.MockitoExtension
+import javax.persistence.*
 import javax.persistence.criteria.JoinType
-import javax.persistence.criteria.Root
 
+@ExtendWith(MockitoExtension::class)
 internal class EntityJoinManagerImplTest {
 
     @Test
-    fun computeJoinMap_with_inner_joins() {
+    fun compute_entity_without_joins() {
+        val searchDescriptor = mock<SearchDescriptor<EntityWithNoJoins>> {
+            on { this.id }.doReturn("entity")
+            on { this.entityClass }.doReturn(EntityWithNoJoins::class.java)
+            on { this.entityJoinHandlers }.doReturn(emptyList())
+        }
+
         val entityJoinManager = EntityJoinManagerImpl()
+        val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
-        val root = mock<Root<Person>>()
-        val entityJoinHandlers = listOf<EntityJoinHandler<Person>>(DefaultEntityJoinHandler())
-
-        val mockNickNamesJoin = mock<Join<Any, Any>>()
-        val mockPhoneNumberJoin = mock<Join<Any, Any>>()
-        val mockAddressEntitiesJoin = mock<Join<Any, Any>>()
-        val mockJobEntityJoin = mock<Join<Any, Any>>()
-        val mockVehiclesJoin = mock<Join<Any, Any>>()
-        whenever(root.join<Any, Any>("nickNames", JoinType.INNER)).thenReturn(mockNickNamesJoin)
-        whenever(root.join<Any, Any>("phoneNumbers", JoinType.INNER)).thenReturn(mockPhoneNumberJoin)
-        whenever(root.join<Any, Any>("addressEntities", JoinType.INNER)).thenReturn(mockAddressEntitiesJoin)
-        whenever(root.join<Any, Any>("jobEntity", JoinType.INNER)).thenReturn(mockJobEntityJoin)
-        whenever(root.join<Any, Any>("vehicles", JoinType.INNER)).thenReturn(mockVehiclesJoin)
-
-        val joinMap = entityJoinManager.computeJoinMap(root, Person::class.java, entityJoinHandlers)
-
-        assertThat(joinMap).containsOnly(
-                entry("nickNames", mockNickNamesJoin),
-                entry("phoneNumbers", mockPhoneNumberJoin),
-                entry(Address::class.java.canonicalName, mockAddressEntitiesJoin),
-                entry(Job::class.java.canonicalName, mockJobEntityJoin),
-                entry(Vehicle::class.java.canonicalName, mockVehiclesJoin)
-        )
+        assertThat(entityJoins).isNotNull()
+        assertThat(entityJoins.getJoins()).isEmpty()
     }
 
     @Test
-    fun computeJoinMap_with_left_joins() {
+    fun compute_entity_with_one_join() {
+        val searchDescriptor = mock<SearchDescriptor<EntityWithJoins>> {
+            on { this.id }.doReturn("entity")
+            on { this.entityClass }.doReturn(EntityWithJoins::class.java)
+            on { this.entityJoinHandlers }.doReturn(emptyList())
+        }
+
         val entityJoinManager = EntityJoinManagerImpl()
+        val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
-        val root = mock<Root<Vehicle>>()
-        val entityJoinHandlers = listOf<EntityJoinHandler<Vehicle>>(FetchingEagerEntityJoinHandler())
+        assertThat(entityJoins).isNotNull()
+        assertThat(entityJoins.getJoins()).hasSize(1)
 
-        val mockPersonJoin = mock<JoinImplementor<Any, Any>>()
-        val mockJobJoin = mock<JoinImplementor<Any, Any>>()
-        whenever(root.fetch<Any, Any>("person", JoinType.LEFT)).thenReturn(mockPersonJoin)
-        whenever(mockPersonJoin.fetch<Any, Any>("jobEntity", JoinType.LEFT)).thenReturn(mockJobJoin)
+        val joinName = EntityWithJoins.OtherEntity::class.java.canonicalName
+        assertThat(entityJoins.getJoins().keys)
+                .containsExactly(joinName)
 
-        val joinMap = entityJoinManager.computeJoinMap(root, Vehicle::class.java, entityJoinHandlers)
-
-        assertThat(joinMap).containsOnly(
-                entry(Person::class.java.canonicalName, mockPersonJoin),
-                entry(Job::class.java.canonicalName, mockJobJoin)
-        )
+        assertThat(entityJoins.getJoins().values)
+                .containsExactly(
+                        EntityJoin("myJoin", joinName)
+                )
     }
 
     @Test
-    fun computeJoinMap_when_no_EntityJoinHandler() {
+    fun compute_entity_with_multiple_joins() {
+        val searchDescriptor = mock<SearchDescriptor<EntityWithMultipleJoins>> {
+            on { this.id }.doReturn("entity")
+            on { this.entityClass }.doReturn(EntityWithMultipleJoins::class.java)
+            on { this.entityJoinHandlers }.doReturn(listOf(EntityWithMultipleJoins().MyEntityJoinHandler()))
+        }
+
         val entityJoinManager = EntityJoinManagerImpl()
+        val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
-        val entityJoinHandlers = listOf<EntityJoinHandler<Person>>()
-        val joinMap = entityJoinManager.computeJoinMap(mock(), Person::class.java, entityJoinHandlers)
+        assertThat(entityJoins).isNotNull()
+        assertThat(entityJoins.getJoins()).hasSize(2)
 
-        assertThat(joinMap).isEmpty()
+        val joinName1 = EntityWithMultipleJoins.OtherEntity::class.java.canonicalName
+        val joinName2 = EntityWithMultipleJoins.OtherEntity::class.java.canonicalName + "." + "myJoin2"
+
+        assertThat(entityJoins.getJoins().keys)
+                .containsExactly(joinName1, joinName2)
+
+        assertThat(entityJoins.getJoins().values)
+                .containsExactlyInAnyOrder(
+                        EntityJoin("myJoin1", joinName1),
+                        EntityJoin("myJoin1.myJoin2", joinName2, JoinType.LEFT, true)
+                )
     }
+
+    @Test
+    fun compute_entity_by_skipping_entity_already_processed_or_root_entity() {
+        val searchDescriptor = mock<SearchDescriptor<EntityWithBidirectionalJoins>> {
+            on { this.id }.doReturn("entity")
+            on { this.entityClass }.doReturn(EntityWithBidirectionalJoins::class.java)
+            on { this.entityJoinHandlers }.doReturn(emptyList())
+        }
+
+        val entityJoinManager = EntityJoinManagerImpl()
+        val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
+
+        assertThat(entityJoins).isNotNull()
+        assertThat(entityJoins.getJoins()).hasSize(2)
+
+        val joinName1 = EntityWithBidirectionalJoins.MyEntity1::class.java.canonicalName
+        val joinName2 = EntityWithBidirectionalJoins.MyEntity2::class.java.canonicalName
+
+        assertThat(entityJoins.getJoins().keys)
+                .containsExactly(joinName1, joinName2)
+
+        assertThat(entityJoins.getJoins().values)
+                .containsExactlyInAnyOrder(
+                        EntityJoin("myJoin1", joinName1),
+                        EntityJoin("myJoin2", joinName2)
+                )
+    }
+
+    internal data class EntityWithNoJoins(
+            @Column(nullable = false)
+            val firstName: String = "",
+
+            @Column(nullable = false)
+            val lastName: String = ""
+    )
+
+    internal data class EntityWithJoins(
+            @Column(nullable = false)
+            val firstName: String = "",
+
+            @OneToMany
+            val myJoin: OtherEntity? = null
+    ) {
+        inner class OtherEntity(
+                @Column(nullable = false)
+                val id: String = ""
+        )
+    }
+
+    internal data class EntityWithMultipleJoins(
+            @Column(nullable = false)
+            val firstName: String = "",
+
+            @OneToMany
+            val myJoin1: OtherEntity? = null
+    ) {
+        inner class OtherEntity(
+                @Column(nullable = false)
+                val id: String = "",
+
+                @ElementCollection
+                val myJoin2: Set<String>
+        )
+
+        inner class MyEntityJoinHandler : EntityJoinHandler<EntityWithMultipleJoins> {
+            override fun supports(entityClass: Class<*>, fieldClass: Class<*>, fieldName: String, joinAnnotation: Annotation): Boolean {
+                return fieldName == "myJoin2"
+            }
+
+            override fun handle(entityClass: Class<*>, fieldClass: Class<*>, fieldName: String, joinAnnotation: Annotation): JoinInfo {
+                return JoinInfo(JoinType.LEFT, true)
+            }
+        }
+    }
+
+    internal data class EntityWithBidirectionalJoins(
+            @Column(nullable = false)
+            val firstName: String = "",
+
+            @OneToMany
+            val myJoin1: MyEntity1? = null,
+
+            @OneToMany
+            val myJoin2: MyEntity2? = null
+    ) {
+        inner class MyEntity1(
+                @Column(nullable = false)
+                val id: String = "",
+
+                @ManyToOne
+                val parent: EntityWithBidirectionalJoins? = null
+        )
+
+        inner class MyEntity2(
+                @Column(nullable = false)
+                val id: String = "",
+
+                @OneToOne
+                val myEntity1: MyEntity1? = null
+        )
+    }
+
 }

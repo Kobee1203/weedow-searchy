@@ -1,7 +1,7 @@
 package com.weedow.spring.data.search.dto
 
-interface DtoMapper<T, R> {
+interface DtoMapper<S, T> {
 
-    fun map(source: T): R
+    fun map(source: S): T
 
 }

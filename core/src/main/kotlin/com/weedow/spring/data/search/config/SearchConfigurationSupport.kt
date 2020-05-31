@@ -1,6 +1,8 @@
 package com.weedow.spring.data.search.config
 
 import com.weedow.spring.data.search.alias.*
+import com.weedow.spring.data.search.converter.StringToDateConverter
+import com.weedow.spring.data.search.converter.StringToOffsetDateTimeConverter
 import com.weedow.spring.data.search.descriptor.*
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +12,7 @@ import org.springframework.core.convert.converter.Converter
 import org.springframework.core.convert.converter.ConverterRegistry
 import org.springframework.core.convert.support.ConfigurableConversionService
 import org.springframework.core.convert.support.DefaultConversionService
+import org.springframework.data.convert.Jsr310Converters
 import javax.annotation.PreDestroy
 import javax.persistence.EntityManager
 
@@ -59,9 +62,16 @@ open class SearchConfigurationSupport {
     @Bean
     open fun searchConversionService(converters: ObjectProvider<Converter<*, *>>): ConversionService {
         val conversionService: ConfigurableConversionService = DefaultConversionService()
+        addDefaultConverters(conversionService)
         addConverters(conversionService)
         converters.orderedStream().forEach { conversionService.addConverter(it) }
         return conversionService
+    }
+
+    private fun addDefaultConverters(registry: ConverterRegistry) {
+        Jsr310Converters.getConvertersToRegister().forEach { registry.addConverter(it) }
+        registry.addConverter(StringToOffsetDateTimeConverter())
+        registry.addConverter(StringToDateConverter())
     }
 
     /**

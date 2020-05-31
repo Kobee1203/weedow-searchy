@@ -26,7 +26,7 @@ internal class DataSearchAutoConfigurationTest {
                 .run { context ->
                     assertThat(context).hasSingleBean(DataSearchController::class.java)
                     assertThat(context).hasBean("fieldPathResolver")
-                    assertThat(context).hasBean("fieldMapper")
+                    assertThat(context).hasBean("expressionMapper")
                     assertThat(context).hasBean("dataSearchService")
                     assertThat(context).hasBean("entityJoinManager")
                     assertThat(context).hasBean("jpaSpecificationService")
@@ -40,7 +40,7 @@ internal class DataSearchAutoConfigurationTest {
                 .run { context ->
                     assertThat(context).doesNotHaveBean(DataSearchController::class.java)
                     assertThat(context).doesNotHaveBean("fieldPathResolver")
-                    assertThat(context).doesNotHaveBean("fieldMapper")
+                    assertThat(context).doesNotHaveBean("expressionMapper")
                     assertThat(context).doesNotHaveBean("dataSearchService")
                     assertThat(context).doesNotHaveBean("entityJoinManager")
                     assertThat(context).doesNotHaveBean("jpaSpecificationService")
@@ -54,7 +54,7 @@ internal class DataSearchAutoConfigurationTest {
                 .run { context ->
                     assertThat(context).hasSingleBean(DataSearchController::class.java)
                     assertThat(context).hasBean("fieldPathResolver")
-                    assertThat(context).hasBean("fieldMapper")
+                    assertThat(context).hasBean("expressionMapper")
                     assertThat(context).hasBean("dataSearchService")
                     assertThat(context).hasBean("entityJoinManager")
                     assertThat(context).hasBean("jpaSpecificationService")

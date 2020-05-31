@@ -4,9 +4,9 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
 import com.weedow.spring.data.search.example.model.Person
-import com.weedow.spring.data.search.field.FieldInfo
-import com.weedow.spring.data.search.join.DefaultEntityJoinHandler
-import com.weedow.spring.data.search.join.EntityJoinHandler
+import com.weedow.spring.data.search.expression.RootExpression
+import com.weedow.spring.data.search.join.EntityJoinManager
+import com.weedow.spring.data.search.join.EntityJoins
 import com.weedow.spring.data.search.specification.JpaSpecificationService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -23,34 +23,34 @@ internal class DataSearchServiceImplTest {
     @Mock
     lateinit var jpaSpecificationService: JpaSpecificationService
 
+    @Mock
+    lateinit var entityJoinManager: EntityJoinManager
+
     @InjectMocks
     lateinit var dataSearchService: DataSearchServiceImpl
 
     @Test
     fun findAll() {
-        val fieldInfos = listOf(
-                FieldInfo("firstName", Person::class.java, Person::class.java.getDeclaredField("firstName"), String::class.java, listOf("John"))
-        )
-
-        val entityJoinHandler = mock<EntityJoinHandler<Person>>()
-
-        val specification = mock<Specification<Person>>()
-        whenever(jpaSpecificationService.createSpecification(fieldInfos, Person::class.java, mutableListOf(entityJoinHandler, DefaultEntityJoinHandler())))
-                .thenReturn(specification)
-
-        val person1 = Person("John", "Doe")
+        val rootExpression = mock<RootExpression<Person>>()
 
         val jpaSpecificationExecutor = mock<JpaSpecificationExecutor<Person>>()
-        whenever(jpaSpecificationExecutor.findAll(specification))
-                .thenReturn(listOf(person1))
 
         val searchDescriptor = SearchDescriptorBuilder.builder<Person>()
-                .entityJoinHandlers(entityJoinHandler)
+                .entityJoinHandlers(mock())
                 .jpaSpecificationExecutor(jpaSpecificationExecutor)
                 .build()
 
-        val result = dataSearchService.findAll(fieldInfos, searchDescriptor)
+        val entityJoins = mock<EntityJoins>()
+        whenever(entityJoinManager.computeEntityJoins(searchDescriptor)).thenReturn(entityJoins)
 
-        assertThat(result).containsExactly(person1)
+        val specification = mock<Specification<Person>>()
+        whenever(jpaSpecificationService.createSpecification(rootExpression, entityJoins)).thenReturn(specification)
+
+        val person = Person("John", "Doe")
+        whenever(jpaSpecificationExecutor.findAll(specification)).thenReturn(listOf(person))
+
+        val result = dataSearchService.findAll(rootExpression, searchDescriptor)
+
+        assertThat(result).containsExactly(person)
     }
 }
