@@ -1,2 +1,2 @@
 # spring-data-search
-Search data with a powerful query language
+Automatically exposes endpoints to search for data using a powerful query language
