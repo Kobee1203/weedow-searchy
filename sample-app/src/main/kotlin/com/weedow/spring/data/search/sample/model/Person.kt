@@ -1,5 +1,7 @@
 package com.weedow.spring.data.search.sample.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -13,7 +15,16 @@ class Person(
         @Column(unique = true, length = 100)
         val email: String? = null,
 
-        @ElementCollection
+        @Column
+        val birthday: LocalDateTime? = null,
+
+        @Column
+        val height: Double? = null,
+
+        @Column
+        val weight: Double? = null,
+
+        @ElementCollection(fetch = FetchType.EAGER)
         var nickNames: Set<String>? = null,
 
         @ElementCollection
@@ -26,12 +37,15 @@ class Person(
                 name = "person_address",
                 joinColumns = [JoinColumn(name = "personId")],
                 inverseJoinColumns = [JoinColumn(name = "addressId")])
+        @JsonIgnoreProperties("persons")
         val addressEntities: Set<Address>? = null,
 
         @OneToOne(mappedBy = "person", cascade = [CascadeType.ALL], orphanRemoval = true)
+        @JsonIgnoreProperties("person")
         val jobEntity: Job? = null,
 
         @OneToMany(mappedBy = "person", cascade = [CascadeType.ALL], orphanRemoval = true)
+        @JsonIgnoreProperties("person")
         val vehicles: Set<Vehicle>? = null
 
 ) : JpaPersistable<Long>() {

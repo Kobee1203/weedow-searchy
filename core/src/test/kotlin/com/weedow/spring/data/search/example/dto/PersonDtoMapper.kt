@@ -1,7 +1,6 @@
 package com.weedow.spring.data.search.example.dto
 
 import com.weedow.spring.data.search.dto.DtoMapper
-import com.weedow.spring.data.search.example.dto.PersonDto
 import com.weedow.spring.data.search.example.model.Person
 
 class PersonDtoMapper : DtoMapper<Person, PersonDto> {
