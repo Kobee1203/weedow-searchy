@@ -1,6 +1,6 @@
 package com.weedow.spring.data.search.alias
 
-import com.weedow.spring.data.search.example.model.Person
+import com.weedow.spring.data.search.common.model.Person
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

@@ -1,6 +1,6 @@
 package com.weedow.spring.data.search.dto
 
-import com.weedow.spring.data.search.example.model.Person
+import com.weedow.spring.data.search.common.model.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

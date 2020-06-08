@@ -15,7 +15,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>spring-data-search-parent</name>
-    <description>Search data with a powerful query language</description>
+    <description>Automatically exposes endpoints to search for data using a powerful query language</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,6 +23,9 @@
 
         <java.version>1.8</java.version>
         <kotlin.version>1.3.71</kotlin.version>
+
+        <!-- Set the default Java character encoding with the same value as ${project.build.sourceEncoding} -->
+        <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
 
         <skip.unit.tests>false</skip.unit.tests>
         <skip.integration.tests>false</skip.integration.tests>
@@ -58,6 +61,7 @@
     </profiles>
 
     <modules>
+        <module>common</module>
         <module>core</module>
         <module>sample-app</module>
     </modules>
@@ -251,7 +255,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Dfile.encoding=UTF8</argLine>
                     <excludedGroups>IntegrationTest</excludedGroups>
                     <skipTests>${skip.unit.tests}</skipTests>
                 </configuration>

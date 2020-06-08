@@ -13,8 +13,6 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
 
     private val joins = mutableMapOf<String, EntityJoin>()
 
-    // private val fetchJoins = mutableListOf<EntityJoin>()
-
     companion object {
         private val log by klogger()
     }
@@ -31,11 +29,6 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
 
     fun add(entityJoin: EntityJoin) {
         joins[entityJoin.joinName] = entityJoin
-        /*
-        if (entityJoin.fetched) {
-            fetchJoins.add(entityJoin)
-        }
-        */
     }
 
     override fun <T> getPath(fieldPath: String, root: Root<T>): Path<*> {

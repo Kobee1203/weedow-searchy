@@ -6,10 +6,16 @@ import org.springframework.core.convert.converter.ConverterRegistry
 
 interface SearchConfigurer {
 
-    fun addSearchDescriptors(registry: SearchDescriptorRegistry) {}
+    fun addSearchDescriptors(registry: SearchDescriptorRegistry) {
+        // Override this method to add custom SearchDescriptors.
+    }
 
-    fun addConverters(registry: ConverterRegistry) {}
+    fun addAliasResolvers(registry: AliasResolverRegistry) {
+        // Override this method to add custom AliasResolvers.
+    }
 
-    fun addAliasResolvers(registry: AliasResolverRegistry) {}
+    fun addConverters(registry: ConverterRegistry) {
+        // Override this method to add custom Converters.
+    }
 
 }

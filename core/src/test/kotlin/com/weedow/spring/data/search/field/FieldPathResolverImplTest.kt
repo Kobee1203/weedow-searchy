@@ -3,8 +3,8 @@ package com.weedow.spring.data.search.field
 import com.neovisionaries.i18n.CountryCode
 import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.alias.AliasResolutionService
-import com.weedow.spring.data.search.example.model.Address
-import com.weedow.spring.data.search.example.model.Person
+import com.weedow.spring.data.search.common.model.Address
+import com.weedow.spring.data.search.common.model.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test

@@ -1,4 +1,4 @@
-package com.weedow.spring.data.search.sample.model
+package com.weedow.spring.data.search.common.model
 
 import org.apache.commons.lang3.builder.ToStringBuilder
 import org.springframework.data.domain.Persistable

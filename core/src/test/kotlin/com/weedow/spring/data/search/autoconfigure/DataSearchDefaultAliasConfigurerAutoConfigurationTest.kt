@@ -2,7 +2,7 @@ package com.weedow.spring.data.search.autoconfigure
 
 import com.weedow.spring.data.search.alias.AliasResolver
 import com.weedow.spring.data.search.alias.AliasResolverRegistry
-import com.weedow.spring.data.search.example.model.Person
+import com.weedow.spring.data.search.common.model.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

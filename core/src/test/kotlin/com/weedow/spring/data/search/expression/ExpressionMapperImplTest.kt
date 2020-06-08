@@ -3,8 +3,8 @@ package com.weedow.spring.data.search.expression
 import com.neovisionaries.i18n.CountryCode
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
-import com.weedow.spring.data.search.example.model.Address
-import com.weedow.spring.data.search.example.model.Person
+import com.weedow.spring.data.search.common.model.Address
+import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.field.FieldInfo
 import com.weedow.spring.data.search.field.FieldPathInfo
 import com.weedow.spring.data.search.field.FieldPathResolver

@@ -1,5 +1,8 @@
 package com.weedow.spring.data.search.sample.config
 
+import com.weedow.spring.data.search.common.model.Address
+import com.weedow.spring.data.search.common.model.Person
+import com.weedow.spring.data.search.common.repository.PersonRepository
 import com.weedow.spring.data.search.config.SearchConfigurer
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
@@ -7,9 +10,6 @@ import com.weedow.spring.data.search.descriptor.SearchDescriptorRegistry
 import com.weedow.spring.data.search.join.handler.FetchingAllEntityJoinHandler
 import com.weedow.spring.data.search.join.handler.FetchingEagerEntityJoinHandler
 import com.weedow.spring.data.search.sample.dto.PersonDtoMapper
-import com.weedow.spring.data.search.sample.model.Address
-import com.weedow.spring.data.search.sample.model.Person
-import com.weedow.spring.data.search.sample.repository.PersonRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

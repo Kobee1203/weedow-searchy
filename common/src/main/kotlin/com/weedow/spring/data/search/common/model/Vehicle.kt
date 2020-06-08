@@ -1,4 +1,4 @@
-package com.weedow.spring.data.search.example.model
+package com.weedow.spring.data.search.common.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import javax.persistence.*

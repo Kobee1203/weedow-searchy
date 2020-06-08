@@ -4,9 +4,9 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.config.JpaSpecificationExecutorFactory
 import com.weedow.spring.data.search.dto.DefaultDtoMapper
-import com.weedow.spring.data.search.example.dto.PersonDtoMapper
-import com.weedow.spring.data.search.example.model.Person
-import com.weedow.spring.data.search.example.repository.PersonRepositoryImpl
+import com.weedow.spring.data.search.common.PersonDtoMapper
+import com.weedow.spring.data.search.common.model.Person
+import com.weedow.spring.data.search.example.PersonRepositoryImpl
 import com.weedow.spring.data.search.join.handler.DefaultEntityJoinHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

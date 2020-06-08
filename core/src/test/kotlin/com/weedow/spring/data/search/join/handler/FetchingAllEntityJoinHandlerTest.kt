@@ -1,7 +1,7 @@
 package com.weedow.spring.data.search.join.handler
 
 import com.nhaarman.mockitokotlin2.mock
-import com.weedow.spring.data.search.example.model.Person
+import com.weedow.spring.data.search.common.model.Person
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
