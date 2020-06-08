@@ -30,7 +30,6 @@ class StringToDateConverter(
     }
 
     private val dateTimeFormatter: DateTimeFormatter
-    // private var dateFormats: List<SimpleDateFormat> = patterns.map { SimpleDateFormat(it, locale) }.toList()
 
     init {
         val joinedPatterns = patterns.joinToString("][", "[", "]")
@@ -57,15 +56,6 @@ class StringToDateConverter(
             }
         }
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
-        /*
-        for (it in dateFormats) {
-            try {
-                return it.parse(source)
-            } catch (e: ParseException) {
-            }
-        }
-        throw IllegalArgumentException("Invalid date format: $source. Use one of the following patterns: $patterns")
-        */
     }
 
 }

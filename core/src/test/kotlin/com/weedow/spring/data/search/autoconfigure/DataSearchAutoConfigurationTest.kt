@@ -4,7 +4,6 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
 import com.weedow.spring.data.search.config.SearchConfigurer
 import com.weedow.spring.data.search.controller.DataSearchController
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.FilteredClassLoader
@@ -15,10 +14,6 @@ internal class DataSearchAutoConfigurationTest {
 
     private val contextRunner = ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(DataSearchAutoConfiguration::class.java))
-
-    @BeforeEach
-    fun setUp() {
-    }
 
     @Test
     fun dataSearchAutoConfiguration_is_loaded() {

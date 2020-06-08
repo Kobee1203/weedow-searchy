@@ -32,7 +32,7 @@ internal data class SimpleExpression(
                 Operator.LESS_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") lessThanOrEquals(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
                 Operator.GREATER_THAN -> @Suppress("UNCHECKED_CAST") greaterThan(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
                 Operator.GREATER_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") greaterThanOrEquals(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
-                Operator.IN -> `in`(criteriaBuilder, path, value as List<*>)
+                Operator.IN -> inPredicate(criteriaBuilder, path, value as List<*>)
                 else -> throw UnsupportedOperatorException(operator)
             }
         }
@@ -84,7 +84,7 @@ internal data class SimpleExpression(
         return criteriaBuilder.greaterThanOrEqualTo(path, value)
     }
 
-    private fun `in`(criteriaBuilder: CriteriaBuilder, path: Path<*>, values: List<*>): Predicate {
+    private fun inPredicate(criteriaBuilder: CriteriaBuilder, path: Path<*>, values: List<*>): Predicate {
         val inClause = criteriaBuilder.`in`(path)
         values.forEach { inClause.value(it) }
         return inClause

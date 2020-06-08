@@ -1,6 +1,6 @@
-package com.weedow.spring.data.search.sample.dto
+package com.weedow.spring.data.search.common.dto
 
-import com.weedow.spring.data.search.sample.model.VehicleType
+import com.weedow.spring.data.search.common.model.VehicleType
 
 class VehicleDto private constructor(
         val vehicleType: VehicleType?,

@@ -57,7 +57,7 @@ internal class LogicalExpressionTest {
         val mockPredicateExpression2 = mockPredicate2 as javax.persistence.criteria.Expression<Boolean>
         whenever(criteriaBuilder.or(mockPredicateExpression2, mockPredicateExpression1)).thenReturn(predicate)
 
-        val expression = LogicalExpression(LogicalOperator.OR, arrayOf(mockExpression1, mockExpression2))
+        val expression = LogicalExpression(LogicalOperator.OR, listOf(mockExpression1, mockExpression2))
         val specification = expression.toSpecification<Any>(entityJoins)
 
         val result = specification.toPredicate(root, criteriaQuery, criteriaBuilder)
@@ -72,7 +72,7 @@ internal class LogicalExpressionTest {
         val mockPredicateExpression2 = mockPredicate2 as javax.persistence.criteria.Expression<Boolean>
         whenever(criteriaBuilder.and(mockPredicateExpression2, mockPredicateExpression1)).thenReturn(predicate)
 
-        val expression = LogicalExpression(LogicalOperator.AND, arrayOf(mockExpression1, mockExpression2))
+        val expression = LogicalExpression(LogicalOperator.AND, listOf(mockExpression1, mockExpression2))
         val specification = expression.toSpecification<Any>(entityJoins)
 
         val result = specification.toPredicate(root, criteriaQuery, criteriaBuilder)

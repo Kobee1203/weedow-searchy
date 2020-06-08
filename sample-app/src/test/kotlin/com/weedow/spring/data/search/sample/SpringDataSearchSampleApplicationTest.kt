@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.get
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SpringDataSearchSampleApplicationTests {
+class SpringDataSearchSampleApplicationTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc

@@ -1,6 +1,6 @@
 package com.weedow.spring.data.search.join
 
-import com.weedow.spring.data.search.example.model.*
+import com.weedow.spring.data.search.common.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

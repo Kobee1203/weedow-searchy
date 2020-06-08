@@ -15,14 +15,21 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>spring-data-search-parent</name>
-    <description>Search data with a powerful query language</description>
+    <description>Automatically exposes endpoints to search for data using a powerful query language</description>
 
     <properties>
+        <encoding>UTF-8</encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <java.version>1.8</java.version>
         <kotlin.version>1.3.71</kotlin.version>
+
+        <!-- Set the default Java character encoding with the same value as ${project.build.sourceEncoding} -->
+        <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+
+        <!-- Tell sonar where to look for the coverage file. Property inherited by submodules -->
+        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
 
         <skip.unit.tests>false</skip.unit.tests>
         <skip.integration.tests>false</skip.integration.tests>
@@ -58,6 +65,7 @@
     </profiles>
 
     <modules>
+        <module>common</module>
         <module>core</module>
         <module>sample-app</module>
     </modules>
@@ -221,28 +229,6 @@
                         </execution>
                     </executions>
                 </plugin>
-
-                <!-- Code Coverage (Jacoco) -->
-                <!--
-                Add the following plugin declarations in the module to calculate the code coverage:
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                </plugin>
-                -->
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.5</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>prepare-agent</goal>
-                                <goal>report</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -251,7 +237,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Dfile.encoding=UTF8</argLine>
                     <excludedGroups>IntegrationTest</excludedGroups>
                     <skipTests>${skip.unit.tests}</skipTests>
                 </configuration>
@@ -282,6 +267,43 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Code Coverage (Jacoco) -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.5</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>merge</id>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet implementation="org.apache.maven.shared.model.fileset.FileSet">
+                                    <directory>${project.basedir}</directory>
+                                    <includes>
+                                        <include>**/*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

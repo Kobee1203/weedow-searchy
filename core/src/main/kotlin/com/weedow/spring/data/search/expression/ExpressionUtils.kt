@@ -44,10 +44,10 @@ object ExpressionUtils {
     }
 
     fun and(vararg expressions: Expression): Expression {
-        return LogicalExpression(LogicalOperator.AND, expressions)
+        return LogicalExpression(LogicalOperator.AND, listOf(*expressions))
     }
 
     fun or(vararg expressions: Expression): Expression {
-        return LogicalExpression(LogicalOperator.OR, expressions)
+        return LogicalExpression(LogicalOperator.OR, listOf(*expressions))
     }
 }

@@ -3,7 +3,7 @@ package com.weedow.spring.data.search.expression
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import com.weedow.spring.data.search.example.model.Person
+import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.field.FieldInfo
 import com.weedow.spring.data.search.join.EntityJoins
 import com.weedow.spring.data.search.utils.NullValue

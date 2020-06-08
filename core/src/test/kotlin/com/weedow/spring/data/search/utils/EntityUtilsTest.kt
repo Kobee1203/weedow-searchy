@@ -1,11 +1,13 @@
 package com.weedow.spring.data.search.utils
 
-import com.weedow.spring.data.search.example.model.Address
-import com.weedow.spring.data.search.example.model.JpaPersistable
-import com.weedow.spring.data.search.example.model.Person
-import com.weedow.spring.data.search.example.model.Vehicle
+import com.weedow.spring.data.search.common.model.Address
+import com.weedow.spring.data.search.common.model.JpaPersistable
+import com.weedow.spring.data.search.common.model.Person
+import com.weedow.spring.data.search.common.model.Vehicle
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import javax.persistence.*
 
 internal class EntityUtilsTest {
@@ -70,7 +72,10 @@ internal class EntityUtilsTest {
                 .isNull()
     }
 
-    @Test
-    fun isElementCollection() {
+    @ParameterizedTest
+    @CsvSource("nickNames,true", "phoneNumbers,true", "firstName,false", "addressEntities,false")
+    fun isElementCollection(fieldName: String, expected: Boolean) {
+        val result = EntityUtils.isElementCollection(Person::class.java.getDeclaredField(fieldName))
+        assertThat(result).isEqualTo(expected)
     }
 }

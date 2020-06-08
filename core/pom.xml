@@ -11,14 +11,11 @@
 
     <artifactId>spring-data-search-core</artifactId>
     <name>spring-data-search-core</name>
-    <description>Search data with a powerful query language</description>
+    <description>Spring Data Search Core Library</description>
 
     <properties>
         <!-- Dependencies versions -->
         <jakarta.persistence-api.version>2.2.3</jakarta.persistence-api.version>
-
-        <!-- Testing dependencies versions -->
-        <nv-i18n.version>1.27</nv-i18n.version>
     </properties>
 
     <dependencies>
@@ -83,18 +80,19 @@
             <artifactId>mockito-kotlin</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>com.neovisionaries</groupId>
-            <artifactId>nv-i18n</artifactId>
-            <version>${nv-i18n.version}</version>
+            <groupId>com.weedow</groupId>
+            <artifactId>spring-data-search-common</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -102,11 +100,6 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

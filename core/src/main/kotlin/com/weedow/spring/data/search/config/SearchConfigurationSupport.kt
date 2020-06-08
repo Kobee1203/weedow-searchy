@@ -42,6 +42,7 @@ open class SearchConfigurationSupport {
      * @param registry [SearchDescriptorRegistry]
      */
     protected open fun addSearchDescriptors(registry: SearchDescriptorRegistry) {
+        // Override this method to add custom SearchDescriptors.
     }
 
     @Bean
@@ -57,7 +58,9 @@ open class SearchConfigurationSupport {
      *
      * @param registry [AliasResolverRegistry]
      */
-    protected open fun addAliasResolvers(registry: AliasResolverRegistry) {}
+    protected open fun addAliasResolvers(registry: AliasResolverRegistry) {
+        // Override this method to add custom AliasResolvers.
+    }
 
     @Bean
     open fun searchConversionService(converters: ObjectProvider<Converter<*, *>>): ConversionService {
@@ -79,5 +82,7 @@ open class SearchConfigurationSupport {
      *
      * @param registry [ConverterRegistry]
      */
-    protected open fun addConverters(registry: ConverterRegistry) {}
+    protected open fun addConverters(registry: ConverterRegistry) {
+        // Override this method to add custom Converters.
+    }
 }

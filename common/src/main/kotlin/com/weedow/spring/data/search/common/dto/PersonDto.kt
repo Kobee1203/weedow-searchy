@@ -1,4 +1,4 @@
-package com.weedow.spring.data.search.sample.dto
+package com.weedow.spring.data.search.common.dto
 
 data class PersonDto private constructor(
         val firstName: String?,

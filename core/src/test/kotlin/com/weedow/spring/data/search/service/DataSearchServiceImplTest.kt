@@ -2,8 +2,8 @@ package com.weedow.spring.data.search.service
 
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
+import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
-import com.weedow.spring.data.search.example.model.Person
 import com.weedow.spring.data.search.expression.RootExpression
 import com.weedow.spring.data.search.join.EntityJoinManager
 import com.weedow.spring.data.search.join.EntityJoins

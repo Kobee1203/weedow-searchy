@@ -2,9 +2,8 @@ package com.weedow.spring.data.search.descriptor
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
+import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.dto.DefaultDtoMapper
-import com.weedow.spring.data.search.example.model.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

@@ -13,10 +13,6 @@
     <name>spring-data-search-sample-app</name>
     <description>Spring Data Search Sample Application</description>
 
-    <properties>
-        <nv-i18n.version>1.27</nv-i18n.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -41,6 +37,11 @@
             <artifactId>spring-data-search-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.weedow</groupId>
+            <artifactId>spring-data-search-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -58,12 +59,6 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.neovisionaries</groupId>
-            <artifactId>nv-i18n</artifactId>
-            <version>${nv-i18n.version}</version>
         </dependency>
 
         <dependency>

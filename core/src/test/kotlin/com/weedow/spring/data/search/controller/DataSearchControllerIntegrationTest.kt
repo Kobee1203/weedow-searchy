@@ -1,9 +1,9 @@
 package com.weedow.spring.data.search.controller
 
 import com.nhaarman.mockitokotlin2.*
+import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
-import com.weedow.spring.data.search.example.model.Person
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.expression.ExpressionUtils
 import com.weedow.spring.data.search.expression.RootExpressionImpl
