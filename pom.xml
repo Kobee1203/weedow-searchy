@@ -17,6 +17,13 @@
     <name>spring-data-search-parent</name>
     <description>Automatically exposes endpoints to search for data using a powerful query language</description>
 
+    <scm>
+        <tag>HEAD</tag>
+        <url>https://github.com/Kobee1203/spring-data-search</url>
+        <connection>scm:git:ssh://git@github.com:Kobee1203/spring-data-search.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:Kobee1203/spring-data-search.git</developerConnection>
+    </scm>
+
     <properties>
         <encoding>UTF-8</encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -301,4 +308,11 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/Kobee1203/spring-data-search</url>
+        </repository>
+    </distributionManagement>
 </project>
