@@ -29,6 +29,7 @@ interface SearchDescriptor<T> {
      * @param <R> represents the DTO type
      * @return DTO Object
      */
+    @JvmDefault
     val dtoMapper: DtoMapper<T, *>
         get() = DefaultDtoMapper()
 
@@ -43,6 +44,7 @@ interface SearchDescriptor<T> {
     /**
      * Return list of [EntityJoinHandler]s to handle the entity joins
      */
+    @JvmDefault
     val entityJoinHandlers: List<EntityJoinHandler<T>>
         get() = listOf()
 }
