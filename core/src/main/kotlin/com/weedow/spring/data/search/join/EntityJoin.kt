@@ -4,15 +4,16 @@ import java.lang.reflect.Field
 import javax.persistence.criteria.JoinType
 
 data class EntityJoin(val fieldPath: String,
+                      val fieldName: String,
                       val joinName: String,
-                      val joinType: JoinType = JoinType.INNER,
-                      val fetched: Boolean = false) {
+                      val joinType: JoinType = JoinInfo.DEFAULT_JOIN_TYPE,
+                      val fetched: Boolean = JoinInfo.DEFAULT_FETCH_MODE) {
 
     constructor(entityClass: Class<*>,
                 parentPath: String,
                 field: Field,
-                joinType: JoinType = JoinType.INNER,
-                fetched: Boolean = false
-    ) : this(EntityJoinUtils.getFieldPath(parentPath, field.name), EntityJoinUtils.getJoinName(entityClass, field), joinType, fetched) {
+                joinType: JoinType = JoinInfo.DEFAULT_JOIN_TYPE,
+                fetched: Boolean = JoinInfo.DEFAULT_FETCH_MODE
+    ) : this(EntityJoinUtils.getFieldPath(parentPath, field.name), field.name, EntityJoinUtils.getJoinName(entityClass, field), joinType, fetched) {
     }
 }

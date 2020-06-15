@@ -49,7 +49,7 @@ internal class EntityJoinManagerImplTest {
 
         assertThat(entityJoins.getJoins().values)
                 .containsExactly(
-                        EntityJoin("myJoin", joinName)
+                        EntityJoin("myJoin", "myJoin", joinName)
                 )
     }
 
@@ -75,8 +75,8 @@ internal class EntityJoinManagerImplTest {
 
         assertThat(entityJoins.getJoins().values)
                 .containsExactlyInAnyOrder(
-                        EntityJoin("myJoin1", joinName1),
-                        EntityJoin("myJoin1.myJoin2", joinName2, JoinType.LEFT, true)
+                        EntityJoin("myJoin1", "myJoin1", joinName1),
+                        EntityJoin("myJoin1.myJoin2", "myJoin2", joinName2, JoinType.LEFT, true)
                 )
     }
 
@@ -102,8 +102,8 @@ internal class EntityJoinManagerImplTest {
 
         assertThat(entityJoins.getJoins().values)
                 .containsExactlyInAnyOrder(
-                        EntityJoin("myJoin1", joinName1),
-                        EntityJoin("myJoin2", joinName2)
+                        EntityJoin("myJoin1", "myJoin1", joinName1),
+                        EntityJoin("myJoin2", "myJoin2", joinName2)
                 )
     }
 

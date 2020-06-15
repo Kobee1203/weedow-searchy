@@ -33,7 +33,7 @@ internal class DefaultEntityJoinHandlerTest {
         val entityJoinHandler = DefaultEntityJoinHandler<Person>()
         val joinInfo = entityJoinHandler.handle(entityClass, fieldClass, fieldName, joinAnnotation)
         assertThat(joinInfo).isNotNull()
-        assertThat(joinInfo.joinType).isEqualTo(JoinType.INNER)
+        assertThat(joinInfo.joinType).isEqualTo(JoinType.LEFT)
         assertThat(joinInfo.fetched).isEqualTo(false)
     }
 

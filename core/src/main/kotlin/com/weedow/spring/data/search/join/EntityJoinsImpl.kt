@@ -33,7 +33,7 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
 
     override fun <T> getPath(fieldPath: String, root: Root<T>): Path<*> {
         val parts = fieldPath.split(FIELD_PATH_SEPARATOR)
-        val field = parts[parts.size - 1]
+        val fieldName = parts[parts.size - 1]
         val parents = parts.subList(0, parts.size - 1)
 
         var parentPath = ""
@@ -43,13 +43,13 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
             parentPath = EntityJoinUtils.getFieldPath(parentPath, parent)
         }
 
-        val joinName = EntityJoinUtils.getJoinName(join.javaType, join.javaType.getDeclaredField(field))
+        val joinName = EntityJoinUtils.getJoinName(join.javaType, join.javaType.getDeclaredField(fieldName))
         val entityJoin = joins[joinName]
-        return if (entityJoin != null) {
-            createJoin(entityJoin, join, field)
-        } else {
-            join.get<Any>(field)
+        if (entityJoin != null) {
+            getOrCreateJoin(join, parentPath, fieldName)
         }
+
+        return join.get<Any>(fieldName)
     }
 
     override fun getJoins(filter: (EntityJoin) -> Boolean): Map<String, EntityJoin> {
@@ -66,12 +66,12 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         }
 
         for (join in from.joins) {
-            if (join.attribute.name == attributeName && join.joinType == entityJoin.joinType) {
+            if (join.attribute.name == entityJoin.fieldName && join.joinType == entityJoin.joinType) {
                 return join as JoinImplementor<*, *>
             }
         }
         for (join in from.fetches) {
-            if (join.attribute.name == attributeName && join.joinType == entityJoin.joinType) {
+            if (join.attribute.name == entityJoin.fieldName && join.joinType == entityJoin.joinType) {
                 return join as JoinImplementor<*, *>
             }
         }

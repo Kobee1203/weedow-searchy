@@ -22,7 +22,7 @@ internal data class SimpleExpression(
 
     override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
         return Specification { root: Root<T>, query: CriteriaQuery<*>, criteriaBuilder: CriteriaBuilder ->
-            val path: Path<*> = entityJoins.getPath(fieldInfo.fieldPath, root)
+            val path = entityJoins.getPath(fieldInfo.fieldPath, root)
 
             when (operator) {
                 Operator.EQUALS -> equals(criteriaBuilder, path, value, fieldInfo.field)

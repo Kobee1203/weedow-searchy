@@ -80,8 +80,8 @@ internal class RootExpressionImplTest {
         val fieldPath1 = "entity.myJoin1"
         val fieldPath2 = "entity.myJoin2"
         val fetchJoins = mapOf(
-                "myJoin1" to EntityJoin(fieldPath1, "myJoin1", JoinType.LEFT, true),
-                "myJoin2" to EntityJoin(fieldPath2, "myJoin2", JoinType.LEFT, true)
+                "myJoin1" to EntityJoin(fieldPath1, "myJoin1", "myJoin1", JoinType.LEFT, true),
+                "myJoin2" to EntityJoin(fieldPath2, "myJoin2", "myJoin2", JoinType.LEFT, true)
         )
         whenever(entityJoins.getJoins(RootExpressionImpl.FILTER_FETCH_JOINS)).thenReturn(fetchJoins)
 

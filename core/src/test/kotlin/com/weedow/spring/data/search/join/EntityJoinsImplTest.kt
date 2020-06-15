@@ -1,6 +1,8 @@
 package com.weedow.spring.data.search.join
 
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.common.model.Address
 import com.weedow.spring.data.search.common.model.Person
@@ -58,6 +60,8 @@ internal class EntityJoinsImplTest {
         val path = entityJoins.getPath(FIRST_NAME_FIELD, root)
 
         assertThat(path).isEqualTo(expectedPath)
+
+        verifyNoMoreInteractions(root)
     }
 
     @Test
@@ -65,18 +69,23 @@ internal class EntityJoinsImplTest {
         val rootClass = Person::class.java
         val entityJoins = EntityJoinsImpl(rootClass)
 
-        val expectedJoin = mock<JoinImplementor<Any, Any>>()
+        val expectedPath = mock<Path<Any>>()
 
         val root = mock<Root<Person>>()
         whenever(root.javaType).thenReturn(rootClass)
-        whenever(root.join<Any, Any>(ADDRESS_ENTITIES_FIELD, JoinType.INNER)).thenReturn(expectedJoin)
+        whenever(root.join<Any, Any>(ADDRESS_ENTITIES_FIELD, JoinType.INNER)).thenReturn(mock<JoinImplementor<Any, Any>>())
+        whenever(root.get<Any>(ADDRESS_ENTITIES_FIELD)).thenReturn(expectedPath)
 
-        val entityJoin = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD))
+        val entityJoin = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD), JoinType.INNER)
         entityJoins.add(entityJoin)
 
-        val join = entityJoins.getPath(ADDRESS_ENTITIES_FIELD, root)
+        val path = entityJoins.getPath(ADDRESS_ENTITIES_FIELD, root)
 
-        assertThat(join).isEqualTo(expectedJoin)
+        assertThat(path).isEqualTo(expectedPath)
+
+        verify(root).joins
+        verify(root).fetches
+        verifyNoMoreInteractions(root)
     }
 
     @Test
@@ -84,18 +93,23 @@ internal class EntityJoinsImplTest {
         val rootClass = Person::class.java
         val entityJoins = EntityJoinsImpl(rootClass)
 
-        val expectedJoin = mock<JoinImplementor<Any, Any>>()
+        val expectedPath = mock<Path<Any>>()
 
         val root = mock<Root<Person>>()
         whenever(root.javaType).thenReturn(rootClass)
-        whenever(root.fetch<Any, Any>(ADDRESS_ENTITIES_FIELD, JoinType.LEFT)).thenReturn(expectedJoin)
+        whenever(root.fetch<Any, Any>(ADDRESS_ENTITIES_FIELD, JoinType.LEFT)).thenReturn(mock<JoinImplementor<Any, Any>>())
+        whenever(root.get<Any>(ADDRESS_ENTITIES_FIELD)).thenReturn(expectedPath)
 
         val entityJoin = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD), JoinType.LEFT, true)
         entityJoins.add(entityJoin)
 
-        val join = entityJoins.getPath(ADDRESS_ENTITIES_FIELD, root)
+        val path = entityJoins.getPath(ADDRESS_ENTITIES_FIELD, root)
 
-        assertThat(join).isEqualTo(expectedJoin)
+        assertThat(path).isEqualTo(expectedPath)
+
+        verify(root).joins
+        verify(root).fetches
+        verifyNoMoreInteractions(root)
     }
 
     @Test
@@ -118,6 +132,10 @@ internal class EntityJoinsImplTest {
         val path = entityJoins.getPath(COUNTRY_PATH, root)
 
         assertThat(path).isEqualTo(expectedPath)
+
+        verify(root).joins
+        verify(root).fetches
+        verifyNoMoreInteractions(root)
     }
 
     @Test
@@ -130,13 +148,17 @@ internal class EntityJoinsImplTest {
         val root = mock<Root<Person>>()
         whenever(root.javaType).thenReturn(rootClass)
         val join = mock<JoinImplementor<Any, Any>>()
-        whenever(root.join<Any, Any>(ADDRESS_ENTITIES_FIELD, JoinType.INNER)).thenReturn(join)
+        whenever(root.join<Any, Any>(ADDRESS_ENTITIES_FIELD, JoinType.LEFT)).thenReturn(join)
         whenever(join.javaType).thenReturn(Address::class.java)
         whenever(join.get<Any>(COUNTRY_FIELD)).thenReturn(expectedPath)
 
         val path = entityJoins.getPath(COUNTRY_PATH, root)
 
         assertThat(path).isEqualTo(expectedPath)
+
+        verify(root).joins
+        verify(root).fetches
+        verifyNoMoreInteractions(root)
     }
 
     @Test
@@ -232,7 +254,7 @@ internal class EntityJoinsImplTest {
         val rootClass = Person::class.java
         val entityJoins = EntityJoinsImpl(rootClass)
 
-        val entityJoin1 = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD))
+        val entityJoin1 = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD), JoinType.INNER)
         entityJoins.add(entityJoin1)
         val entityJoin2 = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(VEHICLES_FIELD), JoinType.LEFT, true)
         entityJoins.add(entityJoin2)
