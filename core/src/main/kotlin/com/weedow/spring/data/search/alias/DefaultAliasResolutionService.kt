@@ -3,6 +3,11 @@ package com.weedow.spring.data.search.alias
 import org.apache.commons.lang3.reflect.FieldUtils
 import java.util.*
 
+/**
+ * Default [AliasResolutionService] implementation suitable for use in most environments.
+ *
+ * Indirectly implements [AliasResolverRegistry] as registration API through the [ConfigurableAliasResolutionService] interface.
+ */
 class DefaultAliasResolutionService : ConfigurableAliasResolutionService {
 
     companion object {

@@ -8,6 +8,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.context.annotation.Configuration
 import java.lang.reflect.Field
 
+/**
+ * Auto-Configuration to register default alias resolvers.
+ */
 @Configuration
 @ConditionalOnClass(SearchConfigurer::class)
 class DataSearchDefaultAliasConfigurerAutoConfiguration : SearchConfigurer {
@@ -16,6 +19,11 @@ class DataSearchDefaultAliasConfigurerAutoConfiguration : SearchConfigurer {
         registry.addAliasResolver(DefaultAliasResolver())
     }
 
+    /**
+     * Default Alias Resolver that create a new alias for all fields ending with 'Entity' or 'Entities'.
+     *
+     * The resolved alias is the field name without 'Entity' and 'Entities'.
+     */
     class DefaultAliasResolver : AliasResolver {
 
         companion object {

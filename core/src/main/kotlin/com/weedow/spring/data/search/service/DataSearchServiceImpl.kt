@@ -7,6 +7,12 @@ import com.weedow.spring.data.search.specification.JpaSpecificationService
 import com.weedow.spring.data.search.utils.klogger
 import org.springframework.transaction.annotation.Transactional
 
+/**
+ * Default [DataSearchService] implementation.
+ *
+ * This implementation uses transactions for any calls to methods of this class.
+ * The transactions are read-only by default.
+ */
 @Transactional(readOnly = true)
 class DataSearchServiceImpl(
         private val jpaSpecificationService: JpaSpecificationService,

@@ -3,8 +3,18 @@ package com.weedow.spring.data.search.join
 import javax.persistence.criteria.Path
 import javax.persistence.criteria.Root
 
+/**
+ * Interface to get the joins or the [Path] relative to an Entity.
+ */
 interface EntityJoins {
 
+    /**
+     * Returns the [Path] corresponding to given [field path][fieldPath] relative to the specified [Root].
+     *
+     * @param fieldPath path of a field. The nested field path contains dots to separate the parents fields (eg. vehicle.brand)
+     * @param root [Root] object
+     * @return [Path] representing the field found in the [field path][fieldPath]
+     */
     fun <T> getPath(fieldPath: String, root: Root<T>): Path<*>
 
     /**

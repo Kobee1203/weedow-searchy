@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.ConverterRegistry
 
+/**
+ * A subclass of [SearchConfigurationSupport] that detects and delegates to all beans of type [SearchConfigurer] allowing them to customize the configuration provided by [SearchConfigurationSupport].
+ */
 @Configuration
 class DelegatingSearchConfiguration : SearchConfigurationSupport() {
 

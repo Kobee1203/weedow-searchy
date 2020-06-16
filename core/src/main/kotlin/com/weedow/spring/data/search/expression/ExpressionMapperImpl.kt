@@ -9,6 +9,9 @@ import org.springframework.core.convert.ConversionService
 import java.util.*
 import java.util.stream.Collectors
 
+/**
+ * Default [ExpressionMapper] implementation.
+ */
 class ExpressionMapperImpl(
         private val fieldPathResolver: FieldPathResolver,
         private val conversionService: ConversionService

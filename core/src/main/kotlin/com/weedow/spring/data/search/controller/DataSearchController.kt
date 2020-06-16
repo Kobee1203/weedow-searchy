@@ -14,6 +14,15 @@ import java.util.stream.Collectors
 
 private const val BASE_URI = "/search"
 
+/**
+ * REST Controller to expose the Spring Data Search endpoint.
+ *
+ * The default base URI of the Spring data Search endpoint is '/search'.
+ *
+ * The base URI is completed with a Search Descriptor ID:
+ * * If the Search Descriptor ID is found, the related [SearchDescriptor] is retrieved and used to perform the search.
+ * * If the Search Descriptor ID is not found, An exception of type [SearchDescriptorNotFound] is thrown.
+ */
 @RestController
 @RequestMapping(BASE_URI)
 class DataSearchController(

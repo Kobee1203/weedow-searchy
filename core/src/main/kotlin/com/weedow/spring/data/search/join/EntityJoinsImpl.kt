@@ -9,6 +9,9 @@ import javax.persistence.criteria.From
 import javax.persistence.criteria.Path
 import javax.persistence.criteria.Root
 
+/**
+ * Default [EntityJoins] implementation.
+ */
 class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
 
     private val joins = mutableMapOf<String, EntityJoin>()
@@ -17,6 +20,15 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         private val log by klogger()
     }
 
+    /**
+     * Check if the class of the given field has been already processed, and so prevent to store the same [EntityJoin] more than once.
+     *
+     * If the field class is the same class as the root entity, the field is considered as already processed.
+     *
+     * @param entityClass Class of the Entity
+     * @param field a field of the Entity declared with a with a Join Annotation
+     * @return
+     */
     fun alreadyProcessed(entityClass: Class<*>, field: Field): Boolean {
         // Do not create a join with the root Entity class
         if (this.rootClass == EntityUtils.getFieldClass(field)) {
@@ -27,6 +39,9 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         return joins.keys.stream().anyMatch { it == joinName }
     }
 
+    /**
+     * Add a new [EntityJoin].
+     */
     fun add(entityJoin: EntityJoin) {
         joins[entityJoin.joinName] = entityJoin
     }

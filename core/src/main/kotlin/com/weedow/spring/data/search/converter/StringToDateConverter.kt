@@ -12,6 +12,13 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.format.DateTimeParseException
 import java.util.*
 
+/**
+ * A converter that converts from String to [Date].
+ *
+ * It uses the default JVM [Locale] and a default list of patterns defined by [DATE_FORMATS].
+ *
+ * It is possible to modify the default behavior by instantiating the converter with a specific [Locale] and/or a specific patterns list.
+ */
 @ReadingConverter
 class StringToDateConverter(
         vararg patterns: String = DATE_FORMATS,

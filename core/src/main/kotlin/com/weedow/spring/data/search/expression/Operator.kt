@@ -1,5 +1,8 @@
 package com.weedow.spring.data.search.expression
 
+/**
+ * Enum of operators
+ */
 enum class Operator {
     EQUALS,
     CONTAINS,

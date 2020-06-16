@@ -5,6 +5,11 @@ import com.weedow.spring.data.search.join.EntityJoins
 import com.weedow.spring.data.search.utils.klogger
 import org.springframework.data.jpa.domain.Specification
 
+/**
+ * Default [JpaSpecificationService] implementation.
+ *
+ * Converts the [RootExpression], containing the [Expressions][com.weedow.spring.data.search.expression.Expression], to a [Specification] object.
+ */
 class JpaSpecificationServiceImpl : JpaSpecificationService {
 
     companion object {

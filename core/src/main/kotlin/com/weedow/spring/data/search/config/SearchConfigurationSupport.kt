@@ -16,6 +16,10 @@ import org.springframework.data.convert.Jsr310Converters
 import javax.annotation.PreDestroy
 import javax.persistence.EntityManager
 
+/**
+ * Main class providing the configuration of Spring Data Search.
+ * An alternative more advanced option is to extend directly from this class and override methods as necessary, remembering to add [@Configuration][org.springframework.context.annotation.Configuration] to the subclass and [@Bean][Bean] to overridden [@Bean][Bean] methods.
+ */
 open class SearchConfigurationSupport {
 
     @Autowired

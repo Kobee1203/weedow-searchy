@@ -8,6 +8,11 @@ import com.weedow.spring.data.search.utils.klogger
 import org.apache.commons.lang3.reflect.FieldUtils
 import java.util.*
 
+/**
+ * Default [EntityJoinManager] implementation.
+ *
+ * This implementation computes the Entity joins for a given [SearchDescriptor], and cache the result.
+ */
 class EntityJoinManagerImpl : EntityJoinManager {
 
     private val joinsBySearchDescriptorId: MutableMap<String, EntityJoins> = HashMap()
