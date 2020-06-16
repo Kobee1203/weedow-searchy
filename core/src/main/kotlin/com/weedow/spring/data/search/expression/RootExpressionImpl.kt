@@ -7,6 +7,9 @@ import javax.persistence.criteria.CriteriaBuilder
 import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.Root
 
+/**
+ * Default [RootExpression] implementation.
+ */
 class RootExpressionImpl<T>(
         vararg val expressions: Expression
 ) : RootExpression<T> {

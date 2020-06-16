@@ -6,6 +6,9 @@ import org.springframework.core.convert.converter.ConverterRegistry
 import org.springframework.util.CollectionUtils
 import java.util.*
 
+/**
+ * A [SearchConfigurer] that delegates to one or more others.
+ */
 class SearchConfigurerComposite : SearchConfigurer {
 
     private val delegates: MutableList<SearchConfigurer> = ArrayList()

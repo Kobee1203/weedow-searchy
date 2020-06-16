@@ -4,6 +4,14 @@ import com.weedow.spring.data.search.join.JoinInfo
 import javax.persistence.*
 import javax.persistence.criteria.JoinType
 
+/**
+ * [EntityJoinHandler] implementation to fetch all fields (entity fields and nested fields included) with Join Annotation defining [FetchType.EAGER].
+ *
+ * Technically, it creates a `LEFT JOIN FETCH` in JPQL for Join Annotation with [FetchType.EAGER].
+ *
+ * _Example: `A` has a relationship with `B` using `@OneToMany` annotation and `FetchType.EAGER`, and `A` has a relationship with `C` using `@OneToMany` annotation and `FetchType.LAZY`.
+ * When we search for `A`, we retrieve `A` with just data from `B`, but not `C`._
+ */
 class FetchingEagerEntityJoinHandler<T> : EntityJoinHandler<T> {
 
     override fun supports(entityClass: Class<*>, fieldClass: Class<*>, fieldName: String, joinAnnotation: Annotation): Boolean {

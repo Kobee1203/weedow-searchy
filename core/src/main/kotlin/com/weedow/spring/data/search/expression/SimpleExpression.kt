@@ -10,6 +10,9 @@ import org.springframework.data.jpa.domain.Specification
 import java.lang.reflect.Field
 import javax.persistence.criteria.*
 
+/**
+ * Expression to compare the field value with the given [value] according to the given [Operator].
+ */
 internal data class SimpleExpression(
         private val operator: Operator,
         private val fieldInfo: FieldInfo,

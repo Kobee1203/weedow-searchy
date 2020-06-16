@@ -3,6 +3,9 @@ package com.weedow.spring.data.search.join
 import java.lang.reflect.Field
 import javax.persistence.criteria.JoinType
 
+/**
+ * Value object representing the join type for a specific field.
+ */
 data class EntityJoin(val fieldPath: String,
                       val fieldName: String,
                       val joinName: String,

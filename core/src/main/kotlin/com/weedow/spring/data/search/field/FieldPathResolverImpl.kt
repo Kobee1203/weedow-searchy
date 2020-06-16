@@ -6,6 +6,13 @@ import com.weedow.spring.data.search.utils.FIELD_PATH_SEPARATOR
 import com.weedow.spring.data.search.utils.klogger
 import java.lang.reflect.Field
 
+/**
+ * Default [FieldPathResolver] implementation.
+ *
+ * The field paths are resolved by splitting the paths to a list of Strings around occurrences of the delimiter [FIELD_PATH_SEPARATOR].
+ *
+ * An [AliasResolutionService] checks if a part of the field path is an alias. If so, it returns the real field name, otherwise it returns the received part.
+ */
 class FieldPathResolverImpl(private val aliasResolutionService: AliasResolutionService) : FieldPathResolver {
 
     companion object {

@@ -23,6 +23,9 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.ConversionService
 
+/**
+ * Auto-Configuration for Spring Data Search.
+ */
 @Configuration
 @ConditionalOnClass(SearchConfigurer::class)
 class DataSearchAutoConfiguration : DelegatingSearchConfiguration() {

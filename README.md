@@ -365,7 +365,7 @@ _Coming soon_
 ## Features
 
 ### Search Descriptor
-The Search Descriptor allows exposing automatically search endpoints for JPA Entities.\
+The Search Descriptors allow exposing automatically search endpoints for JPA Entities.\
 The new endpoints are mapped to `/search/{searchDescriptorId}` where `searchDescriptorId` is the [ID](#search-descriptor-id) defined for the `SearchDescriptor`.
 
 The easiest way to create a Search Descriptor is to use the `com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder` which provides every options available to configure a `SearchDescriptor`.
@@ -472,7 +472,7 @@ Spring Data Search provides the following default implementations:
 * `FetchingEagerEntityJoinHandler`: This implementation allows to query an entity by fetching all fields having a Join Annotation with the Fetch type defined as `EAGER`.\
   _Example:_\
   _`A` has a relationship with `B` using `@OneToMany` annotation and `FetchType.EAGER`, and `A` has a relationship with `C` using `@OneToMany` annotation and `FetchType.LAZY`._\
-  _When we search for `A`, we retrieve `A` with just data from `B`, and not `C`._
+  _When we search for `A`, we retrieve `A` with just data from `B`, but not `C`._
 
 You can create your own implementation to fetch the additional data you require.\
 Just implement the `com.weedow.spring.data.search.join.handler.EntityJoinHandler` interface:
