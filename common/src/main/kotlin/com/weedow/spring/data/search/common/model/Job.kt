@@ -17,7 +17,7 @@ class Job(
         @Column(nullable = false)
         val salary: Int,
 
-        @Column(nullable = false)
+        @Column(nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
         val hireDate: OffsetDateTime,
 
         @OneToOne(optional = false)
