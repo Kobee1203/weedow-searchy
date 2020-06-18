@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
     <name>spring-data-search-parent</name>
     <description>Automatically exposes endpoints to search for data using a powerful query language</description>
+    <url>https://github.com/Kobee1203/spring-data-search</url>
 
     <scm>
         <tag>HEAD</tag>
@@ -31,6 +32,7 @@
 
         <java.version>1.8</java.version>
         <kotlin.version>1.3.71</kotlin.version>
+        <dokka.version>0.10.1</dokka.version>
 
         <!-- Set the default Java character encoding with the same value as ${project.build.sourceEncoding} to prevent encoding errors while running tests -->
         <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
@@ -59,29 +61,6 @@
         <!-- Testing dependencies versions -->
         <mockito-kotlin.version>2.2.0</mockito-kotlin.version>
     </properties>
-
-    <profiles>
-        <profile>
-            <id>all-tests</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>unit-test</id>
-            <properties>
-                <skip.integration.tests>true</skip.integration.tests>
-                <skip.unit.tests>false</skip.unit.tests>
-            </properties>
-        </profile>
-        <profile>
-            <id>integration-test</id>
-            <properties>
-                <skip.integration.tests>false</skip.integration.tests>
-                <skip.unit.tests>true</skip.unit.tests>
-            </properties>
-        </profile>
-    </profiles>
 
     <modules>
         <module>common</module>
@@ -250,6 +229,24 @@
                         </execution>
                     </executions>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.jetbrains.dokka</groupId>
+                    <artifactId>dokka-maven-plugin</artifactId>
+                    <version>${dokka.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>dokka</goal>
+                                <goal>javadocJar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jdkVersion>8</jdkVersion>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -265,12 +262,14 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.0.0-M1</version>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
+                        <id>default-deploy</id>
+                        <phase>deploy</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>deploy</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -278,18 +277,19 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.0-M1</version>
                 <configuration>
-                    <failOnError>false</failOnError>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <arguments>-Dgpg.passphrase="${gpg.passphrase}"</arguments>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-provider-gitexe</artifactId>
+                        <version>1.11.2</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <!-- Code Coverage (Jacoco) -->
@@ -306,14 +306,150 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Attache JAR of sources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- GPG Signature on release -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <gpgArguments>
+                        <arg>--pinentry-mode</arg>
+                        <arg>loopback</arg>
+                    </gpgArguments>
+                    <!-- Add GPG passphrase in Maven settings.xml under .m2 home, see
+                         https://dzone.com/articles/publish-your-artifacts-to-maven-central -->
+                    <keyname>${gpg.keyname}</keyname>
+                    <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/Kobee1203/spring-data-search</url>
-        </repository>
-    </distributionManagement>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>3.0.0</version>
+                <reportSets>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <inherited>false</inherited>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+                <configuration>
+                    <linkJavadoc>true</linkJavadoc>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <pluginRepositories>
+        <!-- Required by Dokka plugin -->
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <profiles>
+        <profile>
+            <id>all-tests</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>skip-all-tests</id>
+            <properties>
+                <skip.integration.tests>true</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>unit-test</id>
+            <properties>
+                <skip.integration.tests>true</skip.integration.tests>
+                <skip.unit.tests>false</skip.unit.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>integration-test</id>
+            <properties>
+                <skip.integration.tests>false</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>ossrh-repository</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>github-repository</id>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub Packages</name>
+                    <url>https://maven.pkg.github.com/Kobee1203/spring-data-search</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>
