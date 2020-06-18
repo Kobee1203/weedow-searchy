@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: install-secret-key
+        name: Install gpg secret key
+        run: |
+          cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
+          gpg --list-secret-keys --keyid-format LONG
+
+      - name: Setup git user configuration
+        run: |
+          echo "Setup git user name to '$GIT_RELEASE_BOT_NAME'"
+          git config --global user.name "$GIT_RELEASE_BOT_NAME";
+          echo "Setup git user email to '$GIT_RELEASE_BOT_EMAIL'"
+          git config --global user.email "$GIT_RELEASE_BOT_EMAIL";
+        env:
+          GIT_RELEASE_BOT_NAME: ${{ secrets.GIT_RELEASE_BOT_NAME }}
+          GIT_RELEASE_BOT_EMAIL: ${{ secrets.GIT_RELEASE_BOT_EMAIL }}
+
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.8 and Maven Central Repository configuration
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+
+      - name: Maven Version
+        run: mvn --version
+
+      - name: Prepare Release (Dry Run)
+        run: mvn --batch-mode -Dgpg.passphrase="${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}" -DdryRun=true release:clean release:prepare -P ossrh-repository
+
+      - name: Prepare and Perform Release
+        run: mvn --batch-mode -Dgpg.passphrase="${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}" release:clean release:prepare release:perform -P ossrh-repository
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          GITHUB_TOKEN: ${{ github.token }}

@@ -21,8 +21,8 @@
     <scm>
         <tag>HEAD</tag>
         <url>https://github.com/Kobee1203/spring-data-search</url>
-        <connection>scm:git:ssh://git@github.com:Kobee1203/spring-data-search.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:Kobee1203/spring-data-search.git</developerConnection>
+        <connection>scm:git:https://github.com/Kobee1203/spring-data-search.git</connection>
+        <developerConnection>scm:git:https://github.com/Kobee1203/spring-data-search.git</developerConnection>
     </scm>
 
     <properties>
@@ -281,6 +281,7 @@
                 <version>3.0.0-M1</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>spring-data-search-@{project.version}</tagNameFormat>
                     <arguments>-Dgpg.passphrase="${gpg.passphrase}"</arguments>
                 </configuration>
                 <dependencies>
@@ -337,14 +338,15 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <!-- Add GPG passphrase in Maven settings.xml under .m2 home, see
+                         https://dzone.com/articles/publish-your-artifacts-to-maven-central
+                         https://gist.github.com/sualeh/ae78dc16123899d7942bc38baba5203c -->
+                    <keyname>${gpg.keyname}</keyname>
+                    <passphraseServerId>${gpg.keyname}</passphraseServerId>
                     <gpgArguments>
                         <arg>--pinentry-mode</arg>
                         <arg>loopback</arg>
                     </gpgArguments>
-                    <!-- Add GPG passphrase in Maven settings.xml under .m2 home, see
-                         https://dzone.com/articles/publish-your-artifacts-to-maven-central -->
-                    <keyname>${gpg.keyname}</keyname>
-                    <passphraseServerId>${gpg.keyname}</passphraseServerId>
                 </configuration>
             </plugin>
         </plugins>
