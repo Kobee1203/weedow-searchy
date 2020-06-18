@@ -29,7 +29,7 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
 [![GitHub repo size](https://img.shields.io/github/repo-size/Kobee1203/spring-data-search)]()
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Kobee1203/spring-data-search)]()
 
-[![Build](https://img.shields.io/github/workflow/status/Kobee1203/spring-data-search/Build%20and%20Analyze)](https://github.com/Kobee1203/spring-data-search/actions?query=workflow%3A%22Build+and+Analyze)
+[![Build](https://img.shields.io/github/workflow/status/Kobee1203/spring-data-search/Build%20and%20Analyze)](https://github.com/Kobee1203/spring-data-search/actions?query=workflow%3A%22Build+and+Analyze%22)
 [![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/Kobee1203/spring-data-search)]()
 
 [![Code Coverage](https://img.shields.io/sonar/coverage/spring-data-search?server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/dashboard?id=spring-data-search)
