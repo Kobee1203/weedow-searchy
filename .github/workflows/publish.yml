@@ -19,6 +19,6 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Publish to GitHub Packages
-      run: mvn --batch-mode --update-snapshots deploy -P github-repository,skip-all-tests
+      run: mvn --batch-mode --update-snapshots deploy -P github,skip-all-tests
       env:
         GITHUB_TOKEN: ${{ github.token }}
