@@ -26,8 +26,8 @@ You could create a Repository with custom methods to perform all these searches,
 Alternatively, you can use Spring Data Search which allows you to perform all these searches with a minimum configuration, without the need of a custom Repository. If you want to do other different searches, you do not need to add new methods to do that.
 
 ## Build
-[![GitHub repo size](https://img.shields.io/github/repo-size/Kobee1203/spring-data-search)]()
-[![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Kobee1203/spring-data-search)]()
+![GitHub repo size](https://img.shields.io/github/repo-size/Kobee1203/spring-data-search)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Kobee1203/spring-data-search)
 
 [![Build](https://img.shields.io/github/workflow/status/Kobee1203/spring-data-search/Build%20and%20Analyze)](https://github.com/Kobee1203/spring-data-search/actions?query=workflow%3A%22Build+and+Analyze%22)
 [![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/Kobee1203/spring-data-search)]()
@@ -49,7 +49,7 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
 * Spring Boot
 
 ### Installation
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Kobee1203/spring-data-search?include_prereleases)]()
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Kobee1203/spring-data-search?include_prereleases)](https://github.com/Kobee1203/spring-data-search/releases)
 [![Downloads](https://img.shields.io/github/downloads/Kobee1203/spring-data-search/total)](https://github.com/Kobee1203/spring-data-search/releases)
 [![Maven Central](https://img.shields.io/maven-central/v/com.weedow/spring-data-search-core)]()
 
