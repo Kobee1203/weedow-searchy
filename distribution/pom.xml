@@ -17,49 +17,49 @@
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
-    <dependencies>
-        <!-- Core -->
-        <dependency>
-            <groupId>com.weedow</groupId>
-            <artifactId>spring-data-search-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.weedow</groupId>
-            <artifactId>spring-data-search-core</artifactId>
-            <version>${project.version}</version>
-            <classifier>javadoc</classifier>
-        </dependency>
-        <dependency>
-            <groupId>com.weedow</groupId>
-            <artifactId>spring-data-search-core</artifactId>
-            <version>${project.version}</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <!-- Sample App -->
-        <dependency>
-            <groupId>com.weedow</groupId>
-            <artifactId>spring-data-search-sample-app</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.weedow</groupId>
-            <artifactId>spring-data-search-sample-app</artifactId>
-            <version>${project.version}</version>
-            <classifier>javadoc</classifier>
-        </dependency>
-        <dependency>
-            <groupId>com.weedow</groupId>
-            <artifactId>spring-data-search-sample-app</artifactId>
-            <version>${project.version}</version>
-            <classifier>sources</classifier>
-        </dependency>
-    </dependencies>
-
     <profiles>
         <profile>
             <id>release</id>
+
+            <dependencies>
+                <!-- Core -->
+                <dependency>
+                    <groupId>com.weedow</groupId>
+                    <artifactId>spring-data-search-core</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.weedow</groupId>
+                    <artifactId>spring-data-search-core</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>javadoc</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>com.weedow</groupId>
+                    <artifactId>spring-data-search-core</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>sources</classifier>
+                </dependency>
+
+                <!-- Sample App -->
+                <dependency>
+                    <groupId>com.weedow</groupId>
+                    <artifactId>spring-data-search-sample-app</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.weedow</groupId>
+                    <artifactId>spring-data-search-sample-app</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>javadoc</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>com.weedow</groupId>
+                    <artifactId>spring-data-search-sample-app</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>sources</classifier>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
