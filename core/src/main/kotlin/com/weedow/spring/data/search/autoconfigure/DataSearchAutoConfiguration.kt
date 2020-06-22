@@ -7,8 +7,8 @@ import com.weedow.spring.data.search.config.DelegatingSearchConfiguration
 import com.weedow.spring.data.search.config.SearchConfigurer
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.expression.ExpressionMapperImpl
-import com.weedow.spring.data.search.field.FieldPathResolver
-import com.weedow.spring.data.search.field.FieldPathResolverImpl
+import com.weedow.spring.data.search.fieldpath.FieldPathResolver
+import com.weedow.spring.data.search.fieldpath.FieldPathResolverImpl
 import com.weedow.spring.data.search.join.EntityJoinManager
 import com.weedow.spring.data.search.join.EntityJoinManagerImpl
 import com.weedow.spring.data.search.service.DataSearchService
@@ -16,6 +16,10 @@ import com.weedow.spring.data.search.service.DataSearchServiceImpl
 import com.weedow.spring.data.search.specification.JpaSpecificationService
 import com.weedow.spring.data.search.specification.JpaSpecificationServiceImpl
 import com.weedow.spring.data.search.utils.klogger
+import com.weedow.spring.data.search.validation.DataSearchErrorsFactory
+import com.weedow.spring.data.search.validation.DataSearchErrorsFactoryImpl
+import com.weedow.spring.data.search.validation.DataSearchValidationService
+import com.weedow.spring.data.search.validation.DataSearchValidationServiceImpl
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
@@ -61,6 +65,18 @@ class DataSearchAutoConfiguration : DelegatingSearchConfiguration() {
         @ConditionalOnMissingBean
         fun dataSearchService(jpaSpecificationService: JpaSpecificationService, entityJoinManager: EntityJoinManager): DataSearchService {
             return DataSearchServiceImpl(jpaSpecificationService, entityJoinManager)
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        fun dataSearchValidationService(dataSearchErrorsFactory: DataSearchErrorsFactory): DataSearchValidationService {
+            return DataSearchValidationServiceImpl(dataSearchErrorsFactory)
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        fun dataSearchErrorsFactory(): DataSearchErrorsFactory {
+            return DataSearchErrorsFactoryImpl()
         }
 
         @Bean

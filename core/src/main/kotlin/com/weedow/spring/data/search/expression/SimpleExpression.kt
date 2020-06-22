@@ -1,7 +1,6 @@
 package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.exception.UnsupportedOperatorException
-import com.weedow.spring.data.search.field.FieldInfo
 import com.weedow.spring.data.search.join.EntityJoins
 import com.weedow.spring.data.search.utils.EntityUtils
 import com.weedow.spring.data.search.utils.NullValue
@@ -21,6 +20,10 @@ internal data class SimpleExpression(
 
     companion object {
         private val log by klogger()
+    }
+
+    override fun toFieldExpressions(negated: Boolean): Collection<FieldExpression> {
+        return listOf(FieldExpressionImpl(fieldInfo, value, operator, negated))
     }
 
     override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {

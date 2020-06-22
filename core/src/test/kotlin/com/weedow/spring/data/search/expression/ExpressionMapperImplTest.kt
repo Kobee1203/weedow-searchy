@@ -5,9 +5,8 @@ import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.common.model.Address
 import com.weedow.spring.data.search.common.model.Person
-import com.weedow.spring.data.search.field.FieldInfo
-import com.weedow.spring.data.search.field.FieldPathInfo
-import com.weedow.spring.data.search.field.FieldPathResolver
+import com.weedow.spring.data.search.fieldpath.FieldPathInfo
+import com.weedow.spring.data.search.fieldpath.FieldPathResolver
 import com.weedow.spring.data.search.utils.NullValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

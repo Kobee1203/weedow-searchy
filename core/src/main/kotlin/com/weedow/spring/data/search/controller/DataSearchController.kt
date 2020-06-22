@@ -7,6 +7,7 @@ import com.weedow.spring.data.search.exception.SearchDescriptorNotFound
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.service.DataSearchService
 import com.weedow.spring.data.search.utils.klogger
+import com.weedow.spring.data.search.validation.DataSearchValidationService
 import org.springframework.http.ResponseEntity
 import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
@@ -28,7 +29,8 @@ private const val BASE_URI = "/search"
 class DataSearchController(
         private val searchDescriptorService: SearchDescriptorService,
         private val expressionMapper: ExpressionMapper,
-        private val dataSearchService: DataSearchService
+        private val dataSearchService: DataSearchService,
+        private val dataSearchValidationService: DataSearchValidationService
 ) {
 
     companion object {
@@ -56,7 +58,7 @@ class DataSearchController(
         val rootExpression = expressionMapper.toExpression(params, searchDescriptor.entityClass)
 
         // Validate the given parameters with the found Search Descriptor
-        // dataSearchValidator.validate(expression.toFieldInfos(), searchDescriptor)
+        dataSearchValidationService.validate(rootExpression.toFieldExpressions(false), searchDescriptor)
 
         // Find entities according to field infos
         return dataSearchService.findAll(rootExpression, searchDescriptor)

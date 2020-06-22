@@ -5,6 +5,7 @@ import com.weedow.spring.data.search.dto.DefaultDtoMapper
 import com.weedow.spring.data.search.dto.DtoMapper
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
 import com.weedow.spring.data.search.utils.TypeReference
+import com.weedow.spring.data.search.validation.DataSearchValidator
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import java.lang.reflect.ParameterizedType
 
@@ -16,6 +17,7 @@ class SearchDescriptorBuilder<T>(
 ) {
 
     private var id: String = this.entityClass.simpleName.decapitalize()
+    private var validators: MutableList<DataSearchValidator> = mutableListOf()
     private var dtoMapper: DtoMapper<T, *> = DefaultDtoMapper()
     private lateinit var specificationExecutor: JpaSpecificationExecutor<T>
     private var entityJoinHandlers: MutableList<EntityJoinHandler<T>> = mutableListOf()
@@ -42,6 +44,11 @@ class SearchDescriptorBuilder<T>(
     fun id(id: String) = apply { this.id = id }
 
     /**
+     * Set the validators to validate the query parameters.
+     */
+    fun validators(vararg validators: DataSearchValidator) = apply { this.validators.addAll(validators) }
+
+    /**
      * Set the [DTO Mapper][DtoMapper] to convert the Entities returned by the SQL queries to DTO object.
      * If this method is not called, the Entities are not converted and they are returned directly.
      */
@@ -66,7 +73,7 @@ class SearchDescriptorBuilder<T>(
             "JPA SpecificationExecutor is required. JpaSpecificationExecutorFactory is not initialized with an EntityManager. Use 'jpaSpecificationExecutor' method."
         }
 
-        return DefaultSearchDescriptor(id, entityClass, dtoMapper, specificationExecutor, entityJoinHandlers)
+        return DefaultSearchDescriptor(id, entityClass, validators, dtoMapper, specificationExecutor, entityJoinHandlers)
     }
 
     /**
@@ -75,6 +82,7 @@ class SearchDescriptorBuilder<T>(
     private data class DefaultSearchDescriptor<T> internal constructor(
             override val id: String,
             override val entityClass: Class<T>,
+            override val validators: List<DataSearchValidator>,
             override val dtoMapper: DtoMapper<T, *>,
             override val jpaSpecificationExecutor: JpaSpecificationExecutor<T>,
             override val entityJoinHandlers: List<EntityJoinHandler<T>>

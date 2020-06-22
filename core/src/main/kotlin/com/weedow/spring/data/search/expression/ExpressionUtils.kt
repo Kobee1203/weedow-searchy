@@ -1,7 +1,5 @@
 package com.weedow.spring.data.search.expression
 
-import com.weedow.spring.data.search.field.FieldInfo
-
 /**
  * [Expression] utility methods.
  */

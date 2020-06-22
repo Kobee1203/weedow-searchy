@@ -1,4 +1,4 @@
-package com.weedow.spring.data.search.field
+package com.weedow.spring.data.search.fieldpath
 
 import java.lang.reflect.Field
 

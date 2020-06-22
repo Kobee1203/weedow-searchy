@@ -1,7 +1,6 @@
 package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.common.model.Person
-import com.weedow.spring.data.search.field.FieldInfo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

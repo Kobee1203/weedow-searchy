@@ -1,8 +1,7 @@
 package com.weedow.spring.data.search.expression
 
-import com.weedow.spring.data.search.field.FieldInfo
-import com.weedow.spring.data.search.field.FieldPathInfo
-import com.weedow.spring.data.search.field.FieldPathResolver
+import com.weedow.spring.data.search.fieldpath.FieldPathInfo
+import com.weedow.spring.data.search.fieldpath.FieldPathResolver
 import com.weedow.spring.data.search.utils.NullValue
 import com.weedow.spring.data.search.utils.klogger
 import org.springframework.core.convert.ConversionService

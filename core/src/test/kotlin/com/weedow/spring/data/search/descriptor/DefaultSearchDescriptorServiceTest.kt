@@ -15,9 +15,9 @@ internal class DefaultSearchDescriptorServiceTest {
 
     @Test
     fun add_and_find_SearchDescriptor_successfully() {
-        val searchDescriptorId = "person"
-        val searchDescriptor = mock<SearchDescriptor<Person>> {
-            on { this.id }.doReturn(searchDescriptorId)
+        val searchDescriptorId1 = "person"
+        val searchDescriptor1 = mock<SearchDescriptor<Person>> {
+            on { this.id }.doReturn(searchDescriptorId1)
         }
 
         val searchDescriptorId2 = "person2"
@@ -29,14 +29,15 @@ internal class DefaultSearchDescriptorServiceTest {
 
         val searchDescriptorService = DefaultSearchDescriptorService()
 
-        searchDescriptorService.addSearchDescriptor(searchDescriptor)
+        searchDescriptorService.addSearchDescriptor(searchDescriptor1)
         searchDescriptorService.addSearchDescriptor(searchDescriptor2)
 
-        val resultSearchDescriptor = searchDescriptorService.getSearchDescriptor(searchDescriptorId)
-        assertThat(resultSearchDescriptor).isEqualTo(searchDescriptor)
+        val resultSearchDescriptor1 = searchDescriptorService.getSearchDescriptor(searchDescriptorId1)
+        assertThat(resultSearchDescriptor1).isEqualTo(searchDescriptor1)
 
         val resultSearchDescriptor2 = searchDescriptorService.getSearchDescriptor(searchDescriptorId2)
         assertThat(resultSearchDescriptor2).isEqualTo(searchDescriptor2)
+        assertThat(resultSearchDescriptor2?.validators).isEmpty()
         assertThat(resultSearchDescriptor2?.dtoMapper).isEqualTo(DefaultDtoMapper<Person>())
         assertThat(resultSearchDescriptor2?.dtoMapper).hasSameHashCodeAs(DefaultDtoMapper<Person>())
         assertThat(resultSearchDescriptor2?.entityJoinHandlers).isEmpty()

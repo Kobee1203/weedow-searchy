@@ -15,7 +15,7 @@ import java.util.*
 /**
  * A converter that converts from String to [Date].
  *
- * It uses the default JVM [Locale] and a default list of patterns defined by [DATE_FORMATS].
+ * It uses the default JVM [Locale] and a default list of patterns defined by [DATE_FORMATS][com.weedow.spring.data.search.converter.StringToDateConverter.Companion.DATE_FORMATS].
  *
  * It is possible to modify the default behavior by instantiating the converter with a specific [Locale] and/or a specific patterns list.
  */

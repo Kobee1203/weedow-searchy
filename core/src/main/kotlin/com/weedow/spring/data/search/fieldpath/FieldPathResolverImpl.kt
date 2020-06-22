@@ -1,4 +1,4 @@
-package com.weedow.spring.data.search.field
+package com.weedow.spring.data.search.fieldpath
 
 import com.weedow.spring.data.search.alias.AliasResolutionService
 import com.weedow.spring.data.search.utils.EntityUtils

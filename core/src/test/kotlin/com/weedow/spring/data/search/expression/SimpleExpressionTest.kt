@@ -4,12 +4,14 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.common.model.Person
-import com.weedow.spring.data.search.field.FieldInfo
 import com.weedow.spring.data.search.join.EntityJoins
 import com.weedow.spring.data.search.utils.NullValue
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.groups.Tuple
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.junit.jupiter.MockitoExtension
 import javax.persistence.criteria.*
 import javax.persistence.criteria.Expression
@@ -302,5 +304,25 @@ internal class SimpleExpressionTest {
 
         verify(inClause).value(fieldValue1)
         verify(inClause).value(fieldValue2)
+    }
+
+    @ParameterizedTest
+    @EnumSource(Operator::class)
+    fun to_field_expressions(operator: Operator) {
+        assertToFieldExpressions(false, operator)
+        assertToFieldExpressions(true, operator)
+    }
+
+    private fun assertToFieldExpressions(negated: Boolean, operator: Operator) {
+        val fieldPath = "firstName"
+        val fieldInfo = FieldInfo(fieldPath, Person::class.java, Person::class.java.getDeclaredField("firstName"), String::class.java)
+        val fieldValue = "John"
+
+        val expression = SimpleExpression(operator, fieldInfo, fieldValue)
+        val fieldExpressions = expression.toFieldExpressions(negated)
+
+        assertThat(fieldExpressions)
+                .extracting("fieldInfo", "value", "operator", "negated")
+                .containsExactly(Tuple.tuple(fieldInfo, fieldValue, operator, negated))
     }
 }
