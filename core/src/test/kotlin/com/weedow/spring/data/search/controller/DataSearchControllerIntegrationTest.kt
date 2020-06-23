@@ -7,8 +7,8 @@ import com.weedow.spring.data.search.descriptor.SearchDescriptorService
 import com.weedow.spring.data.search.exception.ValidationException
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.expression.ExpressionUtils
-import com.weedow.spring.data.search.expression.RootExpressionImpl
 import com.weedow.spring.data.search.expression.FieldInfo
+import com.weedow.spring.data.search.expression.RootExpressionImpl
 import com.weedow.spring.data.search.service.DataSearchService
 import com.weedow.spring.data.search.validation.DataSearchError
 import com.weedow.spring.data.search.validation.DataSearchValidationService
