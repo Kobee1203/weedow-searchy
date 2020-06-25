@@ -1,13 +1,11 @@
 package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.exception.UnsupportedOperatorException
-import com.weedow.spring.data.search.field.FieldInfo
 import com.weedow.spring.data.search.join.EntityJoins
 import com.weedow.spring.data.search.utils.EntityUtils
 import com.weedow.spring.data.search.utils.NullValue
 import com.weedow.spring.data.search.utils.klogger
 import org.springframework.data.jpa.domain.Specification
-import java.lang.reflect.Field
 import javax.persistence.criteria.*
 
 /**
@@ -23,12 +21,16 @@ internal data class SimpleExpression(
         private val log by klogger()
     }
 
+    override fun toFieldExpressions(negated: Boolean): Collection<FieldExpression> {
+        return listOf(FieldExpressionImpl(fieldInfo, value, operator, negated))
+    }
+
     override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
         return Specification { root: Root<T>, query: CriteriaQuery<*>, criteriaBuilder: CriteriaBuilder ->
             val path = entityJoins.getPath(fieldInfo.fieldPath, root)
 
             when (operator) {
-                Operator.EQUALS -> equals(criteriaBuilder, path, value, fieldInfo.field)
+                Operator.EQUALS -> equals(criteriaBuilder, path, value, fieldInfo)
                 Operator.CONTAINS -> @Suppress("UNCHECKED_CAST") like(criteriaBuilder, path as Path<String>, value as String)
                 Operator.ICONTAINS -> @Suppress("UNCHECKED_CAST") ilike(criteriaBuilder, path as Path<String>, value as String)
                 Operator.LESS_THAN -> @Suppress("UNCHECKED_CAST") lessThan(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
@@ -41,7 +43,8 @@ internal data class SimpleExpression(
         }
     }
 
-    private fun equals(criteriaBuilder: CriteriaBuilder, path: Path<*>, value: Any, field: Field): Predicate {
+    private fun equals(criteriaBuilder: CriteriaBuilder, path: Path<*>, value: Any, fieldInfo: FieldInfo): Predicate {
+        val field = fieldInfo.parentClass.getDeclaredField(fieldInfo.fieldName)
         return if (value === NullValue) {
             if (Collection::class.java.isAssignableFrom(field.type)) {
                 @Suppress("UNCHECKED_CAST")
@@ -49,11 +52,13 @@ internal data class SimpleExpression(
             } else {
                 criteriaBuilder.isNull(path)
             }
-        } else if (EntityUtils.isElementCollection(field)) {
-            @Suppress("UNCHECKED_CAST")
-            criteriaBuilder.isMember(value, path as javax.persistence.criteria.Expression<Collection<*>>)
         } else {
-            criteriaBuilder.equal(path, value)
+            if (EntityUtils.isElementCollection(field)) {
+                @Suppress("UNCHECKED_CAST")
+                criteriaBuilder.isMember(value, path as javax.persistence.criteria.Expression<Collection<*>>)
+            } else {
+                criteriaBuilder.equal(path, value)
+            }
         }
     }
 

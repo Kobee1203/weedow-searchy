@@ -26,14 +26,17 @@ class DelegatingSearchConfiguration : SearchConfigurationSupport() {
     }
 
     override fun addSearchDescriptors(registry: SearchDescriptorRegistry) {
+        super.addSearchDescriptors(registry)
         configurers.addSearchDescriptors(registry)
     }
 
     override fun addAliasResolvers(registry: AliasResolverRegistry) {
+        super.addAliasResolvers(registry)
         configurers.addAliasResolvers(registry)
     }
 
     override fun addConverters(registry: ConverterRegistry) {
+        super.addConverters(registry)
         configurers.addConverters(registry)
     }
 }

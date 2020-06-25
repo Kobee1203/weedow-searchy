@@ -3,6 +3,7 @@ package com.weedow.spring.data.search.descriptor
 import com.weedow.spring.data.search.dto.DefaultDtoMapper
 import com.weedow.spring.data.search.dto.DtoMapper
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
+import com.weedow.spring.data.search.validation.DataSearchValidator
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
 /**
@@ -60,6 +61,12 @@ interface SearchDescriptor<T> {
     val entityClass: Class<T>
 
     /**
+     * Returns list of [DataSearchValidators][DataSearchValidator] to validate the request parameters.
+     */
+    val validators: List<DataSearchValidator>
+        get() = listOf()
+
+    /**
      * Return the mapper to convert the entity to a specific DTO.
      *
      * By default, the method returns a mapper that just returns the given entity.
@@ -80,7 +87,7 @@ interface SearchDescriptor<T> {
     val jpaSpecificationExecutor: JpaSpecificationExecutor<T>
 
     /**
-     * Return list of [EntityJoinHandler]s to handle the entity joins.
+     * Return list of [EntityJoinHandlers][EntityJoinHandler] to handle the entity joins.
      */
     @JvmDefault
     val entityJoinHandlers: List<EntityJoinHandler<T>>

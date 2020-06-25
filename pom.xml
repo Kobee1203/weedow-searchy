@@ -71,6 +71,9 @@
         <module>core</module>
         <module>sample-app</module>
         <module>report</module>
+        <module>distribution</module>
+        <!-- nexus-staging-maven-plugin requires the last module to be not skipped for deployment -->
+        <module>dummy-module</module>
     </modules>
 
     <dependencyManagement>
@@ -251,6 +254,16 @@
                         <jdkVersion>8</jdkVersion>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <configuration>
+                        <descriptors>
+                            <descriptor>src/assembly/assembly.xml</descriptor>
+                        </descriptors>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -285,7 +298,7 @@
                 <version>3.0.0-M1</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <tagNameFormat>spring-data-search-@{project.version}</tagNameFormat>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
                     <arguments>-Dgpg.passphrase="${gpg.passphrase}"</arguments>
                 </configuration>
                 <dependencies>
@@ -310,48 +323,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- Attache JAR of sources -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- GPG Signature on release -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- Add GPG passphrase in Maven settings.xml under .m2 home, see
-                         https://dzone.com/articles/publish-your-artifacts-to-maven-central
-                         https://gist.github.com/sualeh/ae78dc16123899d7942bc38baba5203c -->
-                    <keyname>${gpg.keyname}</keyname>
-                    <passphraseServerId>${gpg.keyname}</passphraseServerId>
-                    <gpgArguments>
-                        <arg>--pinentry-mode</arg>
-                        <arg>loopback</arg>
-                    </gpgArguments>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -420,7 +391,56 @@
         </profile>
 
         <profile>
-            <id>ossrh-repository</id>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Attache JAR of sources -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- GPG Signature on release -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- Add GPG passphrase in Maven settings.xml under .m2 home, see
+                                 https://dzone.com/articles/publish-your-artifacts-to-maven-central
+                                 https://gist.github.com/sualeh/ae78dc16123899d7942bc38baba5203c -->
+                            <keyname>${gpg.keyname}</keyname>
+                            <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>ossrh</id>
             <build>
                 <plugins>
                     <plugin>
@@ -448,7 +468,7 @@
             </distributionManagement>
         </profile>
         <profile>
-            <id>github-repository</id>
+            <id>github</id>
             <distributionManagement>
                 <repository>
                     <id>github</id>

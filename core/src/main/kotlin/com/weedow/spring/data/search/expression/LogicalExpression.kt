@@ -11,6 +11,10 @@ internal data class LogicalExpression(
         private val expressions: List<Expression>
 ) : Expression {
 
+    override fun toFieldExpressions(negated: Boolean): Collection<FieldExpression> {
+        return expressions.flatMap { it.toFieldExpressions(negated).toList() }
+    }
+
     override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
         var lastSpecification = Specification.where<T>(null)!!
         expressions.forEach { expression ->

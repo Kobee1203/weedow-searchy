@@ -103,4 +103,26 @@ internal class RootExpressionImplTest {
         verifyNoMoreInteractions(criteriaQuery)
         verifyZeroInteractions(criteriaBuilder)
     }
+
+    @Test
+    fun to_field_expressions() {
+        assertToFieldExpressions(false)
+        assertToFieldExpressions(true)
+    }
+
+    private fun assertToFieldExpressions(negated: Boolean) {
+        val fieldExpression1 = mock<FieldExpression>()
+        val mockExpression1 = mock<Expression> {
+            on { this.toFieldExpressions(negated) }.doReturn(listOf(fieldExpression1))
+        }
+        val fieldExpression2 = mock<FieldExpression>()
+        val mockExpression2 = mock<Expression> {
+            on { this.toFieldExpressions(negated) }.doReturn(listOf(fieldExpression2))
+        }
+
+        val rootExpression = RootExpressionImpl<Any>(mockExpression1, mockExpression2)
+        val fieldExpressions = rootExpression.toFieldExpressions(negated)
+
+        assertThat(fieldExpressions).containsExactly(fieldExpression1, fieldExpression2)
+    }
 }
