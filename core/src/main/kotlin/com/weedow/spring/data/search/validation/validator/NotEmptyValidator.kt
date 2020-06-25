@@ -5,7 +5,7 @@ import com.weedow.spring.data.search.validation.DataSearchErrors
 import com.weedow.spring.data.search.validation.DataSearchValidator
 
 /**
- * Implementation of [DataSearchValidator] to check if there at least one field expression.
+ * [DataSearchValidator][com.weedow.spring.data.search.validation.DataSearchValidator] implementation to check if there is at least one field expression.
  */
 class NotEmptyValidator(
         private val errorCode: String = DEFAULT_ERROR_CODE,

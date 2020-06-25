@@ -4,7 +4,6 @@ import com.weedow.spring.data.search.alias.AliasResolutionService
 import com.weedow.spring.data.search.utils.EntityUtils
 import com.weedow.spring.data.search.utils.FIELD_PATH_SEPARATOR
 import com.weedow.spring.data.search.utils.klogger
-import java.lang.reflect.Field
 
 /**
  * Default [FieldPathResolver] implementation.
@@ -24,23 +23,23 @@ class FieldPathResolverImpl(private val aliasResolutionService: AliasResolutionS
     }
 
     override fun resolveFieldPath(rootClass: Class<*>, fieldPath: String): FieldPathInfo {
-        var field: Field? = null
-        var parentClass = rootClass
+        var fieldName: String = fieldPath
         var fieldClass = rootClass
+        var parentClass = rootClass
         var resolvedFieldPath = mutableListOf<String>()
         try {
             val parts = fieldPath.split(FIELD_PATH_SEPARATOR)
             for (fieldPart in parts) {
                 parentClass = fieldClass
-                val fieldName = aliasResolutionService.resolve(parentClass, fieldPart)
-                field = parentClass.getDeclaredField(fieldName)
+                fieldName = aliasResolutionService.resolve(parentClass, fieldPart)
+                val field = parentClass.getDeclaredField(fieldName)
                 fieldClass = EntityUtils.getFieldClass(field)
                 resolvedFieldPath.add(fieldName)
             }
         } catch (e: NoSuchFieldException) {
             throw IllegalArgumentException("Could not resolve the field path [$fieldPath] from [$rootClass]: ${e.message}", e)
         }
-        return FieldPathInfo(resolvedFieldPath.joinToString(FIELD_PATH_SEPARATOR), parentClass, field!!, fieldClass)
+        return FieldPathInfo(resolvedFieldPath.joinToString(FIELD_PATH_SEPARATOR), fieldName, fieldClass, parentClass)
     }
 
 }

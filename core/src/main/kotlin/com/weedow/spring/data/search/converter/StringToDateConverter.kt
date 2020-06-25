@@ -21,8 +21,8 @@ import java.util.*
  */
 @ReadingConverter
 class StringToDateConverter(
-        vararg patterns: String = DATE_FORMATS,
-        locale: Locale = Locale.getDefault(Locale.Category.FORMAT)
+        vararg val patterns: String = DATE_FORMATS,
+        val locale: Locale = Locale.getDefault(Locale.Category.FORMAT)
 ) : Converter<String, Date> {
 
     companion object {

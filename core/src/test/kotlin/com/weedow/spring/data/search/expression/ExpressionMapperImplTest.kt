@@ -47,12 +47,13 @@ internal class ExpressionMapperImplTest {
     fun to_root_expression_with_null_param_value() {
         val rootClass = Person::class.java
         val fieldPath = "addressEntities"
-        val fieldValue = NullValue.NULL_VALUE
-        val field = rootClass.getDeclaredField("addressEntities")
+        val fieldName = "addressEntities"
+        val fieldType = Set::class.java
         val fieldClass = Address::class.java
+        val fieldValue = NullValue.NULL_VALUE
 
         whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
-                .thenReturn(FieldPathInfo(fieldPath, rootClass, field, fieldClass))
+                .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
 
         val params = mapOf(fieldPath to listOf(fieldValue))
         val rootExpression = expressionMapper.toExpression(params, rootClass)
@@ -60,7 +61,7 @@ internal class ExpressionMapperImplTest {
         assertThat(rootExpression).isNotNull()
         val expressions = (rootExpression as RootExpressionImpl<Person>).expressions
         assertThat(expressions).containsExactly(
-                ExpressionUtils.equals(FieldInfo(fieldPath, rootClass, field, fieldClass), NullValue)
+                ExpressionUtils.equals(FieldInfo(fieldPath, fieldName, rootClass), NullValue)
         )
 
         verifyZeroInteractions(conversionService)
@@ -70,12 +71,13 @@ internal class ExpressionMapperImplTest {
     fun to_root_expression_with_single_param_value() {
         val rootClass = Person::class.java
         val fieldPath = "firstName"
-        val fieldValue = "John"
-        val field = rootClass.getDeclaredField("firstName")
+        val fieldName = "firstName"
+        val fieldType = String::class.java
         val fieldClass = String::class.java
+        val fieldValue = "John"
 
         whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
-                .thenReturn(FieldPathInfo(fieldPath, rootClass, field, fieldClass))
+                .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
         whenever(conversionService.convert(fieldValue, fieldClass))
                 .thenReturn("John")
 
@@ -85,7 +87,7 @@ internal class ExpressionMapperImplTest {
         assertThat(rootExpression).isNotNull()
         val expressions = (rootExpression as RootExpressionImpl<Person>).expressions
         assertThat(expressions).containsExactly(
-                ExpressionUtils.equals(FieldInfo(fieldPath, rootClass, field, fieldClass), "John")
+                ExpressionUtils.equals(FieldInfo(fieldPath, fieldName, rootClass), "John")
         )
     }
 
@@ -93,13 +95,14 @@ internal class ExpressionMapperImplTest {
     fun to_root_expression_with_multiple_param_values() {
         val rootClass = Person::class.java
         val fieldPath = "firstName"
+        val fieldName = "firstName"
+        val fieldType = String::class.java
+        val fieldClass = String::class.java
         val fieldValue1 = "John"
         val fieldValue2 = "Jane"
-        val field = rootClass.getDeclaredField("firstName")
-        val fieldClass = String::class.java
 
         whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
-                .thenReturn(FieldPathInfo(fieldPath, rootClass, field, fieldClass))
+                .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
         whenever(conversionService.convert(fieldValue1, fieldClass))
                 .thenReturn("John")
         whenever(conversionService.convert(fieldValue2, fieldClass))
@@ -111,29 +114,33 @@ internal class ExpressionMapperImplTest {
         assertThat(rootExpression).isNotNull()
         val expressions = (rootExpression as RootExpressionImpl<Person>).expressions
         assertThat(expressions).containsExactly(
-                ExpressionUtils.`in`(FieldInfo(fieldPath, rootClass, field, fieldClass), listOf("John", "Jane"))
+                ExpressionUtils.`in`(FieldInfo(fieldPath, fieldName, rootClass), listOf("John", "Jane"))
         )
     }
 
     @Test
     fun to_root_expression_with_multiple_params() {
         val rootClass = Person::class.java
+
         val parentClass1 = Person::class.java
         val fieldPath1 = "firstName"
+        val fieldName1 = "firstName"
+        val fieldType1 = String::class.java
+        val fieldClass1 = String::class.java
         val fieldValue11 = "John"
         val fieldValue12 = "Jane"
-        val field1 = parentClass1.getDeclaredField("firstName")
-        val fieldClass1 = String::class.java
+
         val parentClass2 = Address::class.java
         val fieldPath2 = "addressEntities.country"
-        val fieldValue21 = "FR"
-        val field2 = Address::class.java.getDeclaredField("country")
+        val fieldName2 = "country"
+        val fieldType2 = CountryCode::class.java
         val fieldClass2 = CountryCode::class.java
+        val fieldValue21 = "FR"
 
         whenever(fieldPathResolver.resolveFieldPath(parentClass1, fieldPath1))
-                .thenReturn(FieldPathInfo(fieldPath1, parentClass1, field1, fieldClass1))
+                .thenReturn(FieldPathInfo(fieldPath1, fieldName1, fieldClass1, parentClass1))
         whenever(fieldPathResolver.resolveFieldPath(parentClass1, fieldPath2))
-                .thenReturn(FieldPathInfo(fieldPath2, parentClass2, field2, fieldClass2))
+                .thenReturn(FieldPathInfo(fieldPath2, fieldName2, fieldClass2, parentClass2))
         whenever(conversionService.convert(fieldValue11, fieldClass1))
                 .thenReturn("John")
         whenever(conversionService.convert(fieldValue12, fieldClass1))
@@ -150,8 +157,8 @@ internal class ExpressionMapperImplTest {
         assertThat(rootExpression).isNotNull()
         val expressions = (rootExpression as RootExpressionImpl<Person>).expressions
         assertThat(expressions).containsExactly(
-                ExpressionUtils.`in`(FieldInfo(fieldPath1, parentClass1, field1, fieldClass1), listOf("John", "Jane")),
-                ExpressionUtils.equals(FieldInfo(fieldPath2, parentClass2, field2, fieldClass2), CountryCode.FR)
+                ExpressionUtils.`in`(FieldInfo(fieldPath1, fieldName1, parentClass1), listOf("John", "Jane")),
+                ExpressionUtils.equals(FieldInfo(fieldPath2, fieldName2, parentClass2), CountryCode.FR)
         )
     }
 

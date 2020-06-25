@@ -2,10 +2,10 @@ package com.weedow.spring.data.search.validation
 
 interface DataSearchErrors {
 
-    fun getAllErrors(): List<DataSearchError>
+    fun getAllErrors(): Collection<DataSearchError>
 
     fun hasErrors(): Boolean
 
-    fun reject(errorCode: String, errorMessage: String)
+    fun reject(errorCode: String, errorMessage: String, vararg arguments: Any)
 
 }

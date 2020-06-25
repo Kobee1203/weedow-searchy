@@ -30,7 +30,7 @@ class ExpressionMapperImpl(
             if (paramName != "query") {
                 val fieldPathInfo = toFieldKey(rootClass, paramName)
                 val fieldValues = toFieldValues(fieldPathInfo, paramValues)
-                val fieldInfo = FieldInfo(fieldPathInfo.fieldPath, fieldPathInfo.parentClass, fieldPathInfo.field, fieldPathInfo.fieldClass)
+                val fieldInfo = FieldInfo(fieldPathInfo.fieldPath, fieldPathInfo.fieldName, fieldPathInfo.parentClass)
                 val expression = if (fieldValues.size == 1) ExpressionUtils.equals(fieldInfo, fieldValues[0]!!) else ExpressionUtils.`in`(fieldInfo, fieldValues)
                 expressions.add(expression)
             } else {

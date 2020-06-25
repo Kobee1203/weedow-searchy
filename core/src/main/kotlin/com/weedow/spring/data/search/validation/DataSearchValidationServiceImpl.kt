@@ -25,13 +25,15 @@ class DataSearchValidationServiceImpl(
             if (log.isTraceEnabled) log.trace("Process following validators for ${entityClass.canonicalName}: $validators")
 
             val errors = dataSearchErrorsFactory.getDataSearchErrors()
-            validators.forEach {
-                it.validate(fieldExpressions, errors)
+
+            validators.forEach { validator ->
+                validator.validate(fieldExpressions, errors)
             }
 
             if (errors.hasErrors()) {
-                if (log.isDebugEnabled) log.debug("Validators found ${errors.getAllErrors().size} errors")
-                throw ValidationException(errors.getAllErrors())
+                val allErrors = errors.getAllErrors()
+                if (log.isDebugEnabled) log.debug("Validators found ${allErrors.size} errors")
+                throw ValidationException(allErrors)
             } else {
                 if (log.isDebugEnabled) log.debug("Validators found no errors")
             }

@@ -32,7 +32,7 @@ internal class FieldPathResolverImplTest {
         val fieldPathInfo = fieldPathResolver.resolveFieldPath(rootClass, fieldPath)
 
         val resolvedFieldPath = fieldPath
-        assertThat(fieldPathInfo).isEqualTo(FieldPathInfo(resolvedFieldPath, rootClass, rootClass.getDeclaredField("firstName"), String::class.java))
+        assertThat(fieldPathInfo).isEqualTo(FieldPathInfo(resolvedFieldPath, "firstName", String::class.java, rootClass))
     }
 
     @Test
@@ -47,7 +47,7 @@ internal class FieldPathResolverImplTest {
         val fieldPathInfo = fieldPathResolver.resolveFieldPath(rootClass, fieldPath)
 
         val resolvedFieldPath = "addressEntities.country"
-        assertThat(fieldPathInfo).isEqualTo(FieldPathInfo(resolvedFieldPath, parentClass, parentClass.getDeclaredField("country"), CountryCode::class.java))
+        assertThat(fieldPathInfo).isEqualTo(FieldPathInfo(resolvedFieldPath, "country", CountryCode::class.java, parentClass))
     }
 
     @Test

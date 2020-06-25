@@ -8,7 +8,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun testEquals() {
-        val fieldInfo = FieldInfo("firstName", Person::class.java, Person::class.java.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo("firstName", "firstName", Person::class.java)
         val fieldValue = "John"
 
         val expression = ExpressionUtils.equals(fieldInfo, fieldValue)
@@ -18,7 +18,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun contains() {
-        val fieldInfo = FieldInfo("firstName", Person::class.java, Person::class.java.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo("firstName", "firstName", Person::class.java)
         val fieldValue = "Jo"
 
         val expression = ExpressionUtils.contains(fieldInfo, fieldValue)
@@ -28,7 +28,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun icontains() {
-        val fieldInfo = FieldInfo("firstName", Person::class.java, Person::class.java.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo("firstName", "firstName", Person::class.java)
         val fieldValue = "jo"
 
         val expression = ExpressionUtils.icontains(fieldInfo, fieldValue)
@@ -38,7 +38,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun greaterThan() {
-        val fieldInfo = FieldInfo("height", Person::class.java, Person::class.java.getDeclaredField("height"), Double::class.java)
+        val fieldInfo = FieldInfo("height", "height", Person::class.java)
         val fieldValue = 170
 
         val expression = ExpressionUtils.greaterThan(fieldInfo, fieldValue)
@@ -48,7 +48,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun greaterThanOrEquals() {
-        val fieldInfo = FieldInfo("height", Person::class.java, Person::class.java.getDeclaredField("height"), Double::class.java)
+        val fieldInfo = FieldInfo("height", "height", Person::class.java)
         val fieldValue = 170
 
         val expression = ExpressionUtils.greaterThanOrEquals(fieldInfo, fieldValue)
@@ -58,7 +58,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun lessThan() {
-        val fieldInfo = FieldInfo("height", Person::class.java, Person::class.java.getDeclaredField("height"), Double::class.java)
+        val fieldInfo = FieldInfo("height", "height", Person::class.java)
         val fieldValue = 170
 
         val expression = ExpressionUtils.lessThan(fieldInfo, fieldValue)
@@ -68,7 +68,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun lessThanOrEquals() {
-        val fieldInfo = FieldInfo("height", Person::class.java, Person::class.java.getDeclaredField("height"), Double::class.java)
+        val fieldInfo = FieldInfo("height", "height", Person::class.java)
         val fieldValue = 170
 
         val expression = ExpressionUtils.lessThanOrEquals(fieldInfo, fieldValue)
@@ -78,7 +78,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun between() {
-        val fieldInfo = FieldInfo("height", Person::class.java, Person::class.java.getDeclaredField("height"), Double::class.java)
+        val fieldInfo = FieldInfo("height", "height", Person::class.java)
         val fieldValue1 = 160
         val fieldValue2 = 180
 
@@ -90,7 +90,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun `in`() {
-        val fieldInfo = FieldInfo("firstName", Person::class.java, Person::class.java.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo("firstName", "firstName", Person::class.java)
         val fieldValue1 = "John"
         val fieldValue2 = "Jane"
 
@@ -101,7 +101,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     operator fun not() {
-        val fieldInfo = FieldInfo("firstName", Person::class.java, Person::class.java.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo("firstName", "firstName", Person::class.java)
         val fieldValue = "John"
 
         val expression = ExpressionUtils.not(ExpressionUtils.equals(fieldInfo, fieldValue))
@@ -111,7 +111,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun and() {
-        val fieldInfo = FieldInfo("firstName", Person::class.java, Person::class.java.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo("firstName", "firstName", Person::class.java)
         val fieldValue1 = "John"
         val fieldValue2 = "Jane"
 
@@ -123,7 +123,7 @@ internal class ExpressionUtilsTest {
 
     @Test
     fun or() {
-        val fieldInfo = FieldInfo("firstName", Person::class.java, Person::class.java.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo("firstName", "firstName", Person::class.java)
         val fieldValue1 = "John"
         val fieldValue2 = "Jane"
 

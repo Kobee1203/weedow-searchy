@@ -10,6 +10,7 @@ import com.weedow.spring.data.search.descriptor.SearchDescriptorRegistry
 import com.weedow.spring.data.search.join.handler.FetchingAllEntityJoinHandler
 import com.weedow.spring.data.search.join.handler.FetchingEagerEntityJoinHandler
 import com.weedow.spring.data.search.sample.dto.PersonDtoMapper
+import com.weedow.spring.data.search.validation.validator.EmailValidator
 import com.weedow.spring.data.search.validation.validator.NotEmptyValidator
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -27,7 +28,7 @@ class SampleAppConfiguration : SearchConfigurer {
     @Bean
     fun person2SearchDescriptor(personRepository: PersonRepository): SearchDescriptor<Person> = SearchDescriptorBuilder.builder<Person>()
             .id("person2")
-            .validators(NotEmptyValidator())
+            .validators(NotEmptyValidator(), EmailValidator("email"))
             .dtoMapper(PersonDtoMapper())
             .jpaSpecificationExecutor(personRepository)
             .entityJoinHandlers(FetchingEagerEntityJoinHandler())

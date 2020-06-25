@@ -51,7 +51,7 @@ class DataSearchControllerIntegrationTest {
         val searchDescriptor = createSearchDescriptor()
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
 
-        val fieldInfo = FieldInfo(fieldPath, rootClass, rootClass.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo(fieldPath, "firstName", rootClass)
         val rootExpression = RootExpressionImpl<Person>(ExpressionUtils.equals(fieldInfo, fieldValue))
         whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
 
@@ -106,7 +106,7 @@ class DataSearchControllerIntegrationTest {
         val searchDescriptor = createSearchDescriptor()
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
 
-        val fieldInfo = FieldInfo(fieldPath, rootClass, rootClass.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo(fieldPath, "firstName", rootClass)
         val rootExpression = RootExpressionImpl<Person>(ExpressionUtils.equals(fieldInfo, fieldValue))
         whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
 
