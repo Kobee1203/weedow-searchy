@@ -9,4 +9,8 @@ object NullValue : Serializable {
 
     const val NULL_VALUE = "null"
 
+    override fun toString(): String {
+        return javaClass.simpleName
+    }
+
 }

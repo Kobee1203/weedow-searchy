@@ -18,6 +18,10 @@ class RootExpressionImpl<T>(
         val FILTER_FETCH_JOINS = { entityJoin: EntityJoin -> entityJoin.fetched }
     }
 
+    override fun toFieldExpressions(negated: Boolean): Collection<FieldExpression> {
+        return expressions.flatMap { it.toFieldExpressions(negated).toList() }
+    }
+
     override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
         var specification = Specification { root: Root<T>, query: CriteriaQuery<*>, criteriaBuilder: CriteriaBuilder ->
             query.distinct(true)

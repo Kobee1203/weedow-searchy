@@ -1,5 +1,6 @@
 package com.weedow.spring.data.search.expression
 
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.join.EntityJoins
@@ -40,5 +41,24 @@ internal class NotExpressionTest {
         val result = specification.toPredicate(root, criteriaQuery, criteriaBuilder)
 
         Assertions.assertThat(result).isEqualTo(predicate)
+    }
+
+    @Test
+    fun to_field_expressions() {
+        assertToFieldExpressions(false)
+        assertToFieldExpressions(true)
+    }
+
+    private fun assertToFieldExpressions(negated: Boolean) {
+        val fieldExpression = mock<FieldExpression>()
+        val mockExpression = mock<Expression> {
+            on { this.toFieldExpressions(!negated) }.doReturn(listOf(fieldExpression))
+        }
+
+        val expression = NotExpression(mockExpression)
+
+        val fieldExpressions = expression.toFieldExpressions(negated)
+
+        Assertions.assertThat(fieldExpressions).containsExactly(fieldExpression)
     }
 }

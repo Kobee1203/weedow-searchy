@@ -8,6 +8,7 @@ import com.weedow.spring.data.search.dto.DefaultDtoMapper
 import com.weedow.spring.data.search.example.PersonDtoMapper
 import com.weedow.spring.data.search.example.PersonRepositoryImpl
 import com.weedow.spring.data.search.join.handler.DefaultEntityJoinHandler
+import com.weedow.spring.data.search.validation.DataSearchValidator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -34,6 +35,7 @@ internal class SearchDescriptorBuilderTest {
 
             assertThat(searchDescriptor1.id).isEqualTo("person")
             assertThat(searchDescriptor1.entityClass).isEqualTo(entityClass)
+            assertThat(searchDescriptor1.validators).isEmpty()
             assertThat(searchDescriptor1.dtoMapper).isEqualTo(DefaultDtoMapper<Person>())
             assertThat(searchDescriptor1.jpaSpecificationExecutor).isNotNull
             assertThat(searchDescriptor1.jpaSpecificationExecutor).isInstanceOf(SimpleJpaRepository::class.java)
@@ -44,6 +46,7 @@ internal class SearchDescriptorBuilderTest {
 
             assertThat(searchDescriptor2.id).isEqualTo("person")
             assertThat(searchDescriptor2.entityClass).isEqualTo(entityClass)
+            assertThat(searchDescriptor2.validators).isEmpty()
             assertThat(searchDescriptor2.dtoMapper).isEqualTo(DefaultDtoMapper<Person>())
             assertThat(searchDescriptor2.jpaSpecificationExecutor).isNotNull
             assertThat(searchDescriptor2.jpaSpecificationExecutor).isInstanceOf(SimpleJpaRepository::class.java)
@@ -58,37 +61,43 @@ internal class SearchDescriptorBuilderTest {
     fun build_SearchDescriptor_with_custom_values() {
         val entityClass = Person::class.java
 
+        val validator1 = mock<DataSearchValidator>()
         val dtoMapper1 = PersonDtoMapper()
         val specificationExecutor1 = PersonRepositoryImpl(entityClass, mockEntityManager(entityClass, false))
-        val entityJoinHandlers1 = DefaultEntityJoinHandler<Person>()
+        val entityJoinHandler1 = DefaultEntityJoinHandler<Person>()
         val searchDescriptor1 = SearchDescriptorBuilder.builder<Person>()
                 .id("person1")
+                .validators(validator1)
                 .dtoMapper(dtoMapper1)
                 .jpaSpecificationExecutor(specificationExecutor1)
-                .entityJoinHandlers(entityJoinHandlers1)
+                .entityJoinHandlers(entityJoinHandler1)
                 .build()
 
         assertThat(searchDescriptor1.id).isEqualTo("person1")
         assertThat(searchDescriptor1.entityClass).isEqualTo(entityClass)
+        assertThat(searchDescriptor1.validators).containsExactly(validator1)
         assertThat(searchDescriptor1.dtoMapper).isEqualTo(dtoMapper1)
         assertThat(searchDescriptor1.jpaSpecificationExecutor).isEqualTo(specificationExecutor1)
-        assertThat(searchDescriptor1.entityJoinHandlers).containsExactly(entityJoinHandlers1)
+        assertThat(searchDescriptor1.entityJoinHandlers).containsExactly(entityJoinHandler1)
 
+        val validator2= mock<DataSearchValidator>()
         val dtoMapper2 = PersonDtoMapper()
         val specificationExecutor2 = PersonRepositoryImpl(entityClass, mockEntityManager(entityClass, false))
-        val entityJoinHandlers2 = DefaultEntityJoinHandler<Person>()
+        val entityJoinHandler2 = DefaultEntityJoinHandler<Person>()
         val searchDescriptor2 = SearchDescriptorBuilder(entityClass)
                 .id("person2")
+                .validators(validator2)
                 .dtoMapper(dtoMapper2)
                 .jpaSpecificationExecutor(specificationExecutor2)
-                .entityJoinHandlers(entityJoinHandlers2)
+                .entityJoinHandlers(entityJoinHandler2)
                 .build()
 
         assertThat(searchDescriptor2.id).isEqualTo("person2")
         assertThat(searchDescriptor2.entityClass).isEqualTo(entityClass)
+        assertThat(searchDescriptor2.validators).containsExactly(validator2)
         assertThat(searchDescriptor2.dtoMapper).isEqualTo(dtoMapper2)
         assertThat(searchDescriptor2.jpaSpecificationExecutor).isEqualTo(specificationExecutor2)
-        assertThat(searchDescriptor2.entityJoinHandlers).containsExactly(entityJoinHandlers2)
+        assertThat(searchDescriptor2.entityJoinHandlers).containsExactly(entityJoinHandler2)
     }
 
     @Test

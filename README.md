@@ -364,6 +364,9 @@ _Coming soon_
 
 ## Features
 
+### Javadoc
+[![javadoc](https://javadoc.io/badge2/com.weedow/spring-data-search-core/javadoc.svg)](https://javadoc.io/doc/com.weedow/spring-data-search-core)
+
 ### Search Descriptor
 The Search Descriptors allow exposing automatically search endpoints for JPA Entities.\
 The new endpoints are mapped to `/search/{searchDescriptorId}` where `searchDescriptorId` is the [ID](#search-descriptor-id) defined for the `SearchDescriptor`.
@@ -403,7 +406,25 @@ This is the Search Descriptor Identifier. Each identifier must be unique.\
 Spring Data Search uses this identifier in the search endpoint URL which is mapped to `/search/{searchDescriptorId}`: `searchDescriptorId` is the Search Descriptor Identifier.
 
 If the Search Descriptor ID is not set, Spring Data Search uses the JPA Entity Name in lowercase as Search Descriptor ID.\
-Example: If the Entity is `Person.java`, the Search Descriptor ID is `person`
+_If the Entity is `Person.java`, the Search Descriptor ID is `person`_
+
+Example with a custom Search Descriptor ID:
+```java
+@Configuration
+public class SearchDescriptorConfiguration implements SearchConfigurer {
+
+    @Override
+    public void addSearchDescriptors(SearchDescriptorRegistry registry) {
+        registry.addSearchDescriptor(personSearchDescriptor());
+    }
+    
+    SearchDescriptor<Person> personSearchDescriptor() {
+        return new SearchDescriptorBuilder<Person>(Person.class)
+                        .id("people")
+                        .build();
+    }
+}
+```
 
 ##### Entity Class
 This is the Class of the Entity to be searched.\
@@ -430,8 +451,93 @@ public class PersonDtoMapper implements DtoMapper<Person, PersonDto> {
     }
 }
 ```
-     
+Then you add this DTO Mapper to the `SearchDescriptor`:
+```java
+@Configuration
+public class SearchDescriptorConfiguration implements SearchConfigurer {
+
+    @Override
+    public void addSearchDescriptors(SearchDescriptorRegistry registry) {
+        registry.addSearchDescriptor(personSearchDescriptor());
+    }
+    
+    SearchDescriptor<Person> personSearchDescriptor() {
+        return new SearchDescriptorBuilder<Person>(Person.class)
+                        .dtoMapper(new PersonDtoMapper())
+                        .build();
+    }
+}
+```
+
 If this option is not set, the entity is not converted and the HTTP response returns it directly.
+
+#### Validators
+Spring Data Search provides a validation service to validate the Field Expressions.
+
+A `Field Expression` is a representation of a query parameter which evaluates an Entity field.\
+_Example: `/search/person?job.company=Acme` : the query parameter `job.company=Acme` is converted to a Field Expression where the `company` field from the `Job` Entity must be equals to `Acme`._
+
+**Note:** The validation service does not validate the Type of the query parameter values.
+This is already supported when Spring Data Search converts the query parameter values from String to the correct type expected by the related field.
+(See [Converters](#converters))
+
+The validators is used to validate whether:
+* A value matches a specific Regular Expression,
+* A number is between a minimum and maximum value
+* There is at least one query parameter in the request
+* A query parameter for a specific field is present or absent in the request
+* ...
+
+To do this, you need to create a new class which implements the `com.weedow.spring.data.search.validation.DataSearchValidator` interface:
+```java
+public class EmailValidator implements DataSearchValidator {
+
+    private static final String EMAIL_REGEX = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+
+    @Override
+    public void validate(Collection<? extends FieldExpression> fieldExpressions, DataSearchErrors errors) {
+        fieldExpressions
+                .stream()
+                .filter(fieldExpression -> "email".equals(fieldExpression.getFieldInfo().getField().getName()))
+                .forEach(fieldExpression -> {
+                    final Object value = fieldExpression.getValue();
+                    if (value instanceof String) {
+                        if (!value.toString().matches(EMAIL_REGEX)) {
+                            errors.reject("email", "Invalid email value");
+                        }
+                    }
+                });
+    }
+}
+```
+Then you need to add the validators to a [Search Descriptor](#search-descriptor):
+```java
+@Configuration
+public class SearchDescriptorConfiguration implements SearchConfigurer {
+
+    @Override
+    public void addSearchDescriptors(SearchDescriptorRegistry registry) {
+        registry.addSearchDescriptor(personSearchDescriptor());
+    }
+    
+    SearchDescriptor<Person> personSearchDescriptor() {
+        return new SearchDescriptorBuilder<Person>(Person.class)
+                        .validators(new NotEmptyValidator(), new EmailValidator("email"))
+                        .build();
+    }
+}
+```
+
+Spring Data Search provides the following `DataSearchValidator` implementations:
+* `com.weedow.spring.data.search.validation.validator.NotEmptyValidator`: Checks if there is at least one field expression.
+* `com.weedow.spring.data.search.validation.validator.NotNullValidator`: Checks if the field expression value is not `null`.
+* `com.weedow.spring.data.search.validation.validator.RequiredValidator`: Checks if all specified required `fieldPaths` are present. The validator iterates over the field expressions and compare the related `fieldPath` with the required `fieldPaths`.
+* `com.weedow.spring.data.search.validation.validator.PatternValidator`: Checks if the field expression value matches the specified `pattern`.
+* `com.weedow.spring.data.search.validation.validator.UrlValidator`: Checks if the field expression value matches a valid `URL`.
+* `com.weedow.spring.data.search.validation.validator.EmailValidator`: Checks if the field expression value matches the email format.
+* `com.weedow.spring.data.search.validation.validator.MaxValidator`: Checks if the field expression value is less or equals to the specified `maxValue`.
+* `com.weedow.spring.data.search.validation.validator.MinValidator`: Checks if the field expression value is greater or equals to the specified `minValue`.
+* `com.weedow.spring.data.search.validation.validator.RangeValidator`: Checks if the field expression value is between the specified `minValue` and `maxValue`.
 
 ##### JPA Specification Executor
 Spring Data Search uses the [Spring Data JPA Specifications](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#specifications) to aggregate all expressions in query parameters and query the JPA Entities in the Database.
@@ -645,9 +751,6 @@ To get this result, there were several SQL queries:
 It is therefore sometimes useful to optimize the number of SQL queries by specifying the data that you want to fetch during the first SQL query with the criteria.
 
 To do this, you can use the [EntityJoinHandlers](#entity-join-handlers) to specify the join type for each Entity field having a relationship with another Entity.
-
-### Validation
-_Coming soon_
 
 ### Aliases
 Spring Data Search provides an alias management to replace any field name with another name in queries.

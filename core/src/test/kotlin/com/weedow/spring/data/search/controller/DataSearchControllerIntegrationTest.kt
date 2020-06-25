@@ -4,11 +4,14 @@ import com.nhaarman.mockitokotlin2.*
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
+import com.weedow.spring.data.search.exception.ValidationException
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.expression.ExpressionUtils
+import com.weedow.spring.data.search.expression.FieldInfo
 import com.weedow.spring.data.search.expression.RootExpressionImpl
-import com.weedow.spring.data.search.field.FieldInfo
 import com.weedow.spring.data.search.service.DataSearchService
+import com.weedow.spring.data.search.validation.DataSearchError
+import com.weedow.spring.data.search.validation.DataSearchValidationService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -33,6 +36,9 @@ class DataSearchControllerIntegrationTest {
     @MockBean
     lateinit var dataSearchService: DataSearchService
 
+    @MockBean
+    lateinit var dataSearchValidationService: DataSearchValidationService
+
     @Test
     fun search_with_params() {
         val rootClass = Person::class.java
@@ -45,7 +51,7 @@ class DataSearchControllerIntegrationTest {
         val searchDescriptor = createSearchDescriptor()
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
 
-        val fieldInfo = FieldInfo(fieldPath, rootClass, rootClass.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo(fieldPath, "firstName", rootClass)
         val rootExpression = RootExpressionImpl<Person>(ExpressionUtils.equals(fieldInfo, fieldValue))
         whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
 
@@ -59,6 +65,8 @@ class DataSearchControllerIntegrationTest {
             content { contentType(MediaType.APPLICATION_JSON) }
             content { json("[${personInfos.second}]") }
         }
+
+        verify(dataSearchValidationService).validate(rootExpression.toFieldExpressions(false), searchDescriptor)
     }
 
     @Test
@@ -83,6 +91,8 @@ class DataSearchControllerIntegrationTest {
             content { contentType(MediaType.APPLICATION_JSON) }
             content { json("[${personInfos.second}]") }
         }
+
+        verify(dataSearchValidationService).validate(rootExpression.toFieldExpressions(false), searchDescriptor)
     }
 
     @Test
@@ -96,7 +106,7 @@ class DataSearchControllerIntegrationTest {
         val searchDescriptor = createSearchDescriptor()
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
 
-        val fieldInfo = FieldInfo(fieldPath, rootClass, rootClass.getDeclaredField("firstName"), String::class.java)
+        val fieldInfo = FieldInfo(fieldPath, "firstName", rootClass)
         val rootExpression = RootExpressionImpl<Person>(ExpressionUtils.equals(fieldInfo, fieldValue))
         whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
 
@@ -109,6 +119,8 @@ class DataSearchControllerIntegrationTest {
             content { contentType(MediaType.APPLICATION_JSON) }
             content { json("[]") }
         }
+
+        verify(dataSearchValidationService).validate(rootExpression.toFieldExpressions(false), searchDescriptor)
     }
 
     @Test
@@ -125,6 +137,34 @@ class DataSearchControllerIntegrationTest {
         }
 
         verifyZeroInteractions(expressionMapper)
+        verifyZeroInteractions(dataSearchValidationService)
+        verifyZeroInteractions(dataSearchService)
+    }
+
+    @Test
+    fun search_with_validation_errors() {
+        val rootClass = Person::class.java
+        val searchDescriptorId = "person"
+
+        val searchDescriptor = createSearchDescriptor()
+        whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
+
+        val rootExpression = RootExpressionImpl<Person>()
+        whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
+
+        val errorCode = "not-empty"
+        val errorMessage = "The search must contain at least one query parameter."
+
+        val error = DataSearchError(errorCode, errorMessage)
+        whenever(dataSearchValidationService.validate(rootExpression.toFieldExpressions(false), searchDescriptor)).thenThrow(ValidationException(listOf(error)))
+
+        mockMvc.get("/search/$searchDescriptorId") {
+        }.andExpect {
+            status { isBadRequest }
+            status { reason("Validation Errors: [$errorCode: $errorMessage]") }
+            content { string("") }
+        }
+
         verifyZeroInteractions(dataSearchService)
     }
 

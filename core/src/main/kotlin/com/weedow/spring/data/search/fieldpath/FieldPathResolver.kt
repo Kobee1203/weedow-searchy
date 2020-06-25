@@ -1,4 +1,4 @@
-package com.weedow.spring.data.search.field
+package com.weedow.spring.data.search.fieldpath
 
 /**
  * Interface to resolve the field path information from the given [field path][fieldPath]

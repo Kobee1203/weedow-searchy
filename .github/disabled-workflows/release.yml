@@ -26,7 +26,11 @@ jobs:
           GIT_RELEASE_BOT_NAME: ${{ secrets.GIT_RELEASE_BOT_NAME }}
           GIT_RELEASE_BOT_EMAIL: ${{ secrets.GIT_RELEASE_BOT_EMAIL }}
 
-      - uses: actions/checkout@v2
+      - name: 'Checkout repository on branch: ${{ github.REF }}'
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.HEAD_REF }}
+
       - name: Set up JDK 1.8 and Maven Central Repository configuration
         uses: actions/setup-java@v1
         with:

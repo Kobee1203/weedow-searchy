@@ -1,8 +1,7 @@
 package com.weedow.spring.data.search.expression
 
-import com.weedow.spring.data.search.field.FieldInfo
-import com.weedow.spring.data.search.field.FieldPathInfo
-import com.weedow.spring.data.search.field.FieldPathResolver
+import com.weedow.spring.data.search.fieldpath.FieldPathInfo
+import com.weedow.spring.data.search.fieldpath.FieldPathResolver
 import com.weedow.spring.data.search.utils.NullValue
 import com.weedow.spring.data.search.utils.klogger
 import org.springframework.core.convert.ConversionService
@@ -31,7 +30,7 @@ class ExpressionMapperImpl(
             if (paramName != "query") {
                 val fieldPathInfo = toFieldKey(rootClass, paramName)
                 val fieldValues = toFieldValues(fieldPathInfo, paramValues)
-                val fieldInfo = FieldInfo(fieldPathInfo.fieldPath, fieldPathInfo.parentClass, fieldPathInfo.field, fieldPathInfo.fieldClass)
+                val fieldInfo = FieldInfo(fieldPathInfo.fieldPath, fieldPathInfo.fieldName, fieldPathInfo.parentClass)
                 val expression = if (fieldValues.size == 1) ExpressionUtils.equals(fieldInfo, fieldValues[0]!!) else ExpressionUtils.`in`(fieldInfo, fieldValues)
                 expressions.add(expression)
             } else {

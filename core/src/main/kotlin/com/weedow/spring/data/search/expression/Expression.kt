@@ -9,9 +9,18 @@ import org.springframework.data.jpa.domain.Specification
 interface Expression {
 
     /**
+     * Converts this Expression to a [FieldExpressions][FieldExpression].
+     *
+     * @param negated whether the expression is negated
+     * @return Collection of [FieldExpressions][FieldExpression]
+     */
+    fun toFieldExpressions(negated: Boolean): Collection<FieldExpression>
+
+    /**
      * Converts this Expression to a [Specification].
      *
      * @param entityJoins
+     * @return [Specification] instance
      */
     fun <T> toSpecification(entityJoins: EntityJoins): Specification<T>
 
