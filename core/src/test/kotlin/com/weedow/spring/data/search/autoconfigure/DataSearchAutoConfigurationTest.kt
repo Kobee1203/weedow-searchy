@@ -21,7 +21,10 @@ internal class DataSearchAutoConfigurationTest {
                 .run { context ->
                     assertThat(context).hasSingleBean(DataSearchController::class.java)
                     assertThat(context).hasBean("fieldPathResolver")
+                    assertThat(context).hasBean("fieldInfoResolver")
                     assertThat(context).hasBean("expressionMapper")
+                    assertThat(context).hasBean("expressionParserVisitorFactory")
+                    assertThat(context).hasBean("expressionParser")
                     assertThat(context).hasBean("dataSearchService")
                     assertThat(context).hasBean("dataSearchValidationService")
                     assertThat(context).hasBean("dataSearchErrorsFactory")
@@ -37,7 +40,10 @@ internal class DataSearchAutoConfigurationTest {
                 .run { context ->
                     assertThat(context).doesNotHaveBean(DataSearchController::class.java)
                     assertThat(context).doesNotHaveBean("fieldPathResolver")
+                    assertThat(context).doesNotHaveBean("fieldInfoResolver")
                     assertThat(context).doesNotHaveBean("expressionMapper")
+                    assertThat(context).doesNotHaveBean("expressionParserVisitorFactory")
+                    assertThat(context).doesNotHaveBean("expressionParser")
                     assertThat(context).doesNotHaveBean("dataSearchService")
                     assertThat(context).doesNotHaveBean("dataSearchValidationService")
                     assertThat(context).doesNotHaveBean("dataSearchErrorsFactory")
@@ -53,7 +59,10 @@ internal class DataSearchAutoConfigurationTest {
                 .run { context ->
                     assertThat(context).hasSingleBean(DataSearchController::class.java)
                     assertThat(context).hasBean("fieldPathResolver")
+                    assertThat(context).hasBean("fieldInfoResolver")
                     assertThat(context).hasBean("expressionMapper")
+                    assertThat(context).hasBean("expressionParserVisitorFactory")
+                    assertThat(context).hasBean("expressionParser")
                     assertThat(context).hasBean("dataSearchService")
                     assertThat(context).hasBean("dataSearchValidationService")
                     assertThat(context).hasBean("dataSearchErrorsFactory")

@@ -37,7 +37,7 @@ jobs:
           java-version: 1.8
 
       - name: Create Maven Settings
-        uses: whelk-io/maven-settings-xml-action@v7
+        uses: whelk-io/maven-settings-xml-action@v9
         with:
           servers: '[
             {

@@ -9,6 +9,9 @@ import javax.persistence.OneToOne
 @Entity
 class Job(
         @Column(nullable = false)
+        val active: Boolean,
+
+        @Column(nullable = false)
         val title: String,
 
         @Column(nullable = false)

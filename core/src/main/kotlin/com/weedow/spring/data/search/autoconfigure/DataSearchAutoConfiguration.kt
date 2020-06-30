@@ -7,6 +7,12 @@ import com.weedow.spring.data.search.config.DelegatingSearchConfiguration
 import com.weedow.spring.data.search.config.SearchConfigurer
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.expression.ExpressionMapperImpl
+import com.weedow.spring.data.search.expression.ExpressionResolver
+import com.weedow.spring.data.search.expression.ExpressionResolverImpl
+import com.weedow.spring.data.search.expression.parser.ExpressionParser
+import com.weedow.spring.data.search.expression.parser.ExpressionParserImpl
+import com.weedow.spring.data.search.expression.parser.ExpressionParserVisitorFactory
+import com.weedow.spring.data.search.expression.parser.ExpressionParserVisitorFactoryImpl
 import com.weedow.spring.data.search.fieldpath.FieldPathResolver
 import com.weedow.spring.data.search.fieldpath.FieldPathResolverImpl
 import com.weedow.spring.data.search.join.EntityJoinManager
@@ -57,8 +63,26 @@ class DataSearchAutoConfiguration : DelegatingSearchConfiguration() {
 
         @Bean
         @ConditionalOnMissingBean
-        fun expressionMapper(fieldPathResolver: FieldPathResolver, searchConversionService: ConversionService): ExpressionMapper {
-            return ExpressionMapperImpl(fieldPathResolver, searchConversionService)
+        fun fieldInfoResolver(fieldPathResolver: FieldPathResolver, searchConversionService: ConversionService): ExpressionResolver {
+            return ExpressionResolverImpl(fieldPathResolver, searchConversionService)
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        fun expressionMapper(expressionResolver: ExpressionResolver, expressionParser: ExpressionParser): ExpressionMapper {
+            return ExpressionMapperImpl(expressionResolver, expressionParser)
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        fun expressionParserVisitorFactory(expressionResolver: ExpressionResolver): ExpressionParserVisitorFactory {
+            return ExpressionParserVisitorFactoryImpl(expressionResolver)
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        fun expressionParser(expressionParserVisitorFactory: ExpressionParserVisitorFactory): ExpressionParser {
+            return ExpressionParserImpl(expressionParserVisitorFactory)
         }
 
         @Bean

@@ -5,8 +5,8 @@ package com.weedow.spring.data.search.expression
  */
 enum class Operator {
     EQUALS,
-    CONTAINS,
-    ICONTAINS,
+    MATCHES,
+    IMATCHES,
     LESS_THAN,
     LESS_THAN_OR_EQUALS,
     GREATER_THAN,

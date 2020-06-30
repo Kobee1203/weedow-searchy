@@ -14,7 +14,6 @@ import com.weedow.spring.data.search.validation.DataSearchError
 import com.weedow.spring.data.search.validation.DataSearchValidationService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
@@ -22,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 
 @WebMvcTest(DataSearchController::class)
-class DataSearchControllerIntegrationTest {
+internal class DataSearchControllerIntegrationTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -168,6 +167,35 @@ class DataSearchControllerIntegrationTest {
         verifyZeroInteractions(dataSearchService)
     }
 
+    fun search_with_alias() {
+        val rootClass = Person::class.java
+        val firstName = "John"
+        val lastName = "Doe"
+        val searchDescriptorId = "person"
+        val fieldPath = "first_name"
+        val fieldValue = firstName
+
+        val searchDescriptor = createSearchDescriptor()
+        whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
+
+        val fieldInfo = FieldInfo(fieldPath, "firstName", rootClass)
+        val rootExpression = RootExpressionImpl<Person>(ExpressionUtils.equals(fieldInfo, fieldValue))
+        whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
+
+        val personInfos = createPerson(firstName, lastName)
+        whenever(dataSearchService.findAll(rootExpression, searchDescriptor)).thenReturn(listOf(personInfos.first))
+
+        mockMvc.get("/search/$searchDescriptorId") {
+            param(fieldPath, firstName)
+        }.andExpect {
+            status { isOk }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { json("[${personInfos.second}]") }
+        }
+
+        verify(dataSearchValidationService).validate(rootExpression.toFieldExpressions(false), searchDescriptor)
+    }
+
     private fun createSearchDescriptor() = SearchDescriptorBuilder.builder<Person>().jpaSpecificationExecutor(mock()).build()
 
     private fun createPerson(firstName: String, lastName: String): Pair<Person, String> {
@@ -186,6 +214,3 @@ class DataSearchControllerIntegrationTest {
         return Person(firstName, lastName) to json
     }
 }
-
-@SpringBootApplication
-class MockMvcApplication
