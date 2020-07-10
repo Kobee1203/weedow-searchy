@@ -29,6 +29,14 @@
         <url>https://github.com/Kobee1203/spring-data-search/issues</url>
     </issueManagement>
 
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>https://github.com/Kobee1203/spring-data-search/raw/master/LICENSE.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <encoding>UTF-8</encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
