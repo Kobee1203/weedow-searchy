@@ -42,15 +42,6 @@ class ExpressionResolverImpl(
 
     private fun convert(value: String, clazz: Class<*>): Any {
         return if (!NullValue.NULL_VALUE.equals(value, ignoreCase = true)) conversionService.convert(value, clazz)!! else NullValue
-        /*
-        return when {
-            CurrentDate.CURRENT_DATE.equals(value, ignoreCase = true) -> CurrentDate
-            CurrentTime.CURRENT_TIME.equals(value, ignoreCase = true) -> CurrentTime
-            CurrentDateTime.CURRENT_DATE_TIME.equals(value, ignoreCase = true) -> CurrentDateTime
-            NullValue.NULL_VALUE.equals(value, ignoreCase = true) -> NullValue
-            else -> conversionService.convert(value, clazz)!!
-        }
-        */
     }
 
 }

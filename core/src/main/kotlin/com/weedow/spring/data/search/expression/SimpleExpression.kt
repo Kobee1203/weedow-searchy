@@ -55,7 +55,6 @@ internal data class SimpleExpression(
                 @Suppress("UNCHECKED_CAST")
                 criteriaBuilder.isMember(value, path as javax.persistence.criteria.Expression<Collection<*>>)
             } else {
-                // val expression = convertValueToExpression(criteriaBuilder, value)
                 criteriaBuilder.equal(path, value)
             }
         }
@@ -76,22 +75,18 @@ internal data class SimpleExpression(
     }
 
     private fun <Y : Comparable<Y>> lessThan(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Y): Predicate {
-        // val expression = convertValueToExpression(criteriaBuilder, value)
         return criteriaBuilder.lessThan(path, value)
     }
 
     private fun <Y : Comparable<Y>> lessThanOrEquals(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Y): Predicate {
-        // val expression = convertValueToExpression(criteriaBuilder, value)
         return criteriaBuilder.lessThanOrEqualTo(path, value)
     }
 
     private fun <Y : Comparable<Y>> greaterThan(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Y): Predicate {
-        // val expression = convertValueToExpression(criteriaBuilder, value)
         return criteriaBuilder.greaterThan(path, value)
     }
 
     private fun <Y : Comparable<Y>> greaterThanOrEquals(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Y): Predicate {
-        // val expression = convertValueToExpression(criteriaBuilder, value)
         return criteriaBuilder.greaterThanOrEqualTo(path, value)
     }
 
@@ -101,14 +96,4 @@ internal data class SimpleExpression(
         return inClause
     }
 
-    private fun convertValueToExpression(criteriaBuilder: CriteriaBuilder, value: Any): javax.persistence.criteria.Expression<*> {
-        return when {
-            /*
-            CurrentDate === value -> criteriaBuilder.currentDate()
-            CurrentTime === value -> criteriaBuilder.currentTime()
-            CurrentDateTime === value -> criteriaBuilder.currentTimestamp()
-            */
-            else -> criteriaBuilder.literal(value)
-        }
-    }
 }
