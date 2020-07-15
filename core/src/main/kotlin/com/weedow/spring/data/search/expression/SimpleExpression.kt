@@ -1,6 +1,5 @@
 package com.weedow.spring.data.search.expression
 
-import com.weedow.spring.data.search.exception.UnsupportedOperatorException
 import com.weedow.spring.data.search.join.EntityJoins
 import com.weedow.spring.data.search.utils.EntityUtils
 import com.weedow.spring.data.search.utils.NullValue
@@ -31,14 +30,13 @@ internal data class SimpleExpression(
 
             when (operator) {
                 Operator.EQUALS -> equals(criteriaBuilder, path, value, fieldInfo)
-                Operator.CONTAINS -> @Suppress("UNCHECKED_CAST") like(criteriaBuilder, path as Path<String>, value as String)
-                Operator.ICONTAINS -> @Suppress("UNCHECKED_CAST") ilike(criteriaBuilder, path as Path<String>, value as String)
+                Operator.MATCHES -> @Suppress("UNCHECKED_CAST") like(criteriaBuilder, path as Path<String>, value as String)
+                Operator.IMATCHES -> @Suppress("UNCHECKED_CAST") ilike(criteriaBuilder, path as Path<String>, value as String)
                 Operator.LESS_THAN -> @Suppress("UNCHECKED_CAST") lessThan(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
                 Operator.LESS_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") lessThanOrEquals(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
                 Operator.GREATER_THAN -> @Suppress("UNCHECKED_CAST") greaterThan(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
                 Operator.GREATER_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") greaterThanOrEquals(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
                 Operator.IN -> inPredicate(criteriaBuilder, path, value as List<*>)
-                else -> throw UnsupportedOperatorException(operator)
             }
         }
     }
@@ -65,14 +63,14 @@ internal data class SimpleExpression(
     private fun like(criteriaBuilder: CriteriaBuilder, path: Path<String>, value: String): Predicate {
         return criteriaBuilder.like(
                 path,
-                criteriaBuilder.literal("%$value%")
+                criteriaBuilder.literal(value.replace("*", "%"))
         )
     }
 
     private fun ilike(criteriaBuilder: CriteriaBuilder, path: Path<String>, value: String): Predicate {
         return criteriaBuilder.like(
                 criteriaBuilder.lower(path),
-                criteriaBuilder.lower(criteriaBuilder.literal("%$value%"))
+                criteriaBuilder.lower(criteriaBuilder.literal(value.replace("*", "%")))
         )
     }
 
@@ -97,4 +95,5 @@ internal data class SimpleExpression(
         values.forEach { inClause.value(it) }
         return inClause
     }
+
 }

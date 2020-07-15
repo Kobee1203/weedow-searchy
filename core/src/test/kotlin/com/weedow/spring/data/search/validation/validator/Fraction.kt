@@ -42,19 +42,19 @@ data class Fraction private constructor(
         private const val serialVersionUID = 1L
 
         fun getFraction(numerator: Int, denominator: Int): Fraction {
-            var numerator = numerator
-            var denominator = denominator
-            if (denominator == 0) {
+            var num = numerator
+            var den = denominator
+            if (den == 0) {
                 throw ArithmeticException("The denominator must not be zero")
             }
-            if (denominator < 0) {
-                if (numerator == Int.MIN_VALUE || denominator == Int.MIN_VALUE) {
+            if (den < 0) {
+                if (num == Int.MIN_VALUE || den == Int.MIN_VALUE) {
                     throw ArithmeticException("overflow: can't negate")
                 }
-                numerator = -numerator
-                denominator = -denominator
+                num = -num
+                den = -den
             }
-            return Fraction(numerator, denominator)
+            return Fraction(num, den)
         }
 
     }

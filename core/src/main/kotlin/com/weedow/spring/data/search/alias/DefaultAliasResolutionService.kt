@@ -15,8 +15,8 @@ class DefaultAliasResolutionService : ConfigurableAliasResolutionService {
     }
 
     private val aliasResolvers: MutableList<AliasResolver> = ArrayList()
-    private val processedEntityClasses: MutableList<Class<*>> = ArrayList()
 
+    private val processedEntityClasses: MutableList<Class<*>> = ArrayList()
     private val aliases: MutableMap<String, String> = HashMap()
 
     override fun addAliasResolver(aliasResolver: AliasResolver) {

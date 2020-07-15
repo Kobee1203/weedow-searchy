@@ -15,23 +15,23 @@ object ExpressionUtils {
     }
 
     /**
-     * Create an [Expression] to test whether the field value contains the given [value].
+     * Create an [Expression] to test whether the field value matches the given [value].
      *
      * @param fieldInfo Field information
      * @param value value to test
      */
-    fun contains(fieldInfo: FieldInfo, value: Any): Expression {
-        return SimpleExpression(Operator.CONTAINS, fieldInfo, value)
+    fun matches(fieldInfo: FieldInfo, value: Any): Expression {
+        return SimpleExpression(Operator.MATCHES, fieldInfo, value)
     }
 
     /**
-     * Create an [Expression] to test whether the field value contains the given [value], ignoring case.
+     * Create an [Expression] to test whether the field value matches the given [value] and is not case sensitive.
      *
      * @param fieldInfo Field information
      * @param value value to test
      */
-    fun icontains(fieldInfo: FieldInfo, value: Any): Expression {
-        return SimpleExpression(Operator.ICONTAINS, fieldInfo, value)
+    fun imatches(fieldInfo: FieldInfo, value: Any): Expression {
+        return SimpleExpression(Operator.IMATCHES, fieldInfo, value)
     }
 
     /**

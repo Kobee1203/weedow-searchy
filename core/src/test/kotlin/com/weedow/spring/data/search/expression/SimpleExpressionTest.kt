@@ -22,8 +22,8 @@ internal class SimpleExpressionTest {
     @Test
     fun to_specification_with_equals_operator() {
         val fieldPath = "firstName"
-        val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
         val fieldValue = "John"
+        val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
 
         val entityJoins = mock<EntityJoins>()
 
@@ -47,8 +47,8 @@ internal class SimpleExpressionTest {
     @Test
     fun to_specification_with_equals_operator_for_ElementCollection_field() {
         val fieldPath = "nickNames"
-        val fieldInfo = FieldInfo(fieldPath, "nickNames", Person::class.java)
         val fieldValue = "Johnny"
+        val fieldInfo = FieldInfo(fieldPath, "nickNames", Person::class.java)
 
         val entityJoins = mock<EntityJoins>()
 
@@ -72,8 +72,8 @@ internal class SimpleExpressionTest {
     @Test
     fun to_specification_with_equals_operator_and_null_value() {
         val fieldPath = "firstName"
-        val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
         val fieldValue = NullValue
+        val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
 
         val entityJoins = mock<EntityJoins>()
 
@@ -97,8 +97,8 @@ internal class SimpleExpressionTest {
     @Test
     fun to_specification_with_equals_operator_for_ElementCollection_field_and_null_value() {
         val fieldPath = "nickNames"
-        val fieldInfo = FieldInfo(fieldPath, "nickNames", Person::class.java)
         val fieldValue = NullValue
+        val fieldInfo = FieldInfo(fieldPath, "nickNames", Person::class.java)
 
         val entityJoins = mock<EntityJoins>()
 
@@ -120,10 +120,10 @@ internal class SimpleExpressionTest {
     }
 
     @Test
-    fun to_specification_with_contains_operator() {
+    fun to_specification_with_matches_operator() {
         val fieldPath = "firstName"
+        val fieldValue = "Jo*"
         val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
-        val fieldValue = "Jo"
 
         val entityJoins = mock<EntityJoins>()
 
@@ -135,10 +135,10 @@ internal class SimpleExpressionTest {
 
         val predicate = mock<Predicate>()
         val literal = mock<Expression<String>>()
-        whenever(criteriaBuilder.literal("%$fieldValue%")).thenReturn(literal)
+        whenever(criteriaBuilder.literal("Jo%")).thenReturn(literal)
         whenever(criteriaBuilder.like(path, literal)).thenReturn(predicate)
 
-        val expression = SimpleExpression(Operator.CONTAINS, fieldInfo, fieldValue)
+        val expression = SimpleExpression(Operator.MATCHES, fieldInfo, fieldValue)
         val specification = expression.toSpecification<Person>(entityJoins)
 
         val result = specification.toPredicate(root, mock(), criteriaBuilder)
@@ -147,10 +147,10 @@ internal class SimpleExpressionTest {
     }
 
     @Test
-    fun to_specification_with_icontains_operator() {
+    fun to_specification_with_imatches_operator() {
         val fieldPath = "firstName"
+        val fieldValue = "*JO*"
         val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
-        val fieldValue = "jo"
 
         val entityJoins = mock<EntityJoins>()
 
@@ -164,12 +164,12 @@ internal class SimpleExpressionTest {
         val lowerPath = mock<Path<String>>()
         whenever(criteriaBuilder.lower(path)).thenReturn(lowerPath)
         val literal = mock<Expression<String>>()
-        whenever(criteriaBuilder.literal("%$fieldValue%")).thenReturn(literal)
+        whenever(criteriaBuilder.literal("%JO%")).thenReturn(literal)
         val lowerExpression = mock<Expression<String>>()
         whenever(criteriaBuilder.lower(literal)).thenReturn(lowerExpression)
         whenever(criteriaBuilder.like(lowerPath, lowerExpression)).thenReturn(predicate)
 
-        val expression = SimpleExpression(Operator.ICONTAINS, fieldInfo, fieldValue)
+        val expression = SimpleExpression(Operator.IMATCHES, fieldInfo, fieldValue)
         val specification = expression.toSpecification<Person>(entityJoins)
 
         val result = specification.toPredicate(root, mock(), criteriaBuilder)
@@ -180,8 +180,8 @@ internal class SimpleExpressionTest {
     @Test
     fun to_specification_with_less_than_operator() {
         val fieldPath = "height"
-        val fieldInfo = FieldInfo(fieldPath, "height", Person::class.java)
         val fieldValue = 170.0
+        val fieldInfo = FieldInfo(fieldPath, "height", Person::class.java)
 
         val entityJoins = mock<EntityJoins>()
 
@@ -205,8 +205,8 @@ internal class SimpleExpressionTest {
     @Test
     fun to_specification_with_less_than_or_equals_operator() {
         val fieldPath = "height"
-        val fieldInfo = FieldInfo(fieldPath, "height", Person::class.java)
         val fieldValue = 170.0
+        val fieldInfo = FieldInfo(fieldPath, "height", Person::class.java)
 
         val entityJoins = mock<EntityJoins>()
 
@@ -230,8 +230,8 @@ internal class SimpleExpressionTest {
     @Test
     fun to_specification_with_greater_than_operator() {
         val fieldPath = "height"
-        val fieldInfo = FieldInfo(fieldPath, "height", Person::class.java)
         val fieldValue = 170.0
+        val fieldInfo = FieldInfo(fieldPath, "height", Person::class.java)
 
         val entityJoins = mock<EntityJoins>()
 
@@ -255,8 +255,8 @@ internal class SimpleExpressionTest {
     @Test
     fun to_specification_with_greater_than_or_equals_operator() {
         val fieldPath = "height"
-        val fieldInfo = FieldInfo(fieldPath, "height", Person::class.java)
         val fieldValue = 170.0
+        val fieldInfo = FieldInfo(fieldPath, "height", Person::class.java)
 
         val entityJoins = mock<EntityJoins>()
 
@@ -280,9 +280,9 @@ internal class SimpleExpressionTest {
     @Test
     fun to_specification_with_in_operator() {
         val fieldPath = "firstName"
-        val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
         val fieldValue1 = "John"
         val fieldValue2 = "Jane"
+        val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
 
         val entityJoins = mock<EntityJoins>()
 
@@ -315,8 +315,8 @@ internal class SimpleExpressionTest {
 
     private fun assertToFieldExpressions(negated: Boolean, operator: Operator) {
         val fieldPath = "firstName"
-        val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
         val fieldValue = "John"
+        val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
 
         val expression = SimpleExpression(operator, fieldInfo, fieldValue)
         val fieldExpressions = expression.toFieldExpressions(negated)
