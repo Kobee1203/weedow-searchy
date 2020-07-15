@@ -1,12 +1,22 @@
 # Spring Data Search
+
+<p align="center">
+    <a href="">
+        <img src="./docs/images/logo/logo.png" alt="Spring Data Search" />
+    </a>
+</p>
+
+## About
 Spring Data Search allows to automatically expose endpoints in order to search for data related to JPA entities.
 
 Spring Data Search provides an advanced search engine that does not require the creation of JPA repositories with custom methods needed to search on different fields of JPA entities.
 
-We can search on any field, combine multiple criteria to refine the search, and even search on deep fields. 
+We can search on any field, combine multiple criteria to refine the search, and even search on nested fields. 
+
+![Query GIF](./docs/images/query.gif)
 
 ## Why use Spring Data Search?
-Spring Data Rest builds on top of the Spring Data repositories and automatically exports those as REST resources. 
+[Spring Data Rest](https://spring.io/projects/spring-data-rest) builds on top of the Spring Data repositories and automatically exports those as REST resources. 
 
 However, when we want to search for JPA entities according to different criteria, we need to define several methods in the Repositories to perform different searches.
 
@@ -41,6 +51,7 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
 * [Kotlin](https://kotlinlang.org/)
 * [Spring Boot](https://spring.io/projects/spring-boot)
 * [Maven](https://maven.apache.org/)
+* [ANTLR](https://www.antlr.org/)
 
 ## Getting Started
 
@@ -59,12 +70,12 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
   <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>spring-data-search</artifactId>
-      <version>0.0.1</version>
+      <version>1.0.0</version>
   </dependency>
   ```
 * If you have a [Gradle](https://gradle.org/) project, you can add the following dependency in your `build.gradle` file:
   ```groovy
-  implementation "com.weedow:spring-data-search:0.0.1"
+  implementation "com.weedow:spring-data-search:1.0.0"
   ```
 
 ### Getting Started in 5 minutes
@@ -81,12 +92,12 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
     <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>spring-data-search</artifactId>
-      <version>0.0.1</version>
+      <version>1.0.0</version>
     </dependency>
     ```
     * For [Gradle](https://gradle.org/) project, add the dependency in the `build.gradle` file:
     ```groovy
-    implementation "com.weedow:spring-data-search:0.0.1"
+    implementation "com.weedow:spring-data-search:1.0.0"
     ```
 * Create a new file `Person.java` to add a new JPA Entity `Person` with the following content:
     ```java
@@ -258,7 +269,7 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
 
 The examples in this section are based on the following entity model:
 
-The `Person.java` Entity has relationships with the `Job.java` Entity and the `Vehicle.java` Entity. Here are the entities:
+The `Person.java` Entity has relationships with the `Address.java` Entity, the `Job.java` Entity and the `Vehicle.java` Entity. Here are the entities:
 ```java
 @Entity
 public class Person {
@@ -285,6 +296,16 @@ public class Person {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> nickNames;
 
+    @ElementCollection
+    @CollectionTable(name = "person_phone_numbers", joinColumns = [JoinColumn(name = "person_id")])
+    @Column(name = "phone_number")
+    private Set<String> phoneNumbers;
+
+    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @JoinTable(name = "person_address", joinColumns = {JoinColumn(name = "personId")}, inverseJoinColumns = {JoinColumn(name = "addressId")})
+    @JsonIgnoreProperties("persons")
+    private Set<Address> addressEntities;
+
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Job jobEntity;
 
@@ -295,23 +316,31 @@ public class Person {
 }
 
 @Entity
-public class Vehicle {
+public class Address {
 
     @Id
     @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
-    private String brand;
+    private String street;
 
     @Column(nullable = false)
-    private String model;
+    private String city;
 
     @ManyToOne(optional = false)
-    private String person;
+    private String zipCode;
+
+    @Enumerated(EnumType.STRING)
+    private CountryCode country;
+
+    @ManyToMany(mappedBy = "addressEntities")
+    @JsonIgnoreProperties("addressEntities")
+    private Set<Person> persons;
 
     // Getters/Setters
 }
+
 
 @Entity
 public class Job {
@@ -338,10 +367,41 @@ public class Job {
     // Getters/Setters
 
 }
+
+@Entity
+public class Vehicle {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private VehicleType vehicleType;
+
+    @Column(nullable = false)
+    private String brand;
+
+    @Column(nullable = false)
+    private String model;
+
+    @ManyToOne(optional = false)
+    private String person;
+
+    // Getters/Setters
+}
+
+public enum VehicleType {
+    CAR, MOTORBIKE, SCOOTER, VAN, TRUCK
+}
 ```
 
 ### Standard Query
 You can search for entities by adding query parameters representing entity fields to the search URL.
+
+To search on nested fields, you must concatenate the deep fields separated by the dot '`.`'.\
+_Example: The `Person` Entity contains a property of the `Address` Entity that is named `addressEntities`, and we search for Persons who live in 'Paris'_:\
+/search?`addressEntities.city='Paris'`
 
 This mode is limited to the use of the `AND` operator between each field criteria.\
 Each field criteria is limited to the use of the `EQUALS` operator and the `IN` operator.
@@ -360,7 +420,163 @@ Each field criteria is limited to the use of the `EQUALS` operator and the `IN` 
 ### Advanced Query
 You can search for entities by using the query string `query`.
 
-_Coming soon_
+`query` supports a powerful query language to perform advanced searches for the JPA Entities.
+
+You can combine logical operators and operators to create complex queries.
+
+The value types are the following:
+* `String`: must be surrounded by single quotes or double quotes.\
+  _Example: `firstName='John'`, `firstName="John"`_
+* `Number`: could be an integer or a decimal number.\
+  _Example: `height=174`, `height=175.2`_
+* `Boolean`: could be true or false and is case-insensitive
+  _Example: `active=true`, `active=FALSE`_
+
+> Note: The examples use the unencoded 'query' parameter, where **firstName = 'John'** is encoded as **firstName+%3d+%27John%27**.
+>
+> Remember to manage this encoding when making requests from your code.
+
+1. <a name="equals-operator"></a> Equals operator `=`
+
+| What you want to query                                              | Example                                               |
+| ------------------------------------------------------------------- | ----------------------------------------------------- |
+| Persons with the first name 'John'                                  | /person?query=`firstName='John'`                      |
+| Persons with the birthday equals to the given `LocalDateTime`       | /person?query=`birthday='1981-03-12T10:36:00'`        |
+| Persons with the hire date equals to the given `OffsetDateTime`     | /person?query=`job.hireDate='2019-09-01T09:00:00Z'`   |
+| Persons who own a car (VehicleType is an Enum)                      | /person?query=`vehicle.vehicleType='CAR'`             |
+| Persons who are 1,74 m tall                                         | /person?query=`height=174`                            |
+| Persons who are actively employed                                   | /person?query=`job.active=true`                       |
+
+1. <a name="not-equals-operator"></a> Not Equals operator `!=`
+
+| What you want to query                                              | Example                                               |
+| ------------------------------------------------------------------- | ----------------------------------------------------- |
+| Persons who are not named 'John'                                    | /person?query=`firstName!='John'`                     |
+| Persons with the birthday not equals to the given `LocalDateTime`   | /person?query=`birthday!='1981-03-12T10:36:00'`       |
+| Persons with the hire date not equals to the given `OffsetDateTime` | /person?query=`job.hireDate!='2019-09-01T09:00:00Z'`  |
+| Persons who don't own a car (VehicleType is an Enum)                | /person?query=`vehicle.vehicleType!='CAR'`            |
+| Persons who are not 1,74 m tall                                     | /person?query=`height!=174`                           |
+| Persons who are not actively employed                               | /person?query=`job.active!=true`                      |
+
+1. <a name="less-than-operator"></a> Less than operator `<`
+
+| What you want to query                                              | Example                                               |
+| ------------------------------------------------------------------- | ----------------------------------------------------- |
+| Persons who were born before the given `LocalDateTime`              | /person?query=`birthday<'1981-03-12T10:36:00'`        |
+| Persons who are hired before the given `OffsetDateTime`             | /person?query=`job.hireDate<'2019-09-01T09:00:00Z'`   |
+| Persons who are smaller than 1,74 m                                 | /person?query=`height<174`                            |
+
+1. <a name="less-than-or-equals-operator"></a> Less than or equals operator `<=`
+
+| What you want to query                                              | Example                                               |
+| ------------------------------------------------------------------- | ----------------------------------------------------- |
+| Persons who were born before or on the given `LocalDateTime`        | /person?query=`birthday<='1981-03-12T10:36:00'`       |
+| Persons who are hired before or on the given `OffsetDateTime`       | /person?query=`job.hireDate<='2019-09-01T09:00:00Z'`  |
+| Persons who are smaller than or equal to 1,74 m                     | /person?query=`height<=174`                           |
+
+1. <a name="greater-than-operator"></a> Greater than operator `>`
+
+| What you want to query                                              | Example                                               |
+| ------------------------------------------------------------------- | ----------------------------------------------------- |
+| Persons who were born after the given `LocalDateTime`               | /person?query=`birthday>'1981-03-12T10:36:00'`        |
+| Persons who are hired after the given `OffsetDateTime`              | /person?query=`job.hireDate>'2019-09-01T09:00:00Z'`   |
+| Persons who are taller than 1,74 m                                  | /person?query=`height>174`                            |
+
+1. <a name="greater-than-or-equals-operator"></a> Greater than or equals operator `>=`
+
+| What you want to query                                              | Example                                               |
+| ------------------------------------------------------------------- | ----------------------------------------------------- |
+| Persons who were born after or on the given `LocalDateTime`         | /person?query=`birthday>='1981-03-12T10:36:00'`       |
+| Persons who are hired after or on the given `OffsetDateTime`        | /person?query=`job.hireDate>='2019-09-01T09:00:00Z'`  |
+| Persons who are taller than or equal to 1,74 m                      | /person?query=`height>=174`                           |
+
+1. <a name="matches-operator"></a> Matches operator `MATCHES`
+
+_Use the wildcard character `*` to match any string with zero or more characters._
+
+| What you want to query                                              | Example                                               |
+| ------------------------------------------------------------------- | ----------------------------------------------------- |
+| Persons with the first name starting with 'Jo'                      | /person?query=`firstName MATCHES 'Jo*'`               |
+| Persons with the first name ending with 'hn'                        | /person?query=`firstName MATCHES '*hn'`               |
+| Persons with the first name containing 'oh'                         | /person?query=`firstName MATCHES '*oh*'`              |
+| Persons with the first name that does not start with 'Jo'           | /person?query=`firstName NOT MATCHES 'Jo*'`           |
+
+1. <a name="imatches-operator"></a> Case-insensitive matches operator `IMATCHES`
+
+This operator has the same behaviour as ['MATCHES'](#matches-operator) except that it is not case-sensitive.
+
+_Use the wildcard character `*` to match any string with zero or more characters._
+
+| What you want to query                                                             | Example                                               |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Persons with the first name starting with 'JO', ignoring case-sensitive            | /person?query=`firstName IMATCHES 'JO*'`              |
+| Persons with the first name ending with 'HN', ignoring case-sensitive              | /person?query=`firstName IMATCHES '*HN'`              |
+| Persons with the first name containing 'OH', ignoring case-sensitive               | /person?query=`firstName IMATCHES '*OH*'`             |
+| Persons with the first name that does not start with 'JO', ignoring case-sensitive | /person?query=`firstName NOT IMATCHES 'JO*'`          |
+
+1. <a name="in-operator"></a> `ÌN` operator
+
+| What you want to query                                                  | Example                                                              |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Persons who are named 'John' or 'Jane'                                  | /person?query=`firstName IN ('John', 'Jane')`                        |
+| Persons with the height is one the given values                         | /person?query=`height IN (168, 174, 185)`                            |
+| Persons who own one of the given vehicle types (VehicleType is an Enum) | /person?query=`vehicle.vehicleType IN ('CAR', 'MOTORBIKE', 'TRUCK')` |
+| Persons who are not named 'John' or 'Jane'                              | /person?query=`firstName NOT IN ('John', 'Jane')`                    |
+
+1. <a name="null-comparison"></a> `NULL` comparison
+
+| What you want to query                                  | Example                                                                 |
+| ------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Persons with the birthday is 'null'                     | /person?query=`birthday=null`<br/>/person?query=`birthday IS NULL`      |
+| Persons with the birthday is not 'null'                 | /person?query=`birthday!=null`<br/>/person?query=`birthday IS NOT NULL` |
+| Persons who don't have jobs                             | /person?query=`job=null`<br/>/person?query=`job IS NULL`                |
+| Persons who have jobs                                   | /person?query=`job!=null`<br/>/person?query=`job IS NOT NULL`           |
+
+1. <a name="and-logical-operator"></a> `AND` logical operator
+
+| What you want to query                                                                                                                            | Example                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Persons with the first name 'John', with a height greater than 1,60 m, the birthday is the given `LocalDateTime` and who are actively employed | /person?query=`firstName='John' AND height > 160 and birthday='1981-03-12T10:36:00' AND job.active=true` |
+
+1. <a name="or-logical-operator"></a> `OR` logical operator
+
+| What you want to query                                                  | Example                                                                      |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Persons who are named 'John' or 'Jane'                                  | /person?query=`firstName='John' OR firstName='Jane'`                         |
+| Persons with the height is 1,68 m, 1,74 m or 1,85 m                     | /person?query=`height=168 OR height=174 OR height=185`                       |
+| Persons who own a car or a motorbike (VehicleType is an Enum)           | /person?query=`vehicle.vehicleType='CAR' OR vehicle.vehicleType='MOTORBIKE'` |
+
+1. <a name="not-operator"></a> `NOT` operator
+
+| What you want to query                                                  | Example                                                                      |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Persons with the first name is not 'John' or 'Jane'                     | /person?query=`NOT (firstName='John' OR firstName='Jane'`)                   |
+| Persons who don't live in France and is not actively employed           | /person?query=`NOT (address.country='FR' AND job.active=true`                |
+| Persons who don't own a car (VehicleType is an Enum)                    | /person?query=`NOT vehicle.vehicleType='CAR'`                                |
+
+1. <a name="parentheses"></a> Parentheses
+
+The precedence of operators determines the order of evaluation of terms in an expression.
+
+[AND](#and-logical-operator) operator has precedence over the [OR](#or-logical-operator) operator.
+
+To override this order and group terms explicitly, you can use parentheses.
+
+| What you want to query                                                           | Example                                                                                                                   |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Persons who are named 'John' or 'Jane', and own a car or a motorbike             | /person?query=`(firstName='John' OR firstName='Jane') AND (vehicle.vehicleType='CAR' OR vehicle.vehicleType='MOTORBIKE')` |
+
+1. Nested fields
+
+To search on nested fields, you must concatenate the deep fields separated by the dot '`.`'.\
+_Example: The `Person` Entity contains a property of the `Address` Entity that is named `addressEntities`, and we search for Persons who live in 'Paris'_:\
+/search?`addressEntities.city='Paris'`
+
+| What you want to query                                                           | Example                                                          |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Persons who own a car                                                            | /person?query=`vehicle.vehicleType='CAR'`                        |
+| Persons who live in 'France' or in Italy                                         | /person?query=`address.country='FR' OR address.country='IT'`     |
+| Persons who work job company is `Acme` and are actively employed                 | /person?query=`job.company='Acme' AND job.active=true`           |
 
 ## Features
 

@@ -22,7 +22,7 @@ import javax.persistence.EntityManager
  */
 open class SearchConfigurationSupport {
 
-    @Autowired
+    @Autowired(required = false)
     fun setEntityManager(entityManager: EntityManager) {
         JpaSpecificationExecutorFactory.init(entityManager)
     }

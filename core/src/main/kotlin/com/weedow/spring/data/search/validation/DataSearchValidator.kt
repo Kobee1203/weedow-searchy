@@ -34,6 +34,8 @@ interface DataSearchValidator {
      */
     @JvmDefault
     fun validateSingle(value: Any, fieldExpression: FieldExpression, errors: DataSearchErrors) {
+        // Override this method to validate the given single [value] related to the [FieldExpression]
+        // Use [DataSearchErrors] instance to report any resulting validation errors
     }
 
     /**
