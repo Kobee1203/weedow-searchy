@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @SpringBootApplication
 @EntityScan("com.weedow.spring.data.search.common.model")
 @EnableJpaRepositories("com.weedow.spring.data.search.common.repository")
-class SpringDataSearchSampleApplication
+class SampleApplication
 
 fun main(args: Array<String>) {
-    runApplication<SpringDataSearchSampleApplication>(*args)
+    runApplication<SampleApplication>(*args)
 }

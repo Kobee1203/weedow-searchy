@@ -30,14 +30,14 @@
             </excludes>
         </dependencySet>
 
-        <!-- Sample App -->
+        <!-- Sample App Kotlin -->
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveDependencies>true</useTransitiveDependencies>
-            <outputDirectory>sample-app</outputDirectory>
+            <outputDirectory>sample-app-kotlin</outputDirectory>
             <unpack>false</unpack>
             <includes>
-                <include>${project.groupId}:*-sample-app:jar</include>
+                <include>${project.groupId}:*-sample-app-*:jar</include>
             </includes>
         </dependencySet>
     </dependencySets>

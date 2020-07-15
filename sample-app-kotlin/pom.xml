@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.weedow</groupId>
         <artifactId>spring-data-search-parent</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>spring-data-search-sample-app</artifactId>
-    <name>spring-data-search-sample-app</name>
-    <description>Spring Data Search Sample Application</description>
+    <artifactId>spring-data-search-sample-app-kotlin</artifactId>
+    <name>spring-data-search-sample-app-kotlin</name>
+    <description>Spring Data Search Sample Application in Kotlin</description>
 
     <dependencies>
         <dependency>
