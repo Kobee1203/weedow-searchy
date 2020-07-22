@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
 import com.weedow.spring.data.search.alias.AliasResolutionService
 import com.weedow.spring.data.search.config.DelegatingSearchConfiguration
+import com.weedow.spring.data.search.config.SearchConfigurationSupport
 import com.weedow.spring.data.search.config.SearchConfigurer
+import com.weedow.spring.data.search.config.SearchProperties
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.expression.ExpressionMapperImpl
 import com.weedow.spring.data.search.expression.ExpressionResolver
@@ -28,6 +30,8 @@ import com.weedow.spring.data.search.validation.DataSearchValidationService
 import com.weedow.spring.data.search.validation.DataSearchValidationServiceImpl
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -38,6 +42,8 @@ import org.springframework.core.convert.ConversionService
  */
 @Configuration
 @ConditionalOnClass(SearchConfigurer::class)
+@ConditionalOnMissingBean(SearchConfigurationSupport::class)
+@EnableConfigurationProperties(SearchProperties::class)
 class DataSearchAutoConfiguration : DelegatingSearchConfiguration() {
 
     @Configuration
