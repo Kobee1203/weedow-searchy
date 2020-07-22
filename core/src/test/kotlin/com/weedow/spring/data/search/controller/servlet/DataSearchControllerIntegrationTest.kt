@@ -167,6 +167,7 @@ internal class DataSearchControllerIntegrationTest {
         verifyZeroInteractions(dataSearchService)
     }
 
+    @Test
     fun search_with_alias() {
         val rootClass = Person::class.java
         val firstName = "John"
