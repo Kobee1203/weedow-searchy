@@ -30,7 +30,6 @@ import com.weedow.spring.data.search.validation.DataSearchValidationService
 import com.weedow.spring.data.search.validation.DataSearchValidationServiceImpl
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
@@ -44,14 +43,10 @@ import org.springframework.core.convert.ConversionService
 @ConditionalOnClass(SearchConfigurer::class)
 @ConditionalOnMissingBean(SearchConfigurationSupport::class)
 @EnableConfigurationProperties(SearchProperties::class)
-class DataSearchAutoConfiguration : DelegatingSearchConfiguration() {
+class DataSearchAutoConfiguration {
 
     @Configuration
-    @ComponentScan("com.weedow.spring.data.search.controller")
-    internal class EnableControllerAutoConfiguration
-
-    @Configuration
-    internal class EnableDataSearchAutoConfiguration {
+    internal class EnableDataSearchAutoConfiguration : DelegatingSearchConfiguration() {
 
         companion object {
             private val log by klogger()
@@ -60,6 +55,10 @@ class DataSearchAutoConfiguration : DelegatingSearchConfiguration() {
         init {
             log.info("Initializing Data Search Configuration")
         }
+
+        @Configuration
+        @ComponentScan("com.weedow.spring.data.search.controller")
+        internal class EnableControllerAutoConfiguration
 
         @Bean
         @ConditionalOnMissingBean
