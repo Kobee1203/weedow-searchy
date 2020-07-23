@@ -12,5 +12,9 @@ data class SearchProperties(
         /**
          * Base path to be used by Spring Data Search to expose data search resources. Default is '/search'.
          */
-        val basePath: String = "/search"
-)
+        val basePath: String = DEFAULT_BASE_PATH
+) {
+    companion object {
+        const val DEFAULT_BASE_PATH = "/search"
+    }
+}

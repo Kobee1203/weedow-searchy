@@ -3,6 +3,7 @@ package com.weedow.spring.data.search.controller
 import com.nhaarman.mockitokotlin2.*
 import com.weedow.spring.data.search.common.dto.PersonDto
 import com.weedow.spring.data.search.common.model.Person
+import com.weedow.spring.data.search.config.SearchProperties
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
 import com.weedow.spring.data.search.example.PersonDtoMapper
@@ -17,12 +18,14 @@ import com.weedow.spring.data.search.validation.DataSearchValidationService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.groups.Tuple
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.HttpStatus
+import org.springframework.test.util.ReflectionTestUtils
 import org.springframework.util.LinkedMultiValueMap
 
 @ExtendWith(MockitoExtension::class)
@@ -42,6 +45,11 @@ internal class DataSearchControllerTest {
 
     @InjectMocks
     lateinit var dataSearchController: DataSearchController
+
+    @BeforeEach
+    fun setUp() {
+        ReflectionTestUtils.setField(dataSearchController, "basePath", SearchProperties.DEFAULT_BASE_PATH)
+    }
 
     @Test
     fun search_successfully() {

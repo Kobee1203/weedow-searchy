@@ -1,6 +1,5 @@
 package com.weedow.spring.data.search.sample
 
-import com.weedow.spring.data.search.config.SearchProperties
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -14,8 +13,11 @@ import org.springframework.test.web.servlet.get
 
 @DirtiesContext
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SampleApplicationTest {
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = ["spring.data.search.base-path=/api"]
+)
+class SampleApplicationWithCustomBasePathTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -24,8 +26,8 @@ class SampleApplicationTest {
     private lateinit var jsonResult: Resource
 
     @Test
-    fun search() {
-        val basePath = SearchProperties.DEFAULT_BASE_PATH
+    fun search_with_custom_base_path() {
+        val basePath = "/api"
 
         val firstName = "John"
         val searchDescriptorId = "person"
