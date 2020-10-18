@@ -25,3 +25,6 @@ INSERT INTO PERSON_ADDRESS(person_id, address_id) VALUES (2, 2);
 
 INSERT INTO JOB(id, person_id, created_on, updated_on, active, title, company, salary, hire_date) VALUES (1, 1, '2020-03-12T10:36:00Z', '2020-04-17T12:00:00Z', true, 'Lab Technician', 'Acme', '50000', '2019-09-01T09:00:00Z');
 INSERT INTO JOB(id, person_id, created_on, updated_on, active, title, company, salary, hire_date) VALUES (2, 2, '2020-03-12T10:36:00Z', '2020-04-17T12:00:00Z', true, 'Commercial Fisherman', 'Fishing & Co', '60000', '2019-09-01T09:00:00Z');
+
+INSERT INTO CHARACTERISTIC_MAPPING(person_id, characteristic_name, value) VALUES (1, 'eyes', 'blue');
+INSERT INTO CHARACTERISTIC_MAPPING(person_id, characteristic_name, value) VALUES (1, 'hair', 'brown');

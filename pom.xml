@@ -71,6 +71,7 @@
 
         <!-- Dependencies versions -->
         <commons-lang3.version>3.9</commons-lang3.version>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <antlr4.version>4.8-1</antlr4.version>
 
         <!-- Testing dependencies versions -->
@@ -93,6 +94,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
             </dependency>
 
             <dependency>

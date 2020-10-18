@@ -46,7 +46,15 @@ class Person(
 
         @OneToMany(mappedBy = "person", cascade = [CascadeType.ALL], orphanRemoval = true)
         @JsonIgnoreProperties("person")
-        val vehicles: Set<Vehicle>? = null
+        val vehicles: Set<Vehicle>? = null,
+
+        @ElementCollection
+        @CollectionTable(
+                name = "characteristic_mapping",
+                joinColumns = [JoinColumn(name = "person_id", referencedColumnName = "id")])
+        @MapKeyColumn(name = "characteristic_name")
+        @Column(name = "value")
+        val characteristics: Map<String, String>? = null
 
 ) : JpaPersistable<Long>() {
     override fun equals(other: Any?): Boolean {
