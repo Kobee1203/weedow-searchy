@@ -3,7 +3,6 @@ package com.weedow.spring.data.search.controller
 import com.weedow.spring.data.search.config.SearchProperties
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
-import com.weedow.spring.data.search.dto.DtoMapper
 import com.weedow.spring.data.search.exception.SearchDescriptorNotFound
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.service.DataSearchService
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
-import java.util.stream.Collectors
 
 /**
  * REST Controller to expose the Spring Data Search endpoint.
@@ -50,13 +48,10 @@ class DataSearchController(
 
         val result = doSearch(params, searchDescriptor)
 
-        // Map result result as defined DTO
-        @Suppress("UNCHECKED_CAST")
-        val dtoMapper = searchDescriptor.dtoMapper as DtoMapper<Any?, Any?>
-        return ResponseEntity.ok(convertToDto(result, dtoMapper))
+        return ResponseEntity.ok(result)
     }
 
-    private fun <T> doSearch(params: MultiValueMap<String, String>, searchDescriptor: SearchDescriptor<T>): List<T> {
+    private fun <T> doSearch(params: MultiValueMap<String, String>, searchDescriptor: SearchDescriptor<T>): List<*> {
         // Mapping the given request parameters to the associated expressions
         val rootExpression = expressionMapper.toExpression(params, searchDescriptor.entityClass)
 
@@ -65,12 +60,6 @@ class DataSearchController(
 
         // Find entities according to field infos
         return dataSearchService.findAll(rootExpression, searchDescriptor)
-    }
-
-    private fun <T, R> convertToDto(result: List<T>, dtoMapper: DtoMapper<T, R>): List<R> {
-        return result.stream()
-                .map { entity -> dtoMapper.map(entity) }
-                .collect(Collectors.toList())
     }
 
 }

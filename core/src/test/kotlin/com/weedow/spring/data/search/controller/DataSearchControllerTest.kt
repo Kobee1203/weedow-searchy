@@ -64,7 +64,6 @@ internal class DataSearchControllerTest {
 
         val searchDescriptor = mock<SearchDescriptor<Person>> {
             on { this.entityClass }.doReturn(rootClass)
-            on { this.dtoMapper }.doReturn(PersonDtoMapper())
         }
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
 
@@ -74,7 +73,7 @@ internal class DataSearchControllerTest {
         val fieldExpressions = mock<Collection<FieldExpression>>()
         whenever(rootExpression.toFieldExpressions(false)).thenReturn(fieldExpressions)
 
-        val person = Person(firstName, lastName)
+        val person = PersonDto.Builder().firstName(firstName).lastName(lastName).build()
         whenever(dataSearchService.findAll(rootExpression, searchDescriptor)).thenReturn(listOf(person))
 
         val responseEntity = dataSearchController.search(searchDescriptorId, params)

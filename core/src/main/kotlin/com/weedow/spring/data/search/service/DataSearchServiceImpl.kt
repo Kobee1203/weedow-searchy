@@ -1,11 +1,13 @@
 package com.weedow.spring.data.search.service
 
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
+import com.weedow.spring.data.search.dto.DtoMapper
 import com.weedow.spring.data.search.expression.RootExpression
 import com.weedow.spring.data.search.join.EntityJoinManager
 import com.weedow.spring.data.search.specification.JpaSpecificationService
 import com.weedow.spring.data.search.utils.klogger
 import org.springframework.transaction.annotation.Transactional
+import java.util.stream.Collectors
 
 /**
  * Default [DataSearchService] implementation.
@@ -27,10 +29,21 @@ class DataSearchServiceImpl(
         if (log.isDebugEnabled) log.debug("Initialized DataSearchService: {}", this)
     }
 
-    override fun <T> findAll(rootExpression: RootExpression<T>, searchDescriptor: SearchDescriptor<T>): List<T> {
+    override fun <T> findAll(rootExpression: RootExpression<T>, searchDescriptor: SearchDescriptor<T>): List<*> {
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
         val specification = jpaSpecificationService.createSpecification(rootExpression, entityJoins)
-        return searchDescriptor.jpaSpecificationExecutor.findAll(specification)
+        val entities = searchDescriptor.jpaSpecificationExecutor.findAll(specification)
+
+        return convertToDto(entities, searchDescriptor)
+    }
+
+    private fun <T> convertToDto(result: List<T>, searchDescriptor: SearchDescriptor<T>): List<*> {
+        @Suppress("UNCHECKED_CAST")
+        val dtoMapper = searchDescriptor.dtoMapper as DtoMapper<Any?, Any?>
+
+        return result.stream()
+                .map { entity -> dtoMapper.map(entity) }
+                .collect(Collectors.toList())
     }
 
 }

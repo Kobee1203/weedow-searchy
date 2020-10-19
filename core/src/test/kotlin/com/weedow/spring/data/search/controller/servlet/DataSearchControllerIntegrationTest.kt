@@ -109,7 +109,7 @@ internal class DataSearchControllerIntegrationTest {
         val rootExpression = RootExpressionImpl<Person>(ExpressionUtils.equals(fieldInfo, fieldValue))
         whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
 
-        whenever(dataSearchService.findAll(rootExpression, searchDescriptor)).thenReturn(emptyList())
+        whenever(dataSearchService.findAll(rootExpression, searchDescriptor)).thenReturn(emptyList<Any?>())
 
         mockMvc.get("/search/$searchDescriptorId") {
             param(fieldPath, firstName)

@@ -13,12 +13,12 @@ import com.weedow.spring.data.search.expression.RootExpression
 interface DataSearchService {
 
     /**
-     * Finds all Entities from the given arguments.
+     * Finds all Entities from the given arguments and returns the mapped DTOs.
      *
      * @param rootExpression [RootExpression] object that contains the criteria to filter the result
      * @param searchDescriptor [SearchDescriptor] object that contains the configuration for a specific Entity Class
-     * @return List of Entities
+     * @return List of DTOs
      */
-    fun <T> findAll(rootExpression: RootExpression<T>, searchDescriptor: SearchDescriptor<T>): List<T>
+    fun <T> findAll(rootExpression: RootExpression<T>, searchDescriptor: SearchDescriptor<T>): List<*>
 
 }
