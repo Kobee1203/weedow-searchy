@@ -80,7 +80,7 @@ internal class SearchDescriptorBuilderTest {
         assertThat(searchDescriptor1.jpaSpecificationExecutor).isEqualTo(specificationExecutor1)
         assertThat(searchDescriptor1.entityJoinHandlers).containsExactly(entityJoinHandler1)
 
-        val validator2= mock<DataSearchValidator>()
+        val validator2 = mock<DataSearchValidator>()
         val dtoMapper2 = PersonDtoMapper()
         val specificationExecutor2 = PersonRepositoryImpl(entityClass, mockEntityManager(entityClass, false))
         val entityJoinHandler2 = DefaultEntityJoinHandler<Person>()
@@ -112,9 +112,9 @@ internal class SearchDescriptorBuilderTest {
     }
 
     private fun mockEntityManager(entityClass: Class<Person>, open: Boolean): EntityManager {
-        val entityManager = mock<EntityManager>()
-        val metamodel = mock<Metamodel>()
-        val type = mock<EntityType<Person>>()
+        val entityManager = mock<EntityManager>(lenient = true)
+        val metamodel = mock<Metamodel>(lenient = true)
+        val type = mock<EntityType<Person>>(lenient = true)
         whenever(entityManager.metamodel).thenReturn(metamodel)
         whenever(metamodel.managedType(entityClass)).thenReturn(type)
         whenever(type.name).thenReturn(Person::class.java.simpleName)
