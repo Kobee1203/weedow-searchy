@@ -41,7 +41,7 @@
                     <classifier>sources</classifier>
                 </dependency>
 
-                <!-- Sample App -->
+                <!-- Sample App Kotlin -->
                 <dependency>
                     <groupId>com.weedow</groupId>
                     <artifactId>spring-data-search-sample-app-kotlin</artifactId>
@@ -56,6 +56,25 @@
                 <dependency>
                     <groupId>com.weedow</groupId>
                     <artifactId>spring-data-search-sample-app-kotlin</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>sources</classifier>
+                </dependency>
+
+                <!-- Sample App Java -->
+                <dependency>
+                    <groupId>com.weedow</groupId>
+                    <artifactId>spring-data-search-sample-app-java</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.weedow</groupId>
+                    <artifactId>spring-data-search-sample-app-java</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>javadoc</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>com.weedow</groupId>
+                    <artifactId>spring-data-search-sample-app-java</artifactId>
                     <version>${project.version}</version>
                     <classifier>sources</classifier>
                 </dependency>

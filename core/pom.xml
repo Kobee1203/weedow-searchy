@@ -117,6 +117,7 @@
                 <configuration>
                     <listener>true</listener>
                     <visitor>true</visitor>
+                    <outputDirectory>${project.build.directory}/generated-sources/antlr4</outputDirectory>
                     <arguments>
                         <!-- antlr4-maven-plugin confuses package and outputDirectory: https://github.com/antlr/antlr4/issues/2738 -->
                         <argument>-package</argument>
