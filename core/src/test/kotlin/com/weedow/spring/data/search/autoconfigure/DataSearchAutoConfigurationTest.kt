@@ -2,24 +2,27 @@ package com.weedow.spring.data.search.autoconfigure
 
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
 import com.weedow.spring.data.search.config.SearchConfigurer
-import com.weedow.spring.data.search.controller.DataSearchController
+import com.weedow.spring.data.search.controller.reactive.DataSearchReactiveController
+import com.weedow.spring.data.search.controller.servlet.DataSearchController
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
 import org.springframework.boot.test.context.FilteredClassLoader
-import org.springframework.boot.test.context.runner.ApplicationContextRunner
+import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 
 
 internal class DataSearchAutoConfigurationTest {
 
-    private val contextRunner = ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(DataSearchAutoConfiguration::class.java))
+    private val contextRunner = WebApplicationContextRunner()
+            .withConfiguration(AutoConfigurations.of(DataSearchAutoConfiguration::class.java, WebMvcAutoConfiguration::class.java))
 
     @Test
     fun dataSearchAutoConfiguration_is_loaded() {
         contextRunner
                 .run { context ->
                     assertThat(context).hasSingleBean(DataSearchController::class.java)
+                    assertThat(context).doesNotHaveBean(DataSearchReactiveController::class.java)
                     assertThat(context).hasBean("fieldPathResolver")
                     assertThat(context).hasBean("fieldInfoResolver")
                     assertThat(context).hasBean("expressionMapper")
@@ -39,6 +42,7 @@ internal class DataSearchAutoConfigurationTest {
         contextRunner.withClassLoader(FilteredClassLoader(SearchConfigurer::class.java))
                 .run { context ->
                     assertThat(context).doesNotHaveBean(DataSearchController::class.java)
+                    assertThat(context).doesNotHaveBean(DataSearchReactiveController::class.java)
                     assertThat(context).doesNotHaveBean("fieldPathResolver")
                     assertThat(context).doesNotHaveBean("fieldInfoResolver")
                     assertThat(context).doesNotHaveBean("expressionMapper")
@@ -58,6 +62,7 @@ internal class DataSearchAutoConfigurationTest {
         contextRunner.withClassLoader(FilteredClassLoader(Hibernate5Module::class.java))
                 .run { context ->
                     assertThat(context).hasSingleBean(DataSearchController::class.java)
+                    assertThat(context).doesNotHaveBean(DataSearchReactiveController::class.java)
                     assertThat(context).hasBean("fieldPathResolver")
                     assertThat(context).hasBean("fieldInfoResolver")
                     assertThat(context).hasBean("expressionMapper")

@@ -7,6 +7,9 @@ import com.weedow.spring.data.search.config.DelegatingSearchConfiguration
 import com.weedow.spring.data.search.config.SearchConfigurationSupport
 import com.weedow.spring.data.search.config.SearchConfigurer
 import com.weedow.spring.data.search.config.SearchProperties
+import com.weedow.spring.data.search.controller.reactive.DataSearchReactiveController
+import com.weedow.spring.data.search.controller.servlet.DataSearchController
+import com.weedow.spring.data.search.descriptor.SearchDescriptorService
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.expression.ExpressionMapperImpl
 import com.weedow.spring.data.search.expression.ExpressionResolver
@@ -28,11 +31,12 @@ import com.weedow.spring.data.search.validation.DataSearchErrorsFactory
 import com.weedow.spring.data.search.validation.DataSearchErrorsFactoryImpl
 import com.weedow.spring.data.search.validation.DataSearchValidationService
 import com.weedow.spring.data.search.validation.DataSearchValidationServiceImpl
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.ConversionService
 
@@ -46,6 +50,66 @@ import org.springframework.core.convert.ConversionService
 class DataSearchAutoConfiguration {
 
     @Configuration
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+    @ConditionalOnBean(org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping::class)
+    internal class EnableServletControllerAutoConfiguration {
+
+        companion object {
+            private val log by klogger()
+        }
+
+        init {
+            log.info("Initializing Data Search Servlet Controller")
+        }
+
+//        @Configuration
+//        @ComponentScan("com.weedow.spring.data.search.controller.servlet")
+//        inner class ServletControllerAutoConfiguration
+
+        @Bean
+        @ConditionalOnMissingBean
+        fun servletDataSearchController(
+                searchDescriptorService: SearchDescriptorService,
+                expressionMapper: ExpressionMapper,
+                dataSearchService: DataSearchService,
+                dataSearchValidationService: DataSearchValidationService,
+                searchProperties: SearchProperties,
+                requestMappingHandlerMapping: org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping): DataSearchController {
+            return DataSearchController(searchDescriptorService, expressionMapper, dataSearchService, dataSearchValidationService, searchProperties, requestMappingHandlerMapping)
+        }
+    }
+
+    @Configuration
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+    @ConditionalOnBean(org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping::class)
+    internal class EnableReactiveControllerAutoConfiguration {
+
+        companion object {
+            private val log by klogger()
+        }
+
+        init {
+            log.info("Initializing Data Search Reactive Controller")
+        }
+
+//        @Configuration
+//        @ComponentScan("com.weedow.spring.data.search.controller.reactive")
+//        inner class ReactiveControllerAutoConfiguration
+
+        @Bean
+        @ConditionalOnMissingBean
+        fun reactiveDataSearchController(
+                searchDescriptorService: SearchDescriptorService,
+                expressionMapper: ExpressionMapper,
+                dataSearchService: DataSearchService,
+                dataSearchValidationService: DataSearchValidationService,
+                searchProperties: SearchProperties,
+                requestMappingHandlerMapping: org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping): DataSearchReactiveController {
+            return DataSearchReactiveController(searchDescriptorService, expressionMapper, dataSearchService, dataSearchValidationService, searchProperties, requestMappingHandlerMapping)
+        }
+    }
+
+    @Configuration
     internal class EnableDataSearchAutoConfiguration : DelegatingSearchConfiguration() {
 
         companion object {
@@ -55,10 +119,6 @@ class DataSearchAutoConfiguration {
         init {
             log.info("Initializing Data Search Configuration")
         }
-
-        @Configuration
-        @ComponentScan("com.weedow.spring.data.search.controller")
-        internal class EnableControllerAutoConfiguration
 
         @Bean
         @ConditionalOnMissingBean
