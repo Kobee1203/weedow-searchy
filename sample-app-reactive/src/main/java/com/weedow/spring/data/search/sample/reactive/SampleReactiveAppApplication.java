@@ -1,4 +1,4 @@
-package com.weedow.samplereactiveapp;
+package com.weedow.spring.data.search.sample.reactive;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

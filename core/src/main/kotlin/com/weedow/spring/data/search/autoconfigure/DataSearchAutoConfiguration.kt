@@ -62,10 +62,6 @@ class DataSearchAutoConfiguration {
             log.info("Initializing Data Search Servlet Controller")
         }
 
-//        @Configuration
-//        @ComponentScan("com.weedow.spring.data.search.controller.servlet")
-//        inner class ServletControllerAutoConfiguration
-
         @Bean
         @ConditionalOnMissingBean
         fun servletDataSearchController(
@@ -91,10 +87,6 @@ class DataSearchAutoConfiguration {
         init {
             log.info("Initializing Data Search Reactive Controller")
         }
-
-//        @Configuration
-//        @ComponentScan("com.weedow.spring.data.search.controller.reactive")
-//        inner class ReactiveControllerAutoConfiguration
 
         @Bean
         @ConditionalOnMissingBean

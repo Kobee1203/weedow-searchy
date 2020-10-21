@@ -1,4 +1,4 @@
-package com.weedow.samplereactiveapp.config;
+package com.weedow.spring.data.search.sample.reactive.config;
 
 import com.weedow.spring.data.search.common.model.Person;
 import com.weedow.spring.data.search.config.SearchConfigurer;

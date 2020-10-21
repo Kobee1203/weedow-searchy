@@ -1,4 +1,4 @@
-package com.weedow.spring.data.search.sample.dto
+package com.weedow.spring.data.search.sample.reactive.dto
 
 import com.weedow.spring.data.search.common.dto.AddressDto
 import com.weedow.spring.data.search.common.dto.PersonDto
