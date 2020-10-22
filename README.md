@@ -587,6 +587,8 @@ _Example: The `Person` Entity contains a property of the `Address` Entity that i
 The Search Descriptors allow exposing automatically search endpoints for JPA Entities.\
 The new endpoints are mapped to `/search/{searchDescriptorId}` where `searchDescriptorId` is the [ID](#search-descriptor-id) defined for the `SearchDescriptor`.
 
+_Note: You can change the default base path `/search`. See [Changing the Base Path](#changing-the-base-path)._ 
+
 The easiest way to create a Search Descriptor is to use the `com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder` which provides every options available to configure a `SearchDescriptor`.
 
 #### Configure a new Search Descriptor
@@ -1068,6 +1070,18 @@ public class SampleAppJavaConfiguration implements SearchConfigurer {
 ```
 
 Another solution is to declare your Converter as `@Bean`. This solution is useful when you want to create a Converter which depends on other Beans.
+
+### Changing the Base Path
+
+By default, Spring Data Search defines the Base Path as `/search` and add the Search Descriptor ID. Example: `/search/person`
+
+You can do change the Base Path by setting a single property in application.properties, as follows:
+
+````properties
+spring.data.search.base-path=/api
+````
+
+This changes the Base Path to `/api`. Example: `/api/person`
 
 ---
 
