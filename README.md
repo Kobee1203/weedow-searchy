@@ -603,6 +603,7 @@ You have to add the `SearchDescriptor`s to the Spring Data Search Configuration 
         }
     }
     ```
+
 * Another solution is to add a new `@Bean`. This solution is useful when you want to create a `SearchDescriptor` which depends on other Beans:
     ```java
     @Configuration
@@ -612,6 +613,20 @@ You have to add the `SearchDescriptor`s to the Spring Data Search Configuration 
             return new SearchDescriptorBuilder<Person>(Person.class)
                        .jpaSpecificationExecutor(personRepository)
                        .build();
+        }
+    }
+    ```
+
+* If the `SearchDescriptor` Bean is declared without a specific [JpaSpecificationExecutor](#jpa-specification-executor),
+  an exception may be thrown if the `SearchDescriptor` Bean is initialized before `JpaSpecificationExecutorFactory`.
+  In this case, [@DependsOn](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/DependsOn.html) must be used to prevent the exception:
+    ```java
+    @Configuration
+    public class SearchDescriptorConfiguration {
+        @Bean
+        @DependsOn("jpaSpecificationExecutorFactory")
+        SearchDescriptor<Person> personSearchDescriptor() {
+            return new SearchDescriptorBuilder<Person>(Person.class).build();
         }
     }
     ```

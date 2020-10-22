@@ -26,7 +26,7 @@ import java.lang.reflect.Field
 /**
  * Class to test Bean injection without SearchConfigurer implementation.
  */
-@SpringBootTest
+@SpringBootTest(properties = ["spring.main.web-application-type=servlet"])
 internal class DataSearchAutoConfigurationIntegrationTest {
 
     @Autowired

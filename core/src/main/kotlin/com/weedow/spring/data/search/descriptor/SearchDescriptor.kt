@@ -26,6 +26,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
  *   }
  * }
  * ```
+ *
  * * Another solution is to add a new [@Bean][org.springframework.context.annotation.Bean]. This solution is useful when you want to create a `SearchDescriptor` which depends on other Beans:
  * ```java
  * @Configuration
@@ -35,6 +36,20 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
  *     return new SearchDescriptorBuilder<Person>(Person.class)
  *                      .jpaSpecificationExecutor(personRepository)
  *                      .build();
+ *   }
+ * }
+ * ```
+ *
+ * * If the [SearchDescriptor] Bean is declared without a specific [JpaSpecificationExecutor][org.springframework.data.jpa.repository.JpaSpecificationExecutor],
+ *   an exception may be thrown if the [SearchDescriptor] Bean is initialized before [JpaSpecificationExecutorFactory][com.weedow.spring.data.search.config.JpaSpecificationExecutorFactory].
+ *   In this case, [@DependsOn][org.springframework.context.annotation.DependsOn] must be used to prevent the exception:
+ *```java
+ * @Configuration
+ * public class SearchDescriptorConfiguration {
+ *   @Bean
+ *   @DependsOn("jpaSpecificationExecutorFactory")
+ *   SearchDescriptor<Person> personSearchDescriptor() {
+ *     return new SearchDescriptorBuilder<Person>(Person.class).build();
  *   }
  * }
  * ```

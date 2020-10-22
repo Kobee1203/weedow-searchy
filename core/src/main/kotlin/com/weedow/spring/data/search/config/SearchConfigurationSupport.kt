@@ -32,6 +32,28 @@ open class SearchConfigurationSupport {
         JpaSpecificationExecutorFactory.reset()
     }
 
+    /**
+     * Bean to expose the [JpaSpecificationExecutorFactory].
+     *
+     * It is useful when an application creates an [SearchDescriptor] Bean without a specific [JpaSpecificationExecutor][org.springframework.data.jpa.repository.JpaSpecificationExecutor].
+     * In this case, [@DependsOn][org.springframework.context.annotation.DependsOn] must be used to prevent an exception if the [SearchDescriptor] Bean is initialized before [JpaSpecificationExecutorFactory].
+     *
+     * ```java
+     * @Configuration
+     * public class SearchDescriptorConfiguration {
+     *   @Bean
+     *   @DependsOn("jpaSpecificationExecutorFactory")
+     *   SearchDescriptor<Person> personSearchDescriptor() {
+     *     return new SearchDescriptorBuilder<Person>(Person.class).build();
+     *   }
+     * }
+     * ```
+     */
+    @Bean
+    open fun jpaSpecificationExecutorFactory(): JpaSpecificationExecutorFactory {
+        return JpaSpecificationExecutorFactory
+    }
+
     @Bean
     open fun searchDescriptorService(searchDescriptors: ObjectProvider<SearchDescriptor<*>>): SearchDescriptorService {
         val searchDescriptorService: ConfigurableSearchDescriptorService = DefaultSearchDescriptorService()

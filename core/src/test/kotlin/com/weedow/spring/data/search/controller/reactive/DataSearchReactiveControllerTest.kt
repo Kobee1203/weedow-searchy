@@ -1,4 +1,4 @@
-package com.weedow.spring.data.search.controller
+package com.weedow.spring.data.search.controller.reactive
 
 import com.nhaarman.mockitokotlin2.*
 import com.weedow.spring.data.search.common.dto.PersonDto
@@ -6,7 +6,6 @@ import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.config.SearchProperties
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
-import com.weedow.spring.data.search.example.PersonDtoMapper
 import com.weedow.spring.data.search.exception.SearchDescriptorNotFound
 import com.weedow.spring.data.search.exception.ValidationException
 import com.weedow.spring.data.search.expression.ExpressionMapper
@@ -23,13 +22,17 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Spy
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.HttpStatus
-import org.springframework.test.util.ReflectionTestUtils
 import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
+import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.reactive.result.method.RequestMappingInfo
+import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping
 
 @ExtendWith(MockitoExtension::class)
-internal class DataSearchControllerTest {
+internal class DataSearchReactiveControllerTest {
 
     @Mock
     lateinit var searchDescriptorService: SearchDescriptorService
@@ -43,12 +46,24 @@ internal class DataSearchControllerTest {
     @Mock
     lateinit var dataSearchValidationService: DataSearchValidationService
 
+    @Spy
+    private val searchProperties: SearchProperties = SearchProperties()
+
+    @Mock
+    lateinit var requestMappingHandlerMapping: RequestMappingHandlerMapping
+
     @InjectMocks
-    lateinit var dataSearchController: DataSearchController
+    lateinit var dataSearchController: DataSearchReactiveController
 
     @BeforeEach
     fun setUp() {
-        ReflectionTestUtils.setField(dataSearchController, "basePath", SearchProperties.DEFAULT_BASE_PATH)
+        whenever(searchProperties.basePath).thenReturn(SearchProperties.DEFAULT_BASE_PATH)
+
+        val mapping = RequestMappingInfo
+                .paths("/search/{searchDescriptorId}")
+                .methods(RequestMethod.GET)
+                .build()
+        verify(requestMappingHandlerMapping).registerMapping(mapping, dataSearchController, DataSearchReactiveController::class.java.getMethod("search", String::class.java, MultiValueMap::class.java))
     }
 
     @Test
