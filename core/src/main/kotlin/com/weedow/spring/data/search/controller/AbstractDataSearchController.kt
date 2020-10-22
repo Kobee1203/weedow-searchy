@@ -1,6 +1,7 @@
 package com.weedow.spring.data.search.controller
 
 import com.weedow.spring.data.search.config.SearchProperties
+import com.weedow.spring.data.search.controller.servlet.DataSearchController
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
 import com.weedow.spring.data.search.exception.SearchDescriptorNotFound
@@ -39,6 +40,8 @@ abstract class AbstractDataSearchController<M>(
 
     init {
         registerMapping("${searchProperties.basePath}/{searchDescriptorId}")
+
+        if (log.isDebugEnabled) log.debug("Controller \"$javaClass\" initialized")
     }
 
     protected abstract fun createRequestMapping(dataSearchPath: String): M

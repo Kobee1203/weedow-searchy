@@ -5,11 +5,8 @@ import com.weedow.spring.data.search.controller.AbstractDataSearchController
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.service.DataSearchService
-import com.weedow.spring.data.search.utils.klogger
 import com.weedow.spring.data.search.validation.DataSearchValidationService
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 
 
 /**
@@ -23,8 +20,8 @@ class DataSearchController(
         dataSearchService: DataSearchService,
         dataSearchValidationService: DataSearchValidationService,
         searchProperties: SearchProperties,
-        requestMappingHandlerMapping: RequestMappingHandlerMapping
-) : AbstractDataSearchController<RequestMappingInfo>(
+        requestMappingHandlerMapping: org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
+) : AbstractDataSearchController<org.springframework.web.servlet.mvc.method.RequestMappingInfo>(
         searchDescriptorService,
         expressionMapper,
         dataSearchService,
@@ -33,16 +30,8 @@ class DataSearchController(
         requestMappingHandlerMapping::registerMapping
 ) {
 
-    companion object {
-        private val log by klogger()
-    }
-
-    init {
-        if (log.isDebugEnabled) log.debug("Controller \"$javaClass\" initialized")
-    }
-
-    override fun createRequestMapping(dataSearchPath: String): RequestMappingInfo {
-        return RequestMappingInfo
+    override fun createRequestMapping(dataSearchPath: String): org.springframework.web.servlet.mvc.method.RequestMappingInfo {
+        return org.springframework.web.servlet.mvc.method.RequestMappingInfo
                 .paths(dataSearchPath)
                 .methods(RequestMethod.GET)
                 .build()
