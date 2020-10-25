@@ -1,11 +1,10 @@
 package com.weedow.spring.data.search.join
 
-import com.weedow.spring.data.search.utils.EntityUtils
-import com.weedow.spring.data.search.utils.FIELD_PATH_SEPARATOR
-import com.weedow.spring.data.search.utils.klogger
+import com.weedow.spring.data.search.utils.*
 import org.hibernate.query.criteria.internal.JoinImplementor
 import java.lang.reflect.Field
 import javax.persistence.criteria.From
+import javax.persistence.criteria.MapJoin
 import javax.persistence.criteria.Path
 import javax.persistence.criteria.Root
 
@@ -58,13 +57,22 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
             parentPath = EntityJoinUtils.getFieldPath(parentPath, parent)
         }
 
-        val joinName = EntityJoinUtils.getJoinName(join.javaType, join.javaType.getDeclaredField(fieldName))
-        val entityJoin = joins[joinName]
-        if (entityJoin != null) {
-            getOrCreateJoin(join, parentPath, fieldName)
-        }
+        if (MapJoin::class.java.isAssignableFrom(join.javaClass)) {
+            val mapJoin = join as MapJoin<*, *, *>
+            return when (fieldName) {
+                MAP_KEY -> mapJoin.key()
+                MAP_VALUE -> mapJoin.value()
+                else -> throw IllegalArgumentException("Invalid field path: $fieldPath. The part '$fieldName' is not authorized for a parent field of type Map")
+            }
+        } else {
+            val joinName = EntityJoinUtils.getJoinName(join.javaType, join.javaType.getDeclaredField(fieldName))
+            val entityJoin = joins[joinName]
+            if (entityJoin != null) {
+                getOrCreateJoin(join, parentPath, fieldName)
+            }
 
-        return join.get<Any>(fieldName)
+            return join.get<Any>(fieldName)
+        }
     }
 
     override fun getJoins(filter: (EntityJoin) -> Boolean): Map<String, EntityJoin> {

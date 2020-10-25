@@ -7,8 +7,12 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.common.model.Address
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.common.model.Vehicle
+import com.weedow.spring.data.search.utils.MAP_KEY
+import com.weedow.spring.data.search.utils.MAP_VALUE
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.query.criteria.internal.JoinImplementor
+import org.hibernate.query.criteria.internal.MapJoinImplementor
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
@@ -27,7 +31,7 @@ internal class EntityJoinsImplTest {
         private const val VEHICLES_FIELD = "vehicles"
         private const val COUNTRY_FIELD = "country"
         private const val NICK_NAMES_FIELD = "nickNames"
-
+        private const val CHARACTERISTICS_FIELD = "characteristics"
         private const val COUNTRY_PATH = "addressEntities.country"
     }
 
@@ -82,6 +86,63 @@ internal class EntityJoinsImplTest {
         val path = entityJoins.getPath(ADDRESS_ENTITIES_FIELD, root)
 
         assertThat(path).isEqualTo(expectedPath)
+
+        verify(root).joins
+        verify(root).fetches
+        verifyNoMoreInteractions(root)
+    }
+
+    @Test
+    fun get_path_for_map_key_field() {
+        get_path_for_map_field(MAP_KEY) { mapJoin: MapJoinImplementor<Any, Any, Any>, expectedPath: Path<Any> ->
+            whenever(mapJoin.key()).thenReturn(expectedPath)
+        }
+    }
+
+    @Test
+    fun get_path_for_map_value_field() {
+        get_path_for_map_field(MAP_VALUE) { mapJoin: MapJoinImplementor<Any, Any, Any>, expectedPath: Path<Any> ->
+            whenever(mapJoin.value()).thenReturn(expectedPath)
+        }
+    }
+
+    private fun get_path_for_map_field(specialKey: String, stubbingMethod: (MapJoinImplementor<Any, Any, Any>, Path<Any>) -> Unit) {
+        val rootClass = Person::class.java
+        val entityJoins = EntityJoinsImpl(rootClass)
+
+        val expectedPath = mock<Path<Any>>()
+
+        val root = mock<Root<Person>>()
+        whenever(root.javaType).thenReturn(rootClass)
+        val mapJoin = mock<MapJoinImplementor<Any, Any, Any>>()
+        whenever(root.join<Any, Any>(CHARACTERISTICS_FIELD, JoinType.LEFT)).thenReturn(mapJoin)
+        // Custom stubbing method
+        stubbingMethod(mapJoin, expectedPath)
+
+        val path = entityJoins.getPath("$CHARACTERISTICS_FIELD.$specialKey", root)
+
+        assertThat(path).isEqualTo(expectedPath)
+
+        verify(root).joins
+        verify(root).fetches
+        verifyNoMoreInteractions(root)
+    }
+
+    @Test
+    fun throw_exception_when_field_path_invalid_for_map() {
+        val rootClass = Person::class.java
+        val entityJoins = EntityJoinsImpl(rootClass)
+
+        val root = mock<Root<Person>>()
+        whenever(root.javaType).thenReturn(rootClass)
+        val mapJoin = mock<MapJoinImplementor<Any, Any, Any>>()
+        whenever(root.join<Any, Any>(CHARACTERISTICS_FIELD, JoinType.LEFT)).thenReturn(mapJoin)
+
+        val fieldPath = "$CHARACTERISTICS_FIELD.unknown"
+        Assertions.assertThatThrownBy { entityJoins.getPath(fieldPath, root) }
+                .isInstanceOf(IllegalArgumentException::class.java)
+                .hasMessageStartingWith("Invalid field path: $fieldPath. The part 'unknown' is not authorized for a parent field of type Map")
+                .hasNoCause()
 
         verify(root).joins
         verify(root).fetches

@@ -5,13 +5,17 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.join.EntityJoins
+import com.weedow.spring.data.search.utils.MAP_KEY
+import com.weedow.spring.data.search.utils.MAP_VALUE
 import com.weedow.spring.data.search.utils.NullValue
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.groups.Tuple
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.junit.jupiter.MockitoExtension
 import javax.persistence.criteria.*
 import javax.persistence.criteria.Expression
@@ -69,6 +73,31 @@ internal class SimpleExpressionTest {
         assertThat(result).isEqualTo(predicate)
     }
 
+    @CsvSource("$MAP_KEY,eyes", "$MAP_VALUE,blue")
+    @ParameterizedTest
+    fun to_specification_with_equals_operator_for_map_field(specialKey: String, fieldValue: String) {
+        val fieldPath = "characteristics.$specialKey"
+        val fieldInfo = FieldInfo(fieldPath, specialKey, Map::class.java)
+
+        val entityJoins = mock<EntityJoins>()
+
+        val root = mock<Root<Person>>()
+        val criteriaBuilder = mock<CriteriaBuilder>()
+
+        val path = mock<MapJoin<Person, String, String>>()
+        whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
+
+        val predicate = mock<Predicate>()
+        whenever(criteriaBuilder.equal(path, fieldValue)).thenReturn(predicate)
+
+        val expression = SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue)
+        val specification = expression.toSpecification<Person>(entityJoins)
+
+        val result = specification.toPredicate(root, mock(), criteriaBuilder)
+
+        assertThat(result).isEqualTo(predicate)
+    }
+
     @Test
     fun to_specification_with_equals_operator_and_null_value() {
         val fieldPath = "firstName"
@@ -110,6 +139,32 @@ internal class SimpleExpressionTest {
 
         val predicate = mock<Predicate>()
         whenever(criteriaBuilder.isEmpty(path)).thenReturn(predicate)
+
+        val expression = SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue)
+        val specification = expression.toSpecification<Person>(entityJoins)
+
+        val result = specification.toPredicate(root, mock(), criteriaBuilder)
+
+        assertThat(result).isEqualTo(predicate)
+    }
+
+    @ValueSource(strings = [MAP_KEY, MAP_VALUE])
+    @ParameterizedTest
+    fun to_specification_with_equals_operator_for_map_field_and_null_value(specialKey: String) {
+        val fieldPath = "characteristics.$specialKey"
+        val fieldValue = NullValue
+        val fieldInfo = FieldInfo(fieldPath, specialKey, Map::class.java)
+
+        val entityJoins = mock<EntityJoins>()
+
+        val root = mock<Root<Person>>()
+        val criteriaBuilder = mock<CriteriaBuilder>()
+
+        val path = mock<MapJoin<Person, String, String>>()
+        whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
+
+        val predicate = mock<Predicate>()
+        whenever(criteriaBuilder.isNull(path)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue)
         val specification = expression.toSpecification<Person>(entityJoins)

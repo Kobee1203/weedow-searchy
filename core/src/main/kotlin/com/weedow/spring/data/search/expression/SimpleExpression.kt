@@ -42,20 +42,28 @@ internal data class SimpleExpression(
     }
 
     private fun equals(criteriaBuilder: CriteriaBuilder, path: Path<*>, value: Any, fieldInfo: FieldInfo): Predicate {
-        val field = fieldInfo.parentClass.getDeclaredField(fieldInfo.fieldName)
-        return if (value === NullValue) {
-            if (Collection::class.java.isAssignableFrom(field.type)) {
-                @Suppress("UNCHECKED_CAST")
-                criteriaBuilder.isEmpty(path as javax.persistence.criteria.Expression<Collection<*>>)
-            } else {
+        return if (Map::class.java.isAssignableFrom(fieldInfo.parentClass)) {
+            if (value === NullValue) {
                 criteriaBuilder.isNull(path)
-            }
-        } else {
-            if (EntityUtils.isElementCollection(field)) {
-                @Suppress("UNCHECKED_CAST")
-                criteriaBuilder.isMember(value, path as javax.persistence.criteria.Expression<Collection<*>>)
             } else {
                 criteriaBuilder.equal(path, value)
+            }
+        } else {
+            val field = fieldInfo.parentClass.getDeclaredField(fieldInfo.fieldName)
+            if (value === NullValue) {
+                if (Collection::class.java.isAssignableFrom(field.type)) {
+                    @Suppress("UNCHECKED_CAST")
+                    criteriaBuilder.isEmpty(path as javax.persistence.criteria.Expression<Collection<*>>)
+                } else {
+                    criteriaBuilder.isNull(path)
+                }
+            } else {
+                if (EntityUtils.isElementCollection(field) && !Map::class.java.isAssignableFrom(field.type)) {
+                    @Suppress("UNCHECKED_CAST")
+                    criteriaBuilder.isMember(value, path as javax.persistence.criteria.Expression<Collection<*>>)
+                } else {
+                    criteriaBuilder.equal(path, value)
+                }
             }
         }
     }
