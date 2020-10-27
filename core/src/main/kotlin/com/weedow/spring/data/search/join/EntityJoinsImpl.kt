@@ -51,24 +51,24 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         val parents = parts.subList(0, parts.size - 1)
 
         var parentPath = ""
-        var join = root as From<*, *>
+        var join = root as Path<*>
         for (parent in parents) {
-            join = getOrCreateJoin(join, parentPath, parent)
+            join = if (MapJoin::class.java.isAssignableFrom(join.javaClass)) {
+                getMapJoinPath(join as MapJoin<*, *, *>, parent)
+            } else {
+                getOrCreateJoin(join as From<*, *>, parentPath, parent)
+            }
             parentPath = EntityJoinUtils.getFieldPath(parentPath, parent)
         }
 
         if (MapJoin::class.java.isAssignableFrom(join.javaClass)) {
             val mapJoin = join as MapJoin<*, *, *>
-            return when (fieldName) {
-                MAP_KEY -> mapJoin.key()
-                MAP_VALUE -> mapJoin.value()
-                else -> throw IllegalArgumentException("Invalid field path: $fieldPath. The part '$fieldName' is not authorized for a parent field of type Map")
-            }
+            return getMapJoinPath(mapJoin, fieldName)
         } else {
             val joinName = EntityJoinUtils.getJoinName(join.javaType, join.javaType.getDeclaredField(fieldName))
             val entityJoin = joins[joinName]
             if (entityJoin != null) {
-                getOrCreateJoin(join, parentPath, fieldName)
+                getOrCreateJoin(join as From<*, *>, parentPath, fieldName)
             }
 
             return join.get<Any>(fieldName)
@@ -79,8 +79,17 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         return joins.filter { filter(it.value) }
     }
 
+    private fun getMapJoinPath(mapJoin: MapJoin<*, *, *>, attributeName: String): Path<*> {
+        return when (attributeName) {
+            MAP_KEY -> mapJoin.key()
+            MAP_VALUE -> mapJoin.value()
+            else -> throw IllegalArgumentException("The attribute name '$attributeName' is not authorized for a parent Map Join")
+        }
+    }
+
     private fun getOrCreateJoin(from: From<*, *>, parentPath: String, attributeName: String): JoinImplementor<*, *> {
         val entityClass = from.javaType
+
         val field = entityClass.getDeclaredField(attributeName)
 
         val joinName = EntityJoinUtils.getJoinName(entityClass, field)
