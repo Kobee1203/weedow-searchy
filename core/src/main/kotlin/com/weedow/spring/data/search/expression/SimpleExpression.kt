@@ -1,7 +1,6 @@
 package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.join.EntityJoins
-import com.weedow.spring.data.search.utils.EntityUtils
 import com.weedow.spring.data.search.utils.NullValue
 import com.weedow.spring.data.search.utils.klogger
 import org.springframework.data.jpa.domain.Specification
@@ -43,6 +42,7 @@ internal data class SimpleExpression(
 
     private fun equals(criteriaBuilder: CriteriaBuilder, path: Path<*>, value: Any, fieldInfo: FieldInfo): Predicate {
         return if (Map::class.java.isAssignableFrom(fieldInfo.parentClass)) {
+            // Handle the Map special keys (key, value)
             if (value === NullValue) {
                 criteriaBuilder.isNull(path)
             } else {
@@ -51,14 +51,14 @@ internal data class SimpleExpression(
         } else {
             val field = fieldInfo.parentClass.getDeclaredField(fieldInfo.fieldName)
             if (value === NullValue) {
-                if (Collection::class.java.isAssignableFrom(field.type)) {
+                if (Collection::class.java.isAssignableFrom(field.type) || Map::class.java.isAssignableFrom(field.type)) {
                     @Suppress("UNCHECKED_CAST")
                     criteriaBuilder.isEmpty(path as javax.persistence.criteria.Expression<Collection<*>>)
                 } else {
                     criteriaBuilder.isNull(path)
                 }
             } else {
-                if (EntityUtils.isElementCollection(field) && !Map::class.java.isAssignableFrom(field.type)) {
+                if (Collection::class.java.isAssignableFrom(field.type)) {
                     @Suppress("UNCHECKED_CAST")
                     criteriaBuilder.isMember(value, path as javax.persistence.criteria.Expression<Collection<*>>)
                 } else {
