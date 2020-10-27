@@ -24,7 +24,7 @@ internal data class SimpleExpression(
     }
 
     override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
-        return Specification { root: Root<T>, query: CriteriaQuery<*>, criteriaBuilder: CriteriaBuilder ->
+        return Specification { root: Root<T>, _: CriteriaQuery<*>, criteriaBuilder: CriteriaBuilder ->
             val path = entityJoins.getPath(fieldInfo.fieldPath, root)
 
             when (operator) {

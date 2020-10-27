@@ -3,6 +3,7 @@ package com.weedow.spring.data.search.sample.java.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.Map;
 
 @Entity
 public class Vehicle extends JpaPersistable<Long> {
@@ -20,6 +21,13 @@ public class Vehicle extends JpaPersistable<Long> {
     @ManyToOne(optional = false)
     @JsonIgnoreProperties({"vehicles"})
     private Person person;
+
+    @OneToMany(cascade = {CascadeType.ALL})
+    @JoinTable(name = "feature_mapping",
+            joinColumns = {@JoinColumn(name = "vehicle_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "feature_id", referencedColumnName = "id")})
+    @MapKey(name = "name") // Feature name
+    private Map<String, Feature> features;
 
     public VehicleType getVehicleType() {
         return vehicleType;
@@ -54,6 +62,15 @@ public class Vehicle extends JpaPersistable<Long> {
 
     public Vehicle setPerson(Person person) {
         this.person = person;
+        return this;
+    }
+
+    public Map<String, Feature> getFeatures() {
+        return features;
+    }
+
+    public Vehicle setFeatures(Map<String, Feature> features) {
+        this.features = features;
         return this;
     }
 }

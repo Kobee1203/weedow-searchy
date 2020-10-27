@@ -26,9 +26,7 @@ class Vehicle(
         @MapKey(name = "name") // Feature name
         val features: Map<String, Feature>? = null
 
-) : JpaPersistable<Long>() {
-
-}
+) : JpaPersistable<Long>()
 
 enum class VehicleType {
     CAR, MOTORBIKE, SCOOTER, VAN, TRUCK

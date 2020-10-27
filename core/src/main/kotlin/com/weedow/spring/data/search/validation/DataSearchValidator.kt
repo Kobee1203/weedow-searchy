@@ -46,7 +46,7 @@ interface DataSearchValidator {
      * The given [DataSearchErrors] instance can be used to report any resulting validation errors.
      *
      * @param values collection of values to be validated.
-     * @param fieldExpression [FieldExpression] related to the [value]
+     * @param fieldExpression [FieldExpression] related to the [values]
      * @param errors [DataSearchErrors] instance used to report any resulting validation errors
      */
     @JvmDefault

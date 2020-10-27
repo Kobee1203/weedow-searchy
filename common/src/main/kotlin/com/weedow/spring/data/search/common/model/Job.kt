@@ -27,6 +27,4 @@ class Job(
         @JsonIgnoreProperties("jobEntity")
         val person: Person
 
-) : JpaPersistable<Long>() {
-
-}
+) : JpaPersistable<Long>()

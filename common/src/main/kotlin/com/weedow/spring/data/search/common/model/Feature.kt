@@ -18,6 +18,4 @@ class Feature(
         @Column(name = "value")
         val metadata: Map<String, String>? = null
 
-) : JpaPersistable<Long>() {
-
-}
+) : JpaPersistable<Long>()

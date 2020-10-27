@@ -15,7 +15,7 @@ class ValidationException(
 
     companion object {
         private fun format(errors: Collection<DataSearchError>): String {
-            val locale = LocaleContextHolder.getLocale();
+            val locale = LocaleContextHolder.getLocale()
             return errors.joinToString(
                     separator = ", ",
                     prefix = "Validation Errors: [",

@@ -297,11 +297,11 @@ public class Person {
     private Set<String> nickNames;
 
     @ElementCollection
-    @CollectionTable(name = "person_phone_numbers", joinColumns = [JoinColumn(name = "person_id")])
+    @CollectionTable(name = "person_phone_numbers", joinColumns = {@JoinColumn(name = "person_id")})
     @Column(name = "phone_number")
     private Set<String> phoneNumbers;
 
-    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "person_address", joinColumns = {JoinColumn(name = "personId")}, inverseJoinColumns = {JoinColumn(name = "addressId")})
     @JsonIgnoreProperties("persons")
     private Set<Address> addressEntities;
@@ -780,9 +780,9 @@ The base interface to use the Spring Data JPA Specifications is [JpaSpecificatio
 Spring Data Search uses the following method of this interface:
 ```java
 public interface JpaSpecificationExecutor<T> {
-    ...
+    //...//
     List<T> findAll(Specification<T> spec);
-    ...
+    //...//
 }
 ```
 
@@ -851,13 +851,13 @@ The `Person.java` Entity has relationships with the `Job.java` Entity and the `V
 ```java
 @Entity
 public class Person {
-    ...
+    //...//
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Job jobEntity;
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Vehicle> vehicles;
-    ...
+    //...//
 }
 
 @Entity
@@ -994,10 +994,10 @@ Let's say you manage Persons with following Entity:
 ```java
 @Entity
 public class Person {
-    ...
+    //...//
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Job jobEntity;
-    ...
+    //...//
 }
 ```
 

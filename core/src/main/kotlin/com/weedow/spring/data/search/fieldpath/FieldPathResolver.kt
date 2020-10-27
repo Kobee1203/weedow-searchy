@@ -1,7 +1,7 @@
 package com.weedow.spring.data.search.fieldpath
 
 /**
- * Interface to resolve the field path information from the given [field path][fieldPath]
+ * Interface to resolve the field path information from the given field path.
  */
 interface FieldPathResolver {
 

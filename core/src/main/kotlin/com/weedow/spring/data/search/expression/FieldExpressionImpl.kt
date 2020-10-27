@@ -8,5 +8,4 @@ data class FieldExpressionImpl(
         override val value: Any,
         override val operator: Operator,
         override val negated: Boolean
-) : FieldExpression {
-}
+) : FieldExpression

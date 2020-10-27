@@ -79,7 +79,7 @@ class SearchDescriptorBuilder<T>(
     /**
      * Default [SearchDescriptor] implementation used by [SearchDescriptorBuilder].
      */
-    private data class DefaultSearchDescriptor<T> internal constructor(
+    private data class DefaultSearchDescriptor<T>(
             override val id: String,
             override val entityClass: Class<T>,
             override val validators: List<DataSearchValidator>,
