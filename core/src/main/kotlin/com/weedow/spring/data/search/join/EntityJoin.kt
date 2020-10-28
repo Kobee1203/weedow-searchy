@@ -17,6 +17,5 @@ data class EntityJoin(val fieldPath: String,
                 field: Field,
                 joinType: JoinType = JoinInfo.DEFAULT_JOIN_TYPE,
                 fetched: Boolean = JoinInfo.DEFAULT_FETCH_MODE
-    ) : this(EntityJoinUtils.getFieldPath(parentPath, field.name), field.name, EntityJoinUtils.getJoinName(entityClass, field), joinType, fetched) {
-    }
+    ) : this(EntityJoinUtils.getFieldPath(parentPath, field.name), field.name, EntityJoinUtils.getJoinName(entityClass, field), joinType, fetched)
 }

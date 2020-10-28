@@ -10,7 +10,7 @@ interface AliasResolutionService {
     /**
      * Resolve the given alias to the name of the field present in the given Class.
      *
-     * If the field name related to the alias is not found, the mathod returns the given alias.
+     * If the field name related to the alias is not found, the method returns the given alias.
      *
      * @param parentClass Class where to find the field
      * @param alias alias to be resolved

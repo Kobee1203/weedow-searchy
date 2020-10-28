@@ -43,10 +43,17 @@ object EntityUtils {
     fun getFieldClass(field: Field): Class<*> {
         var fieldClass = field.type
         if (Collection::class.java.isAssignableFrom(fieldClass)) {
-            val genericType = field.genericType as ParameterizedType
-            fieldClass = genericType.actualTypeArguments[0] as Class<*>
+            fieldClass = getGenericTypes(field)[0]
         }
         return fieldClass
+    }
+
+    /**
+     * Gets the generic types of the given field.
+     */
+    fun getGenericTypes(field: Field): List<Class<*>> {
+        val genericType = field.genericType as ParameterizedType
+        return genericType.actualTypeArguments.map { it as Class<*> }
     }
 
     /**

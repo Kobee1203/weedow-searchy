@@ -5,6 +5,8 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.alias.AliasResolutionService
 import com.weedow.spring.data.search.common.model.Address
 import com.weedow.spring.data.search.common.model.Person
+import com.weedow.spring.data.search.utils.MAP_KEY
+import com.weedow.spring.data.search.utils.MAP_VALUE
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -48,6 +50,51 @@ internal class FieldPathResolverImplTest {
 
         val resolvedFieldPath = "addressEntities.country"
         assertThat(fieldPathInfo).isEqualTo(FieldPathInfo(resolvedFieldPath, "country", CountryCode::class.java, parentClass))
+    }
+
+    @Test
+    fun resolveFieldPath_for_map_key() {
+        val rootClass = Person::class.java
+        val fieldPath = "characteristics.$MAP_KEY"
+        val parentClass = Map::class.java
+
+        whenever(aliasResolutionService.resolve(rootClass, "characteristics")).thenReturn("characteristics")
+        whenever(aliasResolutionService.resolve(parentClass, MAP_KEY)).thenReturn(MAP_KEY)
+
+        val fieldPathInfo = fieldPathResolver.resolveFieldPath(rootClass, fieldPath)
+
+        val resolvedFieldPath = "characteristics.$MAP_KEY"
+        assertThat(fieldPathInfo).isEqualTo(FieldPathInfo(resolvedFieldPath, MAP_KEY, String::class.java, parentClass))
+    }
+
+    @Test
+    fun resolveFieldPath_for_map_value() {
+        val rootClass = Person::class.java
+        val fieldPath = "characteristics.$MAP_VALUE"
+        val parentClass = Map::class.java
+
+        whenever(aliasResolutionService.resolve(rootClass, "characteristics")).thenReturn("characteristics")
+        whenever(aliasResolutionService.resolve(parentClass, MAP_VALUE)).thenReturn(MAP_VALUE)
+
+        val fieldPathInfo = fieldPathResolver.resolveFieldPath(rootClass, fieldPath)
+
+        val resolvedFieldPath = "characteristics.$MAP_VALUE"
+        assertThat(fieldPathInfo).isEqualTo(FieldPathInfo(resolvedFieldPath, MAP_VALUE, String::class.java, parentClass))
+    }
+
+    @Test
+    fun throw_exception_when_field_path_unresolved_for_map() {
+        val rootClass = Person::class.java
+        val fieldPath = "characteristics.unknown"
+        val parentClass = Map::class.java
+
+        whenever(aliasResolutionService.resolve(rootClass, "characteristics")).thenReturn("characteristics")
+        whenever(aliasResolutionService.resolve(parentClass, "unknown")).thenReturn("unknown")
+
+        assertThatThrownBy { fieldPathResolver.resolveFieldPath(rootClass, fieldPath) }
+                .isInstanceOf(IllegalArgumentException::class.java)
+                .hasMessageStartingWith("Invalid field path: $fieldPath. The part 'unknown' is not authorized for a parent field of type Map")
+                .hasNoCause()
     }
 
     @Test

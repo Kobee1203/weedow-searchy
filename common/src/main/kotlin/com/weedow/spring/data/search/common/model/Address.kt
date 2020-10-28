@@ -22,5 +22,4 @@ class Address(
         @JsonIgnoreProperties("addressEntities")
         val persons: Set<Person>
 
-) : JpaPersistable<Long>() {
-}
+) : JpaPersistable<Long>()

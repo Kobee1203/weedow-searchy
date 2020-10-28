@@ -69,7 +69,7 @@ interface Initializer<T> {
 
             // Check if the object is initialized
             if (!Hibernate.isInitialized(obj)) {
-                Hibernate.initialize(obj);
+                Hibernate.initialize(obj)
             }
 
             // Initialize recursively
@@ -144,12 +144,12 @@ class MapInitializer(
         private val entityInitializer: EntityInitializer
 ) : Initializer<Map<*, *>> {
 
-    override fun doInitialize(map: Map<*, *>, initializedObjects: IdentitySet) {
-        map.keys.forEach {
+    override fun doInitialize(obj: Map<*, *>, initializedObjects: IdentitySet) {
+        obj.keys.forEach {
             entityInitializer.initialize(it!!, initializedObjects)
         }
 
-        map.values.forEach {
+        obj.values.forEach {
             entityInitializer.initialize(it!!, initializedObjects)
         }
     }
@@ -162,8 +162,8 @@ class CollectionInitializer(
         private val entityInitializer: EntityInitializer
 ) : Initializer<Collection<*>> {
 
-    override fun doInitialize(coll: Collection<*>, initializedObjects: IdentitySet) {
-        coll.forEach { item ->
+    override fun doInitialize(obj: Collection<*>, initializedObjects: IdentitySet) {
+        obj.forEach { item ->
             entityInitializer.initialize(item!!, initializedObjects)
         }
     }

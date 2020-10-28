@@ -297,11 +297,11 @@ public class Person {
     private Set<String> nickNames;
 
     @ElementCollection
-    @CollectionTable(name = "person_phone_numbers", joinColumns = [JoinColumn(name = "person_id")])
+    @CollectionTable(name = "person_phone_numbers", joinColumns = {@JoinColumn(name = "person_id")})
     @Column(name = "phone_number")
     private Set<String> phoneNumbers;
 
-    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "person_address", joinColumns = {JoinColumn(name = "personId")}, inverseJoinColumns = {JoinColumn(name = "addressId")})
     @JsonIgnoreProperties("persons")
     private Set<Address> addressEntities;
@@ -311,6 +311,14 @@ public class Person {
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Vehicle> vehicles;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "characteristic_mapping",
+            joinColumns = {@JoinColumn(name = "person_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "characteristic_name")
+    @Column(name = "value")
+    private Map<String, String> characteristics;
 
     // Getters/Setters
 }
@@ -388,6 +396,38 @@ public class Vehicle {
     @ManyToOne(optional = false)
     private String person;
 
+    @OneToMany(cascade = {CascadeType.ALL})
+    @JoinTable(name = "feature_mapping",
+            joinColumns = {@JoinColumn(name = "vehicle_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "feature_id", referencedColumnName = "id")})
+    @MapKey(name = "name") // Feature name
+    private Map<String, Feature> features;
+
+    // Getters/Setters
+}
+
+@Entity
+public class Feature {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    @Column(nullable = false)
+    private String description;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "metadata_mapping",
+            joinColumns = {@JoinColumn(referencedColumnName = "id", name = "feature_id")}
+    )
+    @MapKeyColumn(name = "metadata_name")
+    @Column(name = "value")
+    private Map<String, String> metadata;
+
     // Getters/Setters
 }
 
@@ -401,7 +441,11 @@ You can search for entities by adding query parameters representing entity field
 
 To search on nested fields, you must concatenate the deep fields separated by the dot '`.`'.\
 _Example: The `Person` Entity contains a property of the `Address` Entity that is named `addressEntities`, and we search for Persons who live in 'Paris'_:\
-/search?`addressEntities.city='Paris'`
+/search?`addressEntities.city=Paris`
+
+To search on fields with a `Map` type, you have to use the special keys `key` or `value` to query the keys or values respectively.
+_Example: The `Person` Entity contains a property of type `Map` that is named `characteristics`, and we search for Persons who have 'blue eyes':_\
+/search?`characteristics.key=eyes&characteristics.value=blue`
 
 This mode is limited to the use of the `AND` operator between each field criteria.\
 Each field criteria is limited to the use of the `EQUALS` operator and the `IN` operator.
@@ -413,9 +457,11 @@ Each field criteria is limited to the use of the `EQUALS` operator and the `IN` 
 | Persons with the firstName is _'John'_ and lastName is _'Doe'_                                                           | `/search?firstName=John&lastName=Doe`                                                  |
 | Persons whose the vehicle brand is _'Renault'_                                                                           | `/search/person?vehicles.brand=Renault`                                                |
 | Persons whose the vehicle brand is _'Renault'_ and the job company is _'Acme'_                                           | `/search/person?vehicles.brand=Renault&jobEntity.company=Acme`                         |
-| Persons with the firstName is _'John'_ or _'Jane'_, and the vehicle brand is _'Renault'_ and the job company is _'Acme'_ | `/search?firstName=John&firstName=Jane&vehicles.brand=Renault&jobEntity.company=Acme` |
+| Persons with the firstName is _'John'_ or _'Jane'_, and the vehicle brand is _'Renault'_ and the job company is _'Acme'_ | `/search?firstName=John&firstName=Jane&vehicles.brand=Renault&jobEntity.company=Acme`  |
+| Persons who have a vehicle with _'GPS'_<br/>_This will be result from a query on the `feature` field of type `Map`_      | `/search?vehicles.features.value.name=gps`                                             |
 | Persons with the birthday is _'null'_                                                                                    | `/search?birthday=null`                                                                |
 | Persons who don't have jobs                                                                                              | `/search?jobEntity=null`                                                               |
+| Persons who have a vehicle without defined feature in database                                                           | `/search?vehicles.features=null`                                                       |
 
 ### Advanced Query
 You can search for entities by using the query string `query`.
@@ -438,14 +484,15 @@ The value types are the following:
 
 1. <a name="equals-operator"></a> Equals operator `=`
 
-| What you want to query                                              | Example                                               |
-| ------------------------------------------------------------------- | ----------------------------------------------------- |
-| Persons with the first name 'John'                                  | /person?query=`firstName='John'`                      |
-| Persons with the birthday equals to the given `LocalDateTime`       | /person?query=`birthday='1981-03-12T10:36:00'`        |
-| Persons with the hire date equals to the given `OffsetDateTime`     | /person?query=`job.hireDate='2019-09-01T09:00:00Z'`   |
-| Persons who own a car (VehicleType is an Enum)                      | /person?query=`vehicle.vehicleType='CAR'`             |
-| Persons who are 1,74 m tall                                         | /person?query=`height=174`                            |
-| Persons who are actively employed                                   | /person?query=`job.active=true`                       |
+| What you want to query                                              | Example                                                                  |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Persons with the first name 'John'                                  | /person?query=`firstName='John'`                                         |
+| Persons with the birthday equals to the given `LocalDateTime`       | /person?query=`birthday='1981-03-12T10:36:00'`                           |
+| Persons with the hire date equals to the given `OffsetDateTime`     | /person?query=`job.hireDate='2019-09-01T09:00:00Z'`                      |
+| Persons who own a car (VehicleType is an Enum)                      | /person?query=`vehicle.vehicleType='CAR'`                                |
+| Persons who are 1,74 m tall                                         | /person?query=`height=174`                                               |
+| Persons who are actively employed                                   | /person?query=`job.active=true`                                          |
+| Persons who have brown hair<br/>_It uses a field of `Map` type_     | /person?query=`characteristics.key=hair AND characteristics.value=brown` |
 
 1. <a name="not-equals-operator"></a> Not Equals operator `!=`
 
@@ -534,9 +581,9 @@ _Use the wildcard character `*` to match any string with zero or more characters
 
 1. <a name="and-logical-operator"></a> `AND` logical operator
 
-| What you want to query                                                                                                                            | Example                                                                                                  |
-| ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Persons with the first name 'John', with a height greater than 1,60 m, the birthday is the given `LocalDateTime` and who are actively employed | /person?query=`firstName='John' AND height > 160 and birthday='1981-03-12T10:36:00' AND job.active=true` |
+| What you want to query                                                                                                                                         | Example                                                                                                                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Persons with the first name 'John', with blue eyes, with a height greater than 1,60 m, the birthday is the given `LocalDateTime` and who are actively employed | /person?query=`firstName='John' AND characteristics.key='eyes' AND characteristics.value='blue' AND height > 160 and birthday='1981-03-12T10:36:00' AND job.active=true` |
 
 1. <a name="or-logical-operator"></a> `OR` logical operator
 
@@ -780,9 +827,9 @@ The base interface to use the Spring Data JPA Specifications is [JpaSpecificatio
 Spring Data Search uses the following method of this interface:
 ```java
 public interface JpaSpecificationExecutor<T> {
-    ...
+    //...//
     List<T> findAll(Specification<T> spec);
-    ...
+    //...//
 }
 ```
 
@@ -851,13 +898,13 @@ The `Person.java` Entity has relationships with the `Job.java` Entity and the `V
 ```java
 @Entity
 public class Person {
-    ...
+    //...//
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Job jobEntity;
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Vehicle> vehicles;
-    ...
+    //...//
 }
 
 @Entity
@@ -994,10 +1041,10 @@ Let's say you manage Persons with following Entity:
 ```java
 @Entity
 public class Person {
-    ...
+    //...//
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Job jobEntity;
-    ...
+    //...//
 }
 ```
 

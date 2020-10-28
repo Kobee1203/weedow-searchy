@@ -51,7 +51,7 @@ class StringToDateConverter(
     }
 
     override fun convert(source: String): Date {
-        var localDateTime = try {
+        val localDateTime = try {
             val offsetDateTime = OffsetDateTime.parse(source, dateTimeFormatter)
             offsetDateTime.toLocalDateTime()
         } catch (e: DateTimeParseException) {
