@@ -37,7 +37,29 @@
             <outputDirectory>sample-app-kotlin</outputDirectory>
             <unpack>false</unpack>
             <includes>
-                <include>${project.groupId}:*-sample-app-*:jar</include>
+                <include>${project.groupId}:*-sample-app-kotlin:jar</include>
+            </includes>
+        </dependencySet>
+
+        <!-- Sample App Java -->
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <outputDirectory>sample-app-java</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${project.groupId}:*-sample-app-java:jar</include>
+            </includes>
+        </dependencySet>
+
+        <!-- Sample App Reactive -->
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <outputDirectory>sample-app-reactive</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${project.groupId}:*-sample-app-reactive:jar</include>
             </includes>
         </dependencySet>
     </dependencySets>
