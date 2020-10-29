@@ -119,7 +119,7 @@ object ExpressionUtils {
     /**
      * Converts the [FieldExpression] to a formatted [String].
      *
-     * @param [FieldExpression] to be formatted
+     * @param fieldExpression [FieldExpression] to be formatted
      * @return String representing the [FieldExpression]
      */
     fun format(fieldExpression: FieldExpression): String = StringBuilder()

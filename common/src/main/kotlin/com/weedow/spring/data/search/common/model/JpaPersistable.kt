@@ -11,7 +11,7 @@ import javax.persistence.*
 abstract class JpaPersistable<ID : Serializable> : Persistable<ID> {
 
     companion object {
-        private val serialVersionUID = -1L
+        private const val serialVersionUID = -1L
     }
 
     @Id

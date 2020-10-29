@@ -2,8 +2,10 @@ package com.weedow.spring.data.search.service
 
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
+import com.weedow.spring.data.search.common.dto.PersonDto
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
+import com.weedow.spring.data.search.example.PersonDtoMapper
 import com.weedow.spring.data.search.expression.RootExpression
 import com.weedow.spring.data.search.join.EntityJoinManager
 import com.weedow.spring.data.search.join.EntityJoins
@@ -52,5 +54,31 @@ internal class DataSearchServiceImplTest {
         val result = dataSearchService.findAll(rootExpression, searchDescriptor)
 
         assertThat(result).containsExactly(person)
+    }
+
+    @Test
+    fun findAll_with_custom_dto() {
+        val rootExpression = mock<RootExpression<Person>>()
+
+        val jpaSpecificationExecutor = mock<JpaSpecificationExecutor<Person>>()
+
+        val searchDescriptor = SearchDescriptorBuilder.builder<Person>()
+                .entityJoinHandlers(mock())
+                .jpaSpecificationExecutor(jpaSpecificationExecutor)
+                .dtoMapper(PersonDtoMapper())
+                .build()
+
+        val entityJoins = mock<EntityJoins>()
+        whenever(entityJoinManager.computeEntityJoins(searchDescriptor)).thenReturn(entityJoins)
+
+        val specification = mock<Specification<Person>>()
+        whenever(jpaSpecificationService.createSpecification(rootExpression, entityJoins)).thenReturn(specification)
+
+        val person = Person("John", "Doe")
+        whenever(jpaSpecificationExecutor.findAll(specification)).thenReturn(listOf(person))
+
+        val result = dataSearchService.findAll(rootExpression, searchDescriptor)
+
+        assertThat(result).containsExactly(PersonDto.Builder().firstName("John").lastName("Doe").build())
     }
 }

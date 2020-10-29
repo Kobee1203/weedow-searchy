@@ -33,6 +33,16 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webflux</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -53,6 +63,10 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
         </dependency>
 
         <dependency>
@@ -113,6 +127,7 @@
                 <configuration>
                     <listener>true</listener>
                     <visitor>true</visitor>
+                    <outputDirectory>${project.build.directory}/generated-sources/antlr4</outputDirectory>
                     <arguments>
                         <!-- antlr4-maven-plugin confuses package and outputDirectory: https://github.com/antlr/antlr4/issues/2738 -->
                         <argument>-package</argument>

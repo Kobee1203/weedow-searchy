@@ -21,7 +21,7 @@ internal class EntityUtilsTest {
 
         val columnFields = EntityUtils.getFieldsWithAnnotation(Person::class.java, Column::class.java)
         assertThat(columnFields).isNotNull()
-        assertThat(columnFields).hasSize(9)
+        assertThat(columnFields).hasSize(10)
         assertThat(columnFields).containsExactlyInAnyOrder(
                 Person::class.java.getDeclaredField("firstName"),
                 Person::class.java.getDeclaredField("lastName"),
@@ -30,6 +30,7 @@ internal class EntityUtilsTest {
                 Person::class.java.getDeclaredField("height"),
                 Person::class.java.getDeclaredField("weight"),
                 Person::class.java.getDeclaredField("phoneNumbers"),
+                Person::class.java.getDeclaredField("characteristics"),
                 JpaPersistable::class.java.getDeclaredField("createdOn"),
                 JpaPersistable::class.java.getDeclaredField("updatedOn")
         )

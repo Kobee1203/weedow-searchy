@@ -3,6 +3,7 @@ package com.weedow.spring.data.search.sample.config
 import com.weedow.spring.data.search.common.model.Address
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.common.repository.PersonRepository
+import com.weedow.spring.data.search.config.JpaSpecificationExecutorFactory
 import com.weedow.spring.data.search.config.SearchConfigurer
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
@@ -14,6 +15,7 @@ import com.weedow.spring.data.search.validation.validator.EmailValidator
 import com.weedow.spring.data.search.validation.validator.NotEmptyValidator
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.DependsOn
 
 @Configuration
 class SampleAppConfiguration : SearchConfigurer {
@@ -35,6 +37,7 @@ class SampleAppConfiguration : SearchConfigurer {
             .build()
 
     @Bean
+    @DependsOn("jpaSpecificationExecutorFactory")
     fun person3SearchDescriptor(): SearchDescriptor<Person> = SearchDescriptorBuilder.builder<Person>()
             .id("person3")
             .entityJoinHandlers(FetchingAllEntityJoinHandler())
@@ -43,9 +46,10 @@ class SampleAppConfiguration : SearchConfigurer {
     fun addressSearchDescriptor(): SearchDescriptor<Address> = SearchDescriptorBuilder.builder<Address>().build()
 
     @Bean
-    fun address3SearchDescriptor(): SearchDescriptor<Address> = SearchDescriptorBuilder.builder<Address>()
+    fun address3SearchDescriptor(jpaSpecificationExecutorFactory: JpaSpecificationExecutorFactory): SearchDescriptor<Address> = SearchDescriptorBuilder.builder<Address>()
             .id("address2")
             .entityJoinHandlers(FetchingAllEntityJoinHandler())
+            .jpaSpecificationExecutor(jpaSpecificationExecutorFactory.getJpaSpecificationExecutor(Address::class.java))
             .build()
 
 }

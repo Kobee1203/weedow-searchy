@@ -1,7 +1,9 @@
-package com.weedow.spring.data.search.controller
+package com.weedow.spring.data.search.controller.servlet
 
 import com.nhaarman.mockitokotlin2.*
+import com.weedow.spring.data.search.common.dto.PersonDto
 import com.weedow.spring.data.search.common.model.Person
+import com.weedow.spring.data.search.config.SearchProperties
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
 import com.weedow.spring.data.search.exception.ValidationException
@@ -12,31 +14,53 @@ import com.weedow.spring.data.search.expression.RootExpressionImpl
 import com.weedow.spring.data.search.service.DataSearchService
 import com.weedow.spring.data.search.validation.DataSearchError
 import com.weedow.spring.data.search.validation.DataSearchValidationService
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Spy
+import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 
-@WebMvcTest(DataSearchController::class)
+@ExtendWith(MockitoExtension::class)
 internal class DataSearchControllerIntegrationTest {
 
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
-    @MockBean
+    @Mock
     lateinit var searchDescriptorService: SearchDescriptorService
 
-    @MockBean
+    @Mock
     lateinit var expressionMapper: ExpressionMapper
 
-    @MockBean
+    @Mock
     lateinit var dataSearchService: DataSearchService
 
-    @MockBean
+    @Mock
     lateinit var dataSearchValidationService: DataSearchValidationService
+
+    @Spy
+    private val searchProperties: SearchProperties = SearchProperties()
+
+    @Spy
+    private val requestMappingHandlerMapping: RequestMappingHandlerMapping = RequestMappingHandlerMapping()
+
+    @InjectMocks
+    lateinit var dataSearchController: DataSearchController
+
+    private lateinit var mockMvc: MockMvc
+
+    @BeforeEach
+    fun setUp() {
+        whenever(searchProperties.basePath).thenReturn(SearchProperties.DEFAULT_BASE_PATH)
+
+        this.mockMvc = MockMvcBuilders.standaloneSetup(dataSearchController)
+                .setCustomHandlerMapping { requestMappingHandlerMapping }
+                .build()
+    }
 
     @Test
     fun search_with_params() {
@@ -109,7 +133,7 @@ internal class DataSearchControllerIntegrationTest {
         val rootExpression = RootExpressionImpl<Person>(ExpressionUtils.equals(fieldInfo, fieldValue))
         whenever(expressionMapper.toExpression(any(), eq(rootClass))).thenReturn(rootExpression)
 
-        whenever(dataSearchService.findAll(rootExpression, searchDescriptor)).thenReturn(emptyList())
+        whenever(dataSearchService.findAll(rootExpression, searchDescriptor)).thenReturn(emptyList<Any?>())
 
         mockMvc.get("/search/$searchDescriptorId") {
             param(fieldPath, firstName)
@@ -167,6 +191,7 @@ internal class DataSearchControllerIntegrationTest {
         verifyZeroInteractions(dataSearchService)
     }
 
+    @Test
     fun search_with_alias() {
         val rootClass = Person::class.java
         val firstName = "John"
@@ -198,19 +223,17 @@ internal class DataSearchControllerIntegrationTest {
 
     private fun createSearchDescriptor() = SearchDescriptorBuilder.builder<Person>().jpaSpecificationExecutor(mock()).build()
 
-    private fun createPerson(firstName: String, lastName: String): Pair<Person, String> {
+    private fun createPerson(firstName: String, lastName: String): Pair<PersonDto, String> {
         val json = ""
                 .plus("{")
-                .plus("\"id\":null,")
                 .plus("\"firstName\":\"$firstName\",")
                 .plus("\"lastName\":\"$lastName\",")
                 .plus("\"email\":null,")
-                .plus("\"addressEntities\":null,")
-                .plus("\"jobEntity\":null,")
                 .plus("\"phoneNumbers\":null,")
                 .plus("\"nickNames\":null,")
-                .plus("\"new\":true")
+                .plus("\"addresses\":null,")
+                .plus("\"vehicles\":null")
                 .plus("}")
-        return Person(firstName, lastName) to json
+        return PersonDto.Builder().firstName(firstName).lastName(lastName).build() to json
     }
 }

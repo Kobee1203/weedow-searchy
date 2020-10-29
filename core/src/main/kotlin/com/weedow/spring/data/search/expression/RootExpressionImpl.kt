@@ -23,7 +23,7 @@ class RootExpressionImpl<T>(
     }
 
     override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
-        var specification = Specification { root: Root<T>, query: CriteriaQuery<*>, criteriaBuilder: CriteriaBuilder ->
+        var specification = Specification { root: Root<T>, query: CriteriaQuery<*>, _: CriteriaBuilder ->
             query.distinct(true)
 
             val fetchJoins = entityJoins.getJoins(FILTER_FETCH_JOINS)

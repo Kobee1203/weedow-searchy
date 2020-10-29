@@ -70,12 +70,12 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
   <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>spring-data-search</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
   </dependency>
   ```
 * If you have a [Gradle](https://gradle.org/) project, you can add the following dependency in your `build.gradle` file:
   ```groovy
-  implementation "com.weedow:spring-data-search:1.0.0"
+  implementation "com.weedow:spring-data-search:1.0.1"
   ```
 
 ### Getting Started in 5 minutes
@@ -92,12 +92,12 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
     <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>spring-data-search</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
     </dependency>
     ```
     * For [Gradle](https://gradle.org/) project, add the dependency in the `build.gradle` file:
     ```groovy
-    implementation "com.weedow:spring-data-search:1.0.0"
+    implementation "com.weedow:spring-data-search:1.0.1"
     ```
 * Create a new file `Person.java` to add a new JPA Entity `Person` with the following content:
     ```java
@@ -297,11 +297,11 @@ public class Person {
     private Set<String> nickNames;
 
     @ElementCollection
-    @CollectionTable(name = "person_phone_numbers", joinColumns = [JoinColumn(name = "person_id")])
+    @CollectionTable(name = "person_phone_numbers", joinColumns = {@JoinColumn(name = "person_id")})
     @Column(name = "phone_number")
     private Set<String> phoneNumbers;
 
-    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "person_address", joinColumns = {JoinColumn(name = "personId")}, inverseJoinColumns = {JoinColumn(name = "addressId")})
     @JsonIgnoreProperties("persons")
     private Set<Address> addressEntities;
@@ -311,6 +311,14 @@ public class Person {
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Vehicle> vehicles;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "characteristic_mapping",
+            joinColumns = {@JoinColumn(name = "person_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "characteristic_name")
+    @Column(name = "value")
+    private Map<String, String> characteristics;
 
     // Getters/Setters
 }
@@ -388,6 +396,38 @@ public class Vehicle {
     @ManyToOne(optional = false)
     private String person;
 
+    @OneToMany(cascade = {CascadeType.ALL})
+    @JoinTable(name = "feature_mapping",
+            joinColumns = {@JoinColumn(name = "vehicle_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "feature_id", referencedColumnName = "id")})
+    @MapKey(name = "name") // Feature name
+    private Map<String, Feature> features;
+
+    // Getters/Setters
+}
+
+@Entity
+public class Feature {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    @Column(nullable = false)
+    private String description;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "metadata_mapping",
+            joinColumns = {@JoinColumn(referencedColumnName = "id", name = "feature_id")}
+    )
+    @MapKeyColumn(name = "metadata_name")
+    @Column(name = "value")
+    private Map<String, String> metadata;
+
     // Getters/Setters
 }
 
@@ -401,7 +441,11 @@ You can search for entities by adding query parameters representing entity field
 
 To search on nested fields, you must concatenate the deep fields separated by the dot '`.`'.\
 _Example: The `Person` Entity contains a property of the `Address` Entity that is named `addressEntities`, and we search for Persons who live in 'Paris'_:\
-/search?`addressEntities.city='Paris'`
+/search?`addressEntities.city=Paris`
+
+To search on fields with a `Map` type, you have to use the special keys `key` or `value` to query the keys or values respectively.
+_Example: The `Person` Entity contains a property of type `Map` that is named `characteristics`, and we search for Persons who have 'blue eyes':_\
+/search?`characteristics.key=eyes&characteristics.value=blue`
 
 This mode is limited to the use of the `AND` operator between each field criteria.\
 Each field criteria is limited to the use of the `EQUALS` operator and the `IN` operator.
@@ -413,9 +457,11 @@ Each field criteria is limited to the use of the `EQUALS` operator and the `IN` 
 | Persons with the firstName is _'John'_ and lastName is _'Doe'_                                                           | `/search?firstName=John&lastName=Doe`                                                  |
 | Persons whose the vehicle brand is _'Renault'_                                                                           | `/search/person?vehicles.brand=Renault`                                                |
 | Persons whose the vehicle brand is _'Renault'_ and the job company is _'Acme'_                                           | `/search/person?vehicles.brand=Renault&jobEntity.company=Acme`                         |
-| Persons with the firstName is _'John'_ or _'Jane'_, and the vehicle brand is _'Renault'_ and the job company is _'Acme'_ | `/search?firstName=John&firstName=Jane&vehicles.brand=Renault&jobEntity.company=Acme` |
+| Persons with the firstName is _'John'_ or _'Jane'_, and the vehicle brand is _'Renault'_ and the job company is _'Acme'_ | `/search?firstName=John&firstName=Jane&vehicles.brand=Renault&jobEntity.company=Acme`  |
+| Persons who have a vehicle with _'GPS'_<br/>_This will be result from a query on the `feature` field of type `Map`_      | `/search?vehicles.features.value.name=gps`                                             |
 | Persons with the birthday is _'null'_                                                                                    | `/search?birthday=null`                                                                |
 | Persons who don't have jobs                                                                                              | `/search?jobEntity=null`                                                               |
+| Persons who have a vehicle without defined feature in database                                                           | `/search?vehicles.features=null`                                                       |
 
 ### Advanced Query
 You can search for entities by using the query string `query`.
@@ -438,14 +484,15 @@ The value types are the following:
 
 1. <a name="equals-operator"></a> Equals operator `=`
 
-| What you want to query                                              | Example                                               |
-| ------------------------------------------------------------------- | ----------------------------------------------------- |
-| Persons with the first name 'John'                                  | /person?query=`firstName='John'`                      |
-| Persons with the birthday equals to the given `LocalDateTime`       | /person?query=`birthday='1981-03-12T10:36:00'`        |
-| Persons with the hire date equals to the given `OffsetDateTime`     | /person?query=`job.hireDate='2019-09-01T09:00:00Z'`   |
-| Persons who own a car (VehicleType is an Enum)                      | /person?query=`vehicle.vehicleType='CAR'`             |
-| Persons who are 1,74 m tall                                         | /person?query=`height=174`                            |
-| Persons who are actively employed                                   | /person?query=`job.active=true`                       |
+| What you want to query                                              | Example                                                                  |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Persons with the first name 'John'                                  | /person?query=`firstName='John'`                                         |
+| Persons with the birthday equals to the given `LocalDateTime`       | /person?query=`birthday='1981-03-12T10:36:00'`                           |
+| Persons with the hire date equals to the given `OffsetDateTime`     | /person?query=`job.hireDate='2019-09-01T09:00:00Z'`                      |
+| Persons who own a car (VehicleType is an Enum)                      | /person?query=`vehicle.vehicleType='CAR'`                                |
+| Persons who are 1,74 m tall                                         | /person?query=`height=174`                                               |
+| Persons who are actively employed                                   | /person?query=`job.active=true`                                          |
+| Persons who have brown hair<br/>_It uses a field of `Map` type_     | /person?query=`characteristics.key=hair AND characteristics.value=brown` |
 
 1. <a name="not-equals-operator"></a> Not Equals operator `!=`
 
@@ -534,9 +581,9 @@ _Use the wildcard character `*` to match any string with zero or more characters
 
 1. <a name="and-logical-operator"></a> `AND` logical operator
 
-| What you want to query                                                                                                                            | Example                                                                                                  |
-| ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Persons with the first name 'John', with a height greater than 1,60 m, the birthday is the given `LocalDateTime` and who are actively employed | /person?query=`firstName='John' AND height > 160 and birthday='1981-03-12T10:36:00' AND job.active=true` |
+| What you want to query                                                                                                                                         | Example                                                                                                                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Persons with the first name 'John', with blue eyes, with a height greater than 1,60 m, the birthday is the given `LocalDateTime` and who are actively employed | /person?query=`firstName='John' AND characteristics.key='eyes' AND characteristics.value='blue' AND height > 160 and birthday='1981-03-12T10:36:00' AND job.active=true` |
 
 1. <a name="or-logical-operator"></a> `OR` logical operator
 
@@ -587,6 +634,8 @@ _Example: The `Person` Entity contains a property of the `Address` Entity that i
 The Search Descriptors allow exposing automatically search endpoints for JPA Entities.\
 The new endpoints are mapped to `/search/{searchDescriptorId}` where `searchDescriptorId` is the [ID](#search-descriptor-id) defined for the `SearchDescriptor`.
 
+_Note: You can change the default base path `/search`. See [Changing the Base Path](#changing-the-base-path)._ 
+
 The easiest way to create a Search Descriptor is to use the `com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder` which provides every options available to configure a `SearchDescriptor`.
 
 #### Configure a new Search Descriptor
@@ -603,6 +652,7 @@ You have to add the `SearchDescriptor`s to the Spring Data Search Configuration 
         }
     }
     ```
+
 * Another solution is to add a new `@Bean`. This solution is useful when you want to create a `SearchDescriptor` which depends on other Beans:
     ```java
     @Configuration
@@ -612,6 +662,20 @@ You have to add the `SearchDescriptor`s to the Spring Data Search Configuration 
             return new SearchDescriptorBuilder<Person>(Person.class)
                        .jpaSpecificationExecutor(personRepository)
                        .build();
+        }
+    }
+    ```
+
+* If the `SearchDescriptor` Bean is declared without a specific [JpaSpecificationExecutor](#jpa-specification-executor),
+  an exception may be thrown if the `SearchDescriptor` Bean is initialized before `JpaSpecificationExecutorFactory`.
+  In this case, [@DependsOn](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/DependsOn.html) must be used to prevent the exception:
+    ```java
+    @Configuration
+    public class SearchDescriptorConfiguration {
+        @Bean
+        @DependsOn("jpaSpecificationExecutorFactory")
+        SearchDescriptor<Person> personSearchDescriptor() {
+            return new SearchDescriptorBuilder<Person>(Person.class).build();
         }
     }
     ```
@@ -763,9 +827,9 @@ The base interface to use the Spring Data JPA Specifications is [JpaSpecificatio
 Spring Data Search uses the following method of this interface:
 ```java
 public interface JpaSpecificationExecutor<T> {
-    ...
+    //...//
     List<T> findAll(Specification<T> spec);
-    ...
+    //...//
 }
 ```
 
@@ -834,13 +898,13 @@ The `Person.java` Entity has relationships with the `Job.java` Entity and the `V
 ```java
 @Entity
 public class Person {
-    ...
+    //...//
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Job jobEntity;
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Vehicle> vehicles;
-    ...
+    //...//
 }
 
 @Entity
@@ -977,10 +1041,10 @@ Let's say you manage Persons with following Entity:
 ```java
 @Entity
 public class Person {
-    ...
+    //...//
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Job jobEntity;
-    ...
+    //...//
 }
 ```
 
@@ -1053,6 +1117,18 @@ public class SampleAppJavaConfiguration implements SearchConfigurer {
 ```
 
 Another solution is to declare your Converter as `@Bean`. This solution is useful when you want to create a Converter which depends on other Beans.
+
+### Changing the Base Path
+
+By default, Spring Data Search defines the Base Path as `/search` and add the Search Descriptor ID. Example: `/search/person`
+
+You can do change the Base Path by setting a single property in application.properties, as follows:
+
+````properties
+spring.data.search.base-path=/api
+````
+
+This changes the Base Path to `/api`. Example: `/api/person`
 
 ---
 

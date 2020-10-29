@@ -1,9 +1,8 @@
 package com.weedow.spring.data.search.fieldpath
 
 import com.weedow.spring.data.search.alias.AliasResolutionService
-import com.weedow.spring.data.search.utils.EntityUtils
-import com.weedow.spring.data.search.utils.FIELD_PATH_SEPARATOR
-import com.weedow.spring.data.search.utils.klogger
+import com.weedow.spring.data.search.utils.*
+import java.lang.reflect.Field
 
 /**
  * Default [FieldPathResolver] implementation.
@@ -28,12 +27,23 @@ class FieldPathResolverImpl(private val aliasResolutionService: AliasResolutionS
         var parentClass = rootClass
         var resolvedFieldPath = mutableListOf<String>()
         try {
+            var field: Field? = null
             val parts = fieldPath.split(FIELD_PATH_SEPARATOR)
             for (fieldPart in parts) {
                 parentClass = fieldClass
                 fieldName = aliasResolutionService.resolve(parentClass, fieldPart)
-                val field = parentClass.getDeclaredField(fieldName)
-                fieldClass = EntityUtils.getFieldClass(field)
+                fieldClass =
+                        if (Map::class.java.isAssignableFrom(parentClass)) {
+                            val genericTypes = EntityUtils.getGenericTypes(field!!)
+                            when (fieldName) {
+                                MAP_KEY -> genericTypes[0]
+                                MAP_VALUE -> genericTypes[1]
+                                else -> throw IllegalArgumentException("Invalid field path: $fieldPath. The part '$fieldName' is not authorized for a parent field of type Map")
+                            }
+                        } else {
+                            field = parentClass.getDeclaredField(fieldName)
+                            EntityUtils.getFieldClass(field)
+                        }
                 resolvedFieldPath.add(fieldName)
             }
         } catch (e: NoSuchFieldException) {
