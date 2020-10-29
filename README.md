@@ -70,12 +70,12 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
   <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>spring-data-search</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
   </dependency>
   ```
 * If you have a [Gradle](https://gradle.org/) project, you can add the following dependency in your `build.gradle` file:
   ```groovy
-  implementation "com.weedow:spring-data-search:1.0.0"
+  implementation "com.weedow:spring-data-search:1.0.1"
   ```
 
 ### Getting Started in 5 minutes
@@ -92,12 +92,12 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
     <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>spring-data-search</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
     </dependency>
     ```
     * For [Gradle](https://gradle.org/) project, add the dependency in the `build.gradle` file:
     ```groovy
-    implementation "com.weedow:spring-data-search:1.0.0"
+    implementation "com.weedow:spring-data-search:1.0.1"
     ```
 * Create a new file `Person.java` to add a new JPA Entity `Person` with the following content:
     ```java
