@@ -15,6 +15,7 @@ data class SearchProperties(
         val basePath: String = DEFAULT_BASE_PATH
 ) {
     companion object {
+        /** Default Base Path */
         const val DEFAULT_BASE_PATH = "/search"
     }
 }

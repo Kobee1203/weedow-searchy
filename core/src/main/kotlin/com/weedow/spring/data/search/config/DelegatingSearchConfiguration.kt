@@ -19,6 +19,9 @@ class DelegatingSearchConfiguration : SearchConfigurationSupport() {
 
     private val configurers = SearchConfigurerComposite()
 
+    /**
+     * Injects automatically the given List of [SearchConfigurer]s.
+     */
     @Autowired(required = false)
     fun setConfigurers(configurers: List<SearchConfigurer>) {
         log.debug("Adding search configurers: {}", configurers)

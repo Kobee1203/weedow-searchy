@@ -29,6 +29,9 @@ class SearchDescriptorBuilder<T>(
     }
 
     companion object {
+        /**
+         * Returns a new instance of [SearchDescriptorBuilder].
+         */
         inline fun <reified T> builder(): SearchDescriptorBuilder<T> {
             val type = object : TypeReference<T>() {}.type
             val entityClass = if (type is ParameterizedType) type.actualTypeArguments[0] else type

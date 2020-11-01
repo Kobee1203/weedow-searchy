@@ -13,6 +13,9 @@ class SearchConfigurerComposite : SearchConfigurer {
 
     private val delegates: MutableList<SearchConfigurer> = ArrayList()
 
+    /**
+     * Add all detected delegated [SearchConfigurer]s.
+     */
     fun addSearchConfigurers(configurers: List<SearchConfigurer>) {
         if (!CollectionUtils.isEmpty(configurers)) {
             delegates.addAll(configurers)

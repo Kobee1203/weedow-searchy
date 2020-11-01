@@ -13,6 +13,13 @@ abstract class AbstractNumberValidator(
         vararg fieldPaths: String
 ) : AbstractFieldPathValidator(*fieldPaths) {
 
+    /**
+     * Implement this method to specify how to validate the given Number.
+     *
+     * @param value Number to validate
+     * @param fieldExpression [FieldExpression] related to the [value]
+     * @param errors [DataSearchErrors] instance used to report any resulting validation errors
+     */
     abstract fun doValidate(value: Number, fieldExpression: FieldExpression, errors: DataSearchErrors)
 
     final override fun validateSingle(value: Any, fieldExpression: FieldExpression, errors: DataSearchErrors) {

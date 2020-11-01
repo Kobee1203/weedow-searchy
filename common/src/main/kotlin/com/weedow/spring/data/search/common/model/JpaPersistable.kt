@@ -48,9 +48,7 @@ abstract class JpaPersistable<ID : Serializable> : Persistable<ID> {
     }
 
     /**
-     * Must be [Transient] in order to ensure that no JPA provider complains because of a missing setter.
-     *
-     * @see org.springframework.data.domain.Persistable.isNew
+     * Must be javax.persistence.Transient in order to ensure that no JPA provider complains because of a missing setter.
      */
     @Transient
     override fun isNew() = null == getId()

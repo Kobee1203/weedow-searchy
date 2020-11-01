@@ -11,12 +11,20 @@ import java.time.format.DateTimeFormatter
  * It uses [DateTimeFormatter.ISO_OFFSET_DATE_TIME] by default.
  *
  * It is possible to modify the default behavior by instantiating the converter with a specific [DateTimeFormatter].
+ *
+ * @param dateTimeFormatter the formatter to be used while converting. Default is [DateTimeFormatter.ISO_OFFSET_DATE_TIME]
  */
 @ReadingConverter
 class StringToOffsetDateTimeConverter(
         private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 ) : Converter<String, OffsetDateTime> {
 
+    /**
+     * Converts the given [String] to [OffsetDateTime].
+     *
+     * @param source String to be converted
+     * @return the OffsetDateTime instance
+     */
     override fun convert(source: String): OffsetDateTime {
         return OffsetDateTime.parse(source, dateTimeFormatter)
     }

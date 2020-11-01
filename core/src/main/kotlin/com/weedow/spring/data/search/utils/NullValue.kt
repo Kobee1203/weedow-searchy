@@ -7,8 +7,10 @@ import java.io.Serializable
  */
 object NullValue : Serializable {
 
+    /** Constant representing the 'null' value. */
     const val NULL_VALUE = "null"
 
+    /** @suppress */
     override fun toString(): String {
         return javaClass.simpleName
     }

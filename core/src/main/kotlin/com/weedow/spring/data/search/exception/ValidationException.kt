@@ -7,6 +7,13 @@ import org.springframework.web.server.ResponseStatusException
 import java.text.MessageFormat
 import java.util.*
 
+/**
+ * Exception thrown when a validation fails.
+ *
+ * @param errors Collection of [DataSearchError]s
+ * @param status HTTP Status used for the response. Default is [HttpStatus.BAD_REQUEST]
+ * @param reason the associated reason. Default is the formatting of [DataSearchError]s
+ */
 class ValidationException(
         val errors: Collection<DataSearchError>,
         status: HttpStatus = HttpStatus.BAD_REQUEST,

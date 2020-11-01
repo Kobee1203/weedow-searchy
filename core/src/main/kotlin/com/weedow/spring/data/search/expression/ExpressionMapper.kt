@@ -11,7 +11,7 @@ interface ExpressionMapper {
      * The [parameters map][params] contains a field path as a key and a value list associated with the field as value.
      *
      * @param params to be converted to [Expression]
-     * @param rootClass root entity class from which to look for fields
+     * @param rootClass Root entity class from which to look for fields
      */
     fun <T> toExpression(params: Map<String, List<String>>, rootClass: Class<T>): RootExpression<T>
 

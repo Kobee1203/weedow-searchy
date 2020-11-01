@@ -30,7 +30,7 @@ class DataSearchReactiveController(
         requestMappingHandlerMapping::registerMapping
 ) {
 
-    override fun createRequestMapping(dataSearchPath: String): org.springframework.web.reactive.result.method.RequestMappingInfo {
+    override fun createRequestMappingInfo(dataSearchPath: String): org.springframework.web.reactive.result.method.RequestMappingInfo {
         return org.springframework.web.reactive.result.method.RequestMappingInfo
                 .paths(dataSearchPath)
                 .methods(RequestMethod.GET)

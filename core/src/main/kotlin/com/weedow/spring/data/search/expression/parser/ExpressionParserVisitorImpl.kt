@@ -9,6 +9,12 @@ import com.weedow.spring.data.search.utils.NullValue
 import com.weedow.spring.data.search.utils.klogger
 import org.antlr.v4.runtime.ParserRuleContext
 
+/**
+ * Default [ExpressionParserVisitor] implementation.
+ *
+ * @param expressionResolver [ExpressionResolver] used by the parser to resolve the Expressions from the query
+ * @param rootClass Root Entity Class
+ */
 class ExpressionParserVisitorImpl(
         private val expressionResolver: ExpressionResolver,
         private val rootClass: Class<*>

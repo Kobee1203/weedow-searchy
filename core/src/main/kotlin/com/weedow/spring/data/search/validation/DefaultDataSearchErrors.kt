@@ -1,5 +1,8 @@
 package com.weedow.spring.data.search.validation
 
+/**
+ * Default [DataSearchErrors] implementation.
+ */
 class DefaultDataSearchErrors : DataSearchErrors {
 
     private val errors = mutableSetOf<DataSearchError>()
