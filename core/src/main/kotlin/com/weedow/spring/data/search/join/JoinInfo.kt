@@ -7,9 +7,8 @@ import javax.persistence.criteria.JoinType
 /**
  * Value object with the information of a join.
  *
- * The Join information are the following:
- * * [joinType] : [JoinType] object. Default is [DEFAULT_JOIN_TYPE]
- * * [fetched] : [Boolean] object. Default is [DEFAULT_FETCH_MODE]
+ * @param joinType [JoinType] object. Default is [DEFAULT_JOIN_TYPE]
+ * @param fetched [Boolean] object. Default is [DEFAULT_FETCH_MODE]
  */
 data class JoinInfo(
         val joinType: JoinType = DEFAULT_JOIN_TYPE,

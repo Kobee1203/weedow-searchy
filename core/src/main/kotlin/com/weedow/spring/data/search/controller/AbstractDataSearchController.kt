@@ -43,10 +43,13 @@ abstract class AbstractDataSearchController<M>(
         if (log.isDebugEnabled) log.debug("Controller \"$javaClass\" initialized")
     }
 
-    protected abstract fun createRequestMapping(dataSearchPath: String): M
+    /**
+     * Implement this method to create the Request Mapping Information object used to register the request mapping.
+     */
+    protected abstract fun createRequestMappingInfo(dataSearchPath: String): M
 
     private fun registerMapping(dataSearchPath: String) {
-        val mapping = createRequestMapping(dataSearchPath)
+        val mapping = createRequestMappingInfo(dataSearchPath)
 
         val method = javaClass.getMethod("search", String::class.java, MultiValueMap::class.java)
 
@@ -58,7 +61,14 @@ abstract class AbstractDataSearchController<M>(
         mappingRegistrationFunction(mapping, handler, method)
     }
 
-    // Get Mapping: /${searchProperties.basePath}/{searchDescriptorId}
+    /**
+     * Method called by the registered the request mapping.
+     *
+     * The expected mapping HTTP request is: GET /${searchProperties.basePath}/{searchDescriptorId}.
+     *
+     * @param searchDescriptorId: Search Descriptor Identifier specified by a [SearchDescriptor] and present in the URI
+     * @param params Map of request parameters representing Entity fields used to search data
+     */
     @ResponseBody
     fun search(@PathVariable searchDescriptorId: String, @RequestParam params: MultiValueMap<String, String>): ResponseEntity<List<*>> {
         if (log.isDebugEnabled) log.debug("Searching data from URI ${searchProperties.basePath}/$searchDescriptorId and following request parameters: $params")

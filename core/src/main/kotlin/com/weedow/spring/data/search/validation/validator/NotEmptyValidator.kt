@@ -13,7 +13,9 @@ class NotEmptyValidator(
 ) : DataSearchValidator {
 
     companion object {
+        /** Default error code */
         const val DEFAULT_ERROR_CODE = "not-empty"
+        /** Default error message */
         const val DEFAULT_ERROR_MESSAGE = "The search must contain at least one field expression."
     }
 

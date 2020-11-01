@@ -11,9 +11,11 @@ import org.hibernate.internal.util.collections.IdentitySet
  * There is no conversion to a specific DTO.
  *
  * But the entity is fully loaded to prevent LazyInitializationException when the Entity is serialized.
+ *
+ * @param entityInitializer [Initializer] used to load the given the Entity. Default is [EntityInitializer].
  */
 class DefaultDtoMapper<T>(
-        val entityInitializer: EntityInitializer = EntityInitializer()
+        val entityInitializer: Initializer<Any> = EntityInitializer()
 ) : DtoMapper<T, T> {
 
     /**
@@ -30,12 +32,14 @@ class DefaultDtoMapper<T>(
         return source
     }
 
+    /** @suppress */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
         return true
     }
 
+    /** @suppress */
     override fun hashCode(): Int {
         return javaClass.hashCode()
     }
@@ -88,6 +92,9 @@ class EntityInitializer() : Initializer<Any> {
     private var mapInitializer: Initializer<Map<*, *>> = MapInitializer(this)
     private var collectionInitializer: Initializer<Collection<*>> = CollectionInitializer(this)
 
+    /**
+     * Secondary constructor to override one or more inner Initializers.
+     */
     constructor(propertyInitializer: PropertyInitializer, mapInitializer: Initializer<Map<*, *>>, collectionInitializer: Initializer<Collection<*>>) : this() {
         this.propertyInitializer = propertyInitializer
         this.mapInitializer = mapInitializer

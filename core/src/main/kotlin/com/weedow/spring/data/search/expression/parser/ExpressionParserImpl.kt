@@ -4,6 +4,11 @@ import com.weedow.spring.data.search.expression.Expression
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 
+/**
+ * Default [ExpressionParser] implementation.
+ *
+ * @param expressionParserVisitorFactory Factory to get the [ExpressionParserVisitor] from the rootClass.
+ */
 class ExpressionParserImpl(
         private val expressionParserVisitorFactory: ExpressionParserVisitorFactory
 ) : ExpressionParser {

@@ -15,6 +15,7 @@ import java.lang.reflect.Type
  * ```
  */
 abstract class TypeReference<T> protected constructor() : Comparable<TypeReference<T>> {
+    /** Parameterized type */
     val type: Type
 
     init {

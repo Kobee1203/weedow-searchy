@@ -18,11 +18,14 @@ import java.util.*
  * It uses the default JVM [Locale] and a default list of patterns defined by [DATE_FORMATS][com.weedow.spring.data.search.converter.StringToDateConverter.Companion.DATE_FORMATS].
  *
  * It is possible to modify the default behavior by instantiating the converter with a specific [Locale] and/or a specific patterns list.
+ *
+ * @param patterns list of patterns to be used while converting. Default is [DATE_FORMATS][com.weedow.spring.data.search.converter.StringToDateConverter.Companion.DATE_FORMATS]
+ * @param locale [Locale] to be used while converting. Default is JVM [Locale]
  */
 @ReadingConverter
 class StringToDateConverter(
-        vararg val patterns: String = DATE_FORMATS,
-        val locale: Locale = Locale.getDefault(Locale.Category.FORMAT)
+        private vararg val patterns: String = DATE_FORMATS,
+        private val locale: Locale = Locale.getDefault(Locale.Category.FORMAT)
 ) : Converter<String, Date> {
 
     companion object {
@@ -50,6 +53,12 @@ class StringToDateConverter(
         dateTimeFormatter = dateTimeFormatterBuilder.toFormatter(locale)
     }
 
+    /**
+     * Converts the given [String] to [Date].
+     *
+     * @param source String to be converted
+     * @return the Date instance
+     */
     override fun convert(source: String): Date {
         val localDateTime = try {
             val offsetDateTime = OffsetDateTime.parse(source, dateTimeFormatter)

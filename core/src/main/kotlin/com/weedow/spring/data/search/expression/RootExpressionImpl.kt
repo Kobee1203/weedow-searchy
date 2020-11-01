@@ -9,12 +9,15 @@ import javax.persistence.criteria.Root
 
 /**
  * Default [RootExpression] implementation.
+ *
+ * @param expressions [Expression]s
  */
 class RootExpressionImpl<T>(
         vararg val expressions: Expression
 ) : RootExpression<T> {
 
     companion object {
+        /** Filter the joins and return the fetched joins */
         val FILTER_FETCH_JOINS = { entityJoin: EntityJoin -> entityJoin.fetched }
     }
 

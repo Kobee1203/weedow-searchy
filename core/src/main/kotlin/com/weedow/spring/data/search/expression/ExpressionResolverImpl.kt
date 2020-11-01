@@ -6,6 +6,9 @@ import com.weedow.spring.data.search.utils.NullValue
 import org.springframework.core.convert.ConversionService
 import java.util.stream.Collectors
 
+/**
+ * Default [ExpressionResolver] implementation.
+ */
 class ExpressionResolverImpl(
         private val fieldPathResolver: FieldPathResolver,
         private val conversionService: ConversionService

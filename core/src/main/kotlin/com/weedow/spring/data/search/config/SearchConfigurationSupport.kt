@@ -22,11 +22,17 @@ import javax.persistence.EntityManager
  */
 open class SearchConfigurationSupport {
 
+    /**
+     * Inject automatically the current [EntityManager] in order to initialize [JpaSpecificationExecutorFactory].
+     */
     @Autowired(required = false)
     fun setEntityManager(entityManager: EntityManager) {
         JpaSpecificationExecutorFactory.init(entityManager)
     }
 
+    /**
+     * Reset [JpaSpecificationExecutorFactory].
+     */
     @PreDestroy
     fun resetJpaSpecificationExecutorFactory() {
         JpaSpecificationExecutorFactory.reset()
@@ -54,6 +60,11 @@ open class SearchConfigurationSupport {
         return JpaSpecificationExecutorFactory
     }
 
+    /**
+     * Return a [SearchDescriptorService] initialized with the given [SearchDescriptor]s declared as Beans.
+     *
+     * See [addSearchDescriptors] as an alternative to overriding this method.
+     */
     @Bean
     open fun searchDescriptorService(searchDescriptors: ObjectProvider<SearchDescriptor<*>>): SearchDescriptorService {
         val searchDescriptorService: ConfigurableSearchDescriptorService = DefaultSearchDescriptorService()
@@ -66,11 +77,17 @@ open class SearchConfigurationSupport {
      * Override this method to add custom [SearchDescriptor]s.
      *
      * @param registry [SearchDescriptorRegistry]
+     * @see searchDescriptorService
      */
     protected open fun addSearchDescriptors(registry: SearchDescriptorRegistry) {
         // Override this method to add custom SearchDescriptors.
     }
 
+    /**
+     * Return a [AliasResolutionService] initialized with the given [AliasResolver]s declared as Beans.
+     *
+     * See [addAliasResolvers] as an alternative to overriding this method.
+     */
     @Bean
     open fun searchAliasResolutionService(aliasResolvers: ObjectProvider<AliasResolver>): AliasResolutionService {
         val aliasResolutionService: ConfigurableAliasResolutionService = DefaultAliasResolutionService()
@@ -83,11 +100,17 @@ open class SearchConfigurationSupport {
      * Override this method to add custom [AliasResolver]s.
      *
      * @param registry [AliasResolverRegistry]
+     * @see searchAliasResolutionService
      */
     protected open fun addAliasResolvers(registry: AliasResolverRegistry) {
         // Override this method to add custom AliasResolvers.
     }
 
+    /**
+     * Return a [ConversionService] initialized with the given [Converter]s declared as Beans.
+     *
+     * See [addConverters] as an alternative to overriding this method.
+     */
     @Bean
     open fun searchConversionService(converters: ObjectProvider<Converter<*, *>>): ConversionService {
         val conversionService: ConfigurableConversionService = DefaultConversionService()
@@ -107,6 +130,7 @@ open class SearchConfigurationSupport {
      * Override this method to add custom [Converter]s.
      *
      * @param registry [ConverterRegistry]
+     * @see searchConversionService
      */
     protected open fun addConverters(registry: ConverterRegistry) {
         // Override this method to add custom Converters.

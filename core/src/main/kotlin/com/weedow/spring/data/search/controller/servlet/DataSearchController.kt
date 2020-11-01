@@ -30,7 +30,7 @@ class DataSearchController(
         requestMappingHandlerMapping::registerMapping
 ) {
 
-    override fun createRequestMapping(dataSearchPath: String): org.springframework.web.servlet.mvc.method.RequestMappingInfo {
+    override fun createRequestMappingInfo(dataSearchPath: String): org.springframework.web.servlet.mvc.method.RequestMappingInfo {
         return org.springframework.web.servlet.mvc.method.RequestMappingInfo
                 .paths(dataSearchPath)
                 .methods(RequestMethod.GET)
