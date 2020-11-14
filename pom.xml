@@ -44,7 +44,7 @@
 
         <java.version>1.8</java.version>
         <kotlin.version>1.3.72</kotlin.version>
-        <dokka.version>0.10.1</dokka.version>
+        <dokka.version>1.4.10.2</dokka.version>
 
         <!-- Set the default Java character encoding with the same value as ${project.build.sourceEncoding} to prevent encoding errors while running tests -->
         <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
