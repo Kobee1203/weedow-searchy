@@ -24,6 +24,8 @@ import com.weedow.spring.data.search.join.EntityJoinManager
 import com.weedow.spring.data.search.join.EntityJoinManagerImpl
 import com.weedow.spring.data.search.service.DataSearchService
 import com.weedow.spring.data.search.service.DataSearchServiceImpl
+import com.weedow.spring.data.search.service.EntitySearchService
+import com.weedow.spring.data.search.service.EntitySearchServiceImpl
 import com.weedow.spring.data.search.specification.JpaSpecificationService
 import com.weedow.spring.data.search.specification.JpaSpecificationServiceImpl
 import com.weedow.spring.data.search.utils.klogger
@@ -65,13 +67,10 @@ class DataSearchAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         fun servletDataSearchController(
-                searchDescriptorService: SearchDescriptorService,
-                expressionMapper: ExpressionMapper,
                 dataSearchService: DataSearchService,
-                dataSearchValidationService: DataSearchValidationService,
                 searchProperties: SearchProperties,
                 requestMappingHandlerMapping: org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping): DataSearchController {
-            return DataSearchController(searchDescriptorService, expressionMapper, dataSearchService, dataSearchValidationService, searchProperties, requestMappingHandlerMapping)
+            return DataSearchController(dataSearchService, searchProperties, requestMappingHandlerMapping)
         }
     }
 
@@ -91,13 +90,10 @@ class DataSearchAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         fun reactiveDataSearchController(
-                searchDescriptorService: SearchDescriptorService,
-                expressionMapper: ExpressionMapper,
                 dataSearchService: DataSearchService,
-                dataSearchValidationService: DataSearchValidationService,
                 searchProperties: SearchProperties,
                 requestMappingHandlerMapping: org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping): DataSearchReactiveController {
-            return DataSearchReactiveController(searchDescriptorService, expressionMapper, dataSearchService, dataSearchValidationService, searchProperties, requestMappingHandlerMapping)
+            return DataSearchReactiveController(dataSearchService, searchProperties, requestMappingHandlerMapping)
         }
     }
 
@@ -144,8 +140,12 @@ class DataSearchAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        fun dataSearchService(jpaSpecificationService: JpaSpecificationService, entityJoinManager: EntityJoinManager): DataSearchService {
-            return DataSearchServiceImpl(jpaSpecificationService, entityJoinManager)
+        fun dataSearchService(
+                searchDescriptorService: SearchDescriptorService,
+                expressionMapper: ExpressionMapper,
+                dataSearchValidationService: DataSearchValidationService,
+                entitySearchService: EntitySearchService): DataSearchService {
+            return DataSearchServiceImpl(searchDescriptorService, expressionMapper, dataSearchValidationService, entitySearchService)
         }
 
         @Bean
@@ -158,6 +158,12 @@ class DataSearchAutoConfiguration {
         @ConditionalOnMissingBean
         fun dataSearchErrorsFactory(): DataSearchErrorsFactory {
             return DataSearchErrorsFactoryImpl()
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        fun entitySearchService(jpaSpecificationService: JpaSpecificationService, entityJoinManager: EntityJoinManager): EntitySearchServiceImpl {
+            return EntitySearchServiceImpl(jpaSpecificationService, entityJoinManager)
         }
 
         @Bean

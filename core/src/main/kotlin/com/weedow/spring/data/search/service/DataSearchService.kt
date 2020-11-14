@@ -1,24 +1,23 @@
 package com.weedow.spring.data.search.service
 
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
-import com.weedow.spring.data.search.expression.RootExpression
+import com.weedow.spring.data.search.exception.SearchDescriptorNotFound
 
 /**
- * Service interface to find all Entities according to the given [RootExpression] and the [SearchDescriptor].
+ * Service interface to search data related to the given [SearchDescriptor Id][SearchDescriptor] and filtered according to the given parameters Map.
  *
- * @see [RootExpression]
+ * The parameters map contains a field path as a key and a value list associated with the field as value.
+ *
  * @see [SearchDescriptor]
- * @see [com.weedow.spring.data.search.expression.Expression]
  */
 interface DataSearchService {
 
     /**
-     * Finds all Entities from the given arguments and returns the mapped DTOs.
+     * Search data related to the given [searchDescriptorId] and filtered according to the given [parameters Map][params].
      *
-     * @param rootExpression [RootExpression] object that contains the criteria to filter the result
-     * @param searchDescriptor [SearchDescriptor] object that contains the configuration for a specific Entity Class
-     * @return List of DTOs
+     * @throws SearchDescriptorNotFound whether the [SearchDescriptor] is not found
      */
-    fun <T> findAll(rootExpression: RootExpression<T>, searchDescriptor: SearchDescriptor<T>): List<*>
+    @Throws(SearchDescriptorNotFound::class)
+    fun search(searchDescriptorId: String, params: Map<String, List<String>>): List<*>
 
 }
