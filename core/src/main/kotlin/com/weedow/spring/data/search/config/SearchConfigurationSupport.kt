@@ -4,8 +4,31 @@ import com.weedow.spring.data.search.alias.*
 import com.weedow.spring.data.search.converter.StringToDateConverter
 import com.weedow.spring.data.search.converter.StringToOffsetDateTimeConverter
 import com.weedow.spring.data.search.descriptor.*
+import com.weedow.spring.data.search.expression.ExpressionMapper
+import com.weedow.spring.data.search.expression.ExpressionMapperImpl
+import com.weedow.spring.data.search.expression.ExpressionResolver
+import com.weedow.spring.data.search.expression.ExpressionResolverImpl
+import com.weedow.spring.data.search.expression.parser.ExpressionParser
+import com.weedow.spring.data.search.expression.parser.ExpressionParserImpl
+import com.weedow.spring.data.search.expression.parser.ExpressionParserVisitorFactory
+import com.weedow.spring.data.search.expression.parser.ExpressionParserVisitorFactoryImpl
+import com.weedow.spring.data.search.fieldpath.FieldPathResolver
+import com.weedow.spring.data.search.fieldpath.FieldPathResolverImpl
+import com.weedow.spring.data.search.join.EntityJoinManager
+import com.weedow.spring.data.search.join.EntityJoinManagerImpl
+import com.weedow.spring.data.search.service.DataSearchService
+import com.weedow.spring.data.search.service.DataSearchServiceImpl
+import com.weedow.spring.data.search.service.EntitySearchService
+import com.weedow.spring.data.search.service.EntitySearchServiceImpl
+import com.weedow.spring.data.search.specification.JpaSpecificationService
+import com.weedow.spring.data.search.specification.JpaSpecificationServiceImpl
+import com.weedow.spring.data.search.validation.DataSearchErrorsFactory
+import com.weedow.spring.data.search.validation.DataSearchErrorsFactoryImpl
+import com.weedow.spring.data.search.validation.DataSearchValidationService
+import com.weedow.spring.data.search.validation.DataSearchValidationServiceImpl
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.converter.Converter
@@ -58,6 +81,78 @@ open class SearchConfigurationSupport {
     @Bean
     open fun jpaSpecificationExecutorFactory(): JpaSpecificationExecutorFactory {
         return JpaSpecificationExecutorFactory
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun jpaSpecificationService(): JpaSpecificationService {
+        return JpaSpecificationServiceImpl()
+    }
+
+    /////////////////////
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun fieldPathResolver(searchAliasResolutionService: AliasResolutionService): FieldPathResolver {
+        return FieldPathResolverImpl(searchAliasResolutionService)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun fieldInfoResolver(fieldPathResolver: FieldPathResolver, searchConversionService: ConversionService): ExpressionResolver {
+        return ExpressionResolverImpl(fieldPathResolver, searchConversionService)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun expressionMapper(expressionResolver: ExpressionResolver, expressionParser: ExpressionParser): ExpressionMapper {
+        return ExpressionMapperImpl(expressionResolver, expressionParser)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun expressionParserVisitorFactory(expressionResolver: ExpressionResolver): ExpressionParserVisitorFactory {
+        return ExpressionParserVisitorFactoryImpl(expressionResolver)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun expressionParser(expressionParserVisitorFactory: ExpressionParserVisitorFactory): ExpressionParser {
+        return ExpressionParserImpl(expressionParserVisitorFactory)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun dataSearchService(
+            searchDescriptorService: SearchDescriptorService,
+            expressionMapper: ExpressionMapper,
+            dataSearchValidationService: DataSearchValidationService,
+            entitySearchService: EntitySearchService): DataSearchService {
+        return DataSearchServiceImpl(searchDescriptorService, expressionMapper, dataSearchValidationService, entitySearchService)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun dataSearchValidationService(dataSearchErrorsFactory: DataSearchErrorsFactory): DataSearchValidationService {
+        return DataSearchValidationServiceImpl(dataSearchErrorsFactory)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun dataSearchErrorsFactory(): DataSearchErrorsFactory {
+        return DataSearchErrorsFactoryImpl()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun entitySearchService(jpaSpecificationService: JpaSpecificationService, entityJoinManager: EntityJoinManager): EntitySearchServiceImpl {
+        return EntitySearchServiceImpl(jpaSpecificationService, entityJoinManager)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun entityJoinManager(): EntityJoinManager {
+        return EntityJoinManagerImpl()
     }
 
     /**

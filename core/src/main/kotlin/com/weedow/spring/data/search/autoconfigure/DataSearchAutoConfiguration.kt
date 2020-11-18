@@ -2,35 +2,14 @@ package com.weedow.spring.data.search.autoconfigure
 
 import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module
-import com.weedow.spring.data.search.alias.AliasResolutionService
 import com.weedow.spring.data.search.config.DelegatingSearchConfiguration
 import com.weedow.spring.data.search.config.SearchConfigurationSupport
 import com.weedow.spring.data.search.config.SearchConfigurer
 import com.weedow.spring.data.search.config.SearchProperties
 import com.weedow.spring.data.search.controller.reactive.DataSearchReactiveController
 import com.weedow.spring.data.search.controller.servlet.DataSearchController
-import com.weedow.spring.data.search.descriptor.SearchDescriptorService
-import com.weedow.spring.data.search.expression.ExpressionMapper
-import com.weedow.spring.data.search.expression.ExpressionMapperImpl
-import com.weedow.spring.data.search.expression.ExpressionResolver
-import com.weedow.spring.data.search.expression.ExpressionResolverImpl
-import com.weedow.spring.data.search.expression.parser.ExpressionParser
-import com.weedow.spring.data.search.expression.parser.ExpressionParserImpl
-import com.weedow.spring.data.search.expression.parser.ExpressionParserVisitorFactory
-import com.weedow.spring.data.search.expression.parser.ExpressionParserVisitorFactoryImpl
-import com.weedow.spring.data.search.fieldpath.FieldPathResolver
-import com.weedow.spring.data.search.fieldpath.FieldPathResolverImpl
-import com.weedow.spring.data.search.join.EntityJoinManager
-import com.weedow.spring.data.search.join.EntityJoinManagerImpl
 import com.weedow.spring.data.search.service.DataSearchService
-import com.weedow.spring.data.search.service.DataSearchServiceImpl
-import com.weedow.spring.data.search.specification.JpaSpecificationService
-import com.weedow.spring.data.search.specification.JpaSpecificationServiceImpl
 import com.weedow.spring.data.search.utils.klogger
-import com.weedow.spring.data.search.validation.DataSearchErrorsFactory
-import com.weedow.spring.data.search.validation.DataSearchErrorsFactoryImpl
-import com.weedow.spring.data.search.validation.DataSearchValidationService
-import com.weedow.spring.data.search.validation.DataSearchValidationServiceImpl
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -38,7 +17,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.convert.ConversionService
 
 /**
  * Auto-Configuration for Spring Data Search.
@@ -65,13 +43,10 @@ class DataSearchAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         fun servletDataSearchController(
-                searchDescriptorService: SearchDescriptorService,
-                expressionMapper: ExpressionMapper,
                 dataSearchService: DataSearchService,
-                dataSearchValidationService: DataSearchValidationService,
                 searchProperties: SearchProperties,
                 requestMappingHandlerMapping: org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping): DataSearchController {
-            return DataSearchController(searchDescriptorService, expressionMapper, dataSearchService, dataSearchValidationService, searchProperties, requestMappingHandlerMapping)
+            return DataSearchController(dataSearchService, searchProperties, requestMappingHandlerMapping)
         }
     }
 
@@ -91,13 +66,10 @@ class DataSearchAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         fun reactiveDataSearchController(
-                searchDescriptorService: SearchDescriptorService,
-                expressionMapper: ExpressionMapper,
                 dataSearchService: DataSearchService,
-                dataSearchValidationService: DataSearchValidationService,
                 searchProperties: SearchProperties,
                 requestMappingHandlerMapping: org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping): DataSearchReactiveController {
-            return DataSearchReactiveController(searchDescriptorService, expressionMapper, dataSearchService, dataSearchValidationService, searchProperties, requestMappingHandlerMapping)
+            return DataSearchReactiveController(dataSearchService, searchProperties, requestMappingHandlerMapping)
         }
     }
 
@@ -112,65 +84,6 @@ class DataSearchAutoConfiguration {
             log.info("Initializing Data Search Configuration")
         }
 
-        @Bean
-        @ConditionalOnMissingBean
-        fun fieldPathResolver(searchAliasResolutionService: AliasResolutionService): FieldPathResolver {
-            return FieldPathResolverImpl(searchAliasResolutionService)
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        fun fieldInfoResolver(fieldPathResolver: FieldPathResolver, searchConversionService: ConversionService): ExpressionResolver {
-            return ExpressionResolverImpl(fieldPathResolver, searchConversionService)
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        fun expressionMapper(expressionResolver: ExpressionResolver, expressionParser: ExpressionParser): ExpressionMapper {
-            return ExpressionMapperImpl(expressionResolver, expressionParser)
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        fun expressionParserVisitorFactory(expressionResolver: ExpressionResolver): ExpressionParserVisitorFactory {
-            return ExpressionParserVisitorFactoryImpl(expressionResolver)
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        fun expressionParser(expressionParserVisitorFactory: ExpressionParserVisitorFactory): ExpressionParser {
-            return ExpressionParserImpl(expressionParserVisitorFactory)
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        fun dataSearchService(jpaSpecificationService: JpaSpecificationService, entityJoinManager: EntityJoinManager): DataSearchService {
-            return DataSearchServiceImpl(jpaSpecificationService, entityJoinManager)
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        fun dataSearchValidationService(dataSearchErrorsFactory: DataSearchErrorsFactory): DataSearchValidationService {
-            return DataSearchValidationServiceImpl(dataSearchErrorsFactory)
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        fun dataSearchErrorsFactory(): DataSearchErrorsFactory {
-            return DataSearchErrorsFactoryImpl()
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        fun entityJoinManager(): EntityJoinManager {
-            return EntityJoinManagerImpl()
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        fun jpaSpecificationService(): JpaSpecificationService {
-            return JpaSpecificationServiceImpl()
-        }
     }
 
     @Configuration
