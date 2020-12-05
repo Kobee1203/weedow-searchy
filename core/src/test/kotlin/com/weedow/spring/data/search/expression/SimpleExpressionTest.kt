@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.join.EntityJoins
+import com.weedow.spring.data.search.utils.Keyword.CURRENT_DATE
 import com.weedow.spring.data.search.utils.MAP_KEY
 import com.weedow.spring.data.search.utils.MAP_VALUE
 import com.weedow.spring.data.search.utils.NullValue
@@ -17,6 +18,7 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.junit.jupiter.MockitoExtension
+import java.sql.Date
 import javax.persistence.criteria.*
 import javax.persistence.criteria.Expression
 
@@ -38,7 +40,9 @@ internal class SimpleExpressionTest {
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
-        whenever(criteriaBuilder.equal(path, fieldValue)).thenReturn(predicate)
+        val literalExpression = mock<Expression<String>>()
+        whenever(criteriaBuilder.literal(fieldValue)).thenReturn(literalExpression)
+        whenever(criteriaBuilder.equal(path, literalExpression)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue)
         val specification = expression.toSpecification<Person>(entityJoins)
@@ -272,7 +276,9 @@ internal class SimpleExpressionTest {
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
-        whenever(criteriaBuilder.lessThan(path, fieldValue)).thenReturn(predicate)
+        val literalExpression = mock<Expression<Double>>()
+        whenever(criteriaBuilder.literal(fieldValue)).thenReturn(literalExpression)
+        whenever(criteriaBuilder.lessThan(path, literalExpression)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.LESS_THAN, fieldInfo, fieldValue)
         val specification = expression.toSpecification<Person>(entityJoins)
@@ -297,7 +303,9 @@ internal class SimpleExpressionTest {
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
-        whenever(criteriaBuilder.lessThanOrEqualTo(path, fieldValue)).thenReturn(predicate)
+        val literalExpression = mock<Expression<Double>>()
+        whenever(criteriaBuilder.literal(fieldValue)).thenReturn(literalExpression)
+        whenever(criteriaBuilder.lessThanOrEqualTo(path, literalExpression)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.LESS_THAN_OR_EQUALS, fieldInfo, fieldValue)
         val specification = expression.toSpecification<Person>(entityJoins)
@@ -322,7 +330,9 @@ internal class SimpleExpressionTest {
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
-        whenever(criteriaBuilder.greaterThan(path, fieldValue)).thenReturn(predicate)
+        val literalExpression = mock<Expression<Double>>()
+        whenever(criteriaBuilder.literal(fieldValue)).thenReturn(literalExpression)
+        whenever(criteriaBuilder.greaterThan(path, literalExpression)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.GREATER_THAN, fieldInfo, fieldValue)
         val specification = expression.toSpecification<Person>(entityJoins)
@@ -347,7 +357,9 @@ internal class SimpleExpressionTest {
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
-        whenever(criteriaBuilder.greaterThanOrEqualTo(path, fieldValue)).thenReturn(predicate)
+        val literalExpression = mock<Expression<Double>>()
+        whenever(criteriaBuilder.literal(fieldValue)).thenReturn(literalExpression)
+        whenever(criteriaBuilder.greaterThanOrEqualTo(path, literalExpression)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.GREATER_THAN_OR_EQUALS, fieldInfo, fieldValue)
         val specification = expression.toSpecification<Person>(entityJoins)
@@ -391,6 +403,33 @@ internal class SimpleExpressionTest {
     fun to_field_expressions(operator: Operator) {
         assertToFieldExpressions(false, operator)
         assertToFieldExpressions(true, operator)
+    }
+
+    @Test
+    fun to_specification_with_equals_operator_and_current_date_value() {
+        val fieldPath = "birthday"
+        val fieldValue = CURRENT_DATE
+        val fieldInfo = FieldInfo(fieldPath, "firstName", Person::class.java)
+
+        val entityJoins = mock<EntityJoins>()
+
+        val root = mock<Root<Person>>()
+        val criteriaBuilder = mock<CriteriaBuilder>()
+
+        val path = mock<Path<*>>()
+        whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
+
+        val predicate = mock<Predicate>()
+        val dateExpression = mock<Expression<Date>>()
+        whenever(criteriaBuilder.currentDate()).thenReturn(dateExpression)
+        whenever(criteriaBuilder.equal(path, dateExpression)).thenReturn(predicate)
+
+        val expression = SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue)
+        val specification = expression.toSpecification<Person>(entityJoins)
+
+        val result = specification.toPredicate(root, mock(), criteriaBuilder)
+
+        assertThat(result).isEqualTo(predicate)
     }
 
     private fun assertToFieldExpressions(negated: Boolean, operator: Operator) {

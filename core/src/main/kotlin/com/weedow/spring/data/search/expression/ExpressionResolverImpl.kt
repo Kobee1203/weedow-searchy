@@ -2,7 +2,11 @@ package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.fieldpath.FieldPathInfo
 import com.weedow.spring.data.search.fieldpath.FieldPathResolver
+import com.weedow.spring.data.search.utils.Keyword.CURRENT_DATE
+import com.weedow.spring.data.search.utils.Keyword.CURRENT_DATE_TIME
+import com.weedow.spring.data.search.utils.Keyword.CURRENT_TIME
 import com.weedow.spring.data.search.utils.NullValue
+import com.weedow.spring.data.search.utils.NullValue.NULL_VALUE
 import org.springframework.core.convert.ConversionService
 import java.util.stream.Collectors
 
@@ -44,7 +48,15 @@ class ExpressionResolverImpl(
     }
 
     private fun convert(value: String, clazz: Class<*>): Any {
-        return if (!NullValue.NULL_VALUE.equals(value, ignoreCase = true)) conversionService.convert(value, clazz)!! else NullValue
+        return when {
+            CURRENT_DATE.equalsIgnoringCase(value) -> CURRENT_DATE
+            CURRENT_TIME.equalsIgnoringCase(value) -> CURRENT_TIME
+            CURRENT_DATE_TIME.equalsIgnoringCase(value) -> CURRENT_DATE_TIME
+            NULL_VALUE.equalsIgnoringCase(value) -> NullValue
+            else -> conversionService.convert(value, clazz)!!
+        }
     }
+
+    private fun String.equalsIgnoringCase(value: String): Boolean = this.equals(value, ignoreCase = true)
 
 }
