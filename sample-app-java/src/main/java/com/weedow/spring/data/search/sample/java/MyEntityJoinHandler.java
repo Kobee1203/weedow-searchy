@@ -1,22 +1,24 @@
 package com.weedow.spring.data.search.sample.java;
 
-import com.weedow.spring.data.search.sample.java.entity.Person;
+import com.querydsl.core.JoinType;
 import com.weedow.spring.data.search.join.JoinInfo;
+import com.weedow.spring.data.search.join.handler.EntityJoinHandler;
+import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos;
+import com.weedow.spring.data.search.sample.java.entity.Person;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.ElementCollection;
-import javax.persistence.criteria.JoinType;
-import java.lang.annotation.Annotation;
 
-public class MyEntityJoinHandler implements com.weedow.spring.data.search.join.handler.EntityJoinHandler<Person> {
+public class MyEntityJoinHandler implements EntityJoinHandler<Person> {
 
     @Override
-    public boolean supports(@NotNull Class<?> entityClass, @NotNull Class<?> fieldClass, @NotNull String fieldName, @NotNull Annotation joinAnnotation) {
-        return joinAnnotation instanceof ElementCollection;
+    public boolean supports(@NotNull PropertyInfos propertyInfos) {
+        return propertyInfos.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ElementCollection);
     }
 
+    @NotNull
     @Override
-    public JoinInfo handle(@NotNull Class<?> entityClass, @NotNull Class<?> fieldClass, @NotNull String fieldName, @NotNull Annotation joinAnnotation) {
-        return new JoinInfo(JoinType.LEFT, true);
+    public JoinInfo handle(@NotNull PropertyInfos propertyInfos) {
+        return new JoinInfo(JoinType.LEFTJOIN, true);
     }
 }

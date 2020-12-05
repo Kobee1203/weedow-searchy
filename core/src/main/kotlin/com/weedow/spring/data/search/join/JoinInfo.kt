@@ -1,8 +1,8 @@
 package com.weedow.spring.data.search.join
 
+import com.querydsl.core.JoinType
 import com.weedow.spring.data.search.join.JoinInfo.Companion.DEFAULT_FETCH_MODE
 import com.weedow.spring.data.search.join.JoinInfo.Companion.DEFAULT_JOIN_TYPE
-import javax.persistence.criteria.JoinType
 
 /**
  * Value object with the information of a join.
@@ -12,12 +12,12 @@ import javax.persistence.criteria.JoinType
  */
 data class JoinInfo(
         val joinType: JoinType = DEFAULT_JOIN_TYPE,
-        val fetched: Boolean = DEFAULT_FETCH_MODE
+        val fetched: Boolean = DEFAULT_FETCH_MODE,
 ) {
 
     companion object {
         @JvmField
-        val DEFAULT_JOIN_TYPE = JoinType.LEFT
+        val DEFAULT_JOIN_TYPE = JoinType.LEFTJOIN
 
         const val DEFAULT_FETCH_MODE = false
     }

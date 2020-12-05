@@ -9,6 +9,7 @@ import com.weedow.spring.data.search.config.JpaSpecificationExecutorFactory
 import com.weedow.spring.data.search.descriptor.DefaultSearchDescriptorService
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutor
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -90,6 +91,8 @@ class MySearchDescriptor : SearchDescriptor<Person> {
         get() = Person::class.java
     override val jpaSpecificationExecutor: JpaSpecificationExecutor<Person>
         get() = JpaSpecificationExecutorFactory.getJpaSpecificationExecutor(entityClass)
+    override val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<Person>?
+        get() = TODO("Not yet implemented")
 }
 
 @Component

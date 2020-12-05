@@ -1,11 +1,13 @@
 package com.weedow.spring.data.search.config
 
-import com.weedow.spring.data.search.utils.EntityUtils
 import com.weedow.spring.data.search.utils.klogger
+import org.apache.commons.lang3.reflect.FieldUtils
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
+import javax.persistence.EmbeddedId
 import javax.persistence.EntityManager
 import javax.persistence.Id
+import javax.persistence.IdClass
 
 /**
  * Factory class to create new [JpaSpecificationExecutor] from [EntityManager] and the given Entity Class.
@@ -52,8 +54,7 @@ object JpaSpecificationExecutorFactory {
      * @param entityClass Entity Class used to initialize the [JpaSpecificationExecutor]
      */
     fun <T> getJpaSpecificationExecutor(entityClass: Class<T>): JpaSpecificationExecutor<T> {
-        val primaryKeyFields = EntityUtils.getFieldsWithAnnotation(entityClass, Id::class.java)
-        val primaryKeyClass = if (primaryKeyFields.isNotEmpty()) EntityUtils.getFieldClass(primaryKeyFields[0]) else Long::class.java
+        val primaryKeyClass = getPrimaryKeyClass(entityClass) { Long::class.java }
 
         return getJpaSpecificationExecutor(entityClass, primaryKeyClass)
     }
@@ -63,5 +64,24 @@ object JpaSpecificationExecutorFactory {
             "EntityManager is not initialized. Use 'init' method before."
         }
         return SimpleJpaRepository<T, ID>(entityClass, entityManager!!)
+    }
+
+    private fun getPrimaryKeyClass(entityClass: Class<*>, default: () -> Class<*>): Class<*> {
+        val idClassAnnotation = entityClass.getAnnotation(IdClass::class.java)
+        if (idClassAnnotation != null) {
+            return idClassAnnotation.value.java
+        }
+
+        val embeddedFields = FieldUtils.getFieldsWithAnnotation(entityClass, EmbeddedId::class.java)
+        if (embeddedFields.isNotEmpty()) {
+            return embeddedFields[0].type
+        }
+
+        val idFields = FieldUtils.getFieldsWithAnnotation(entityClass, Id::class.java)
+        if (idFields.isNotEmpty()) {
+            return idFields[0].type
+        }
+
+        return default()
     }
 }

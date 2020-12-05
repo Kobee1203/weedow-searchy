@@ -3,6 +3,7 @@ package com.weedow.spring.data.search.descriptor
 import com.weedow.spring.data.search.dto.DefaultDtoMapper
 import com.weedow.spring.data.search.dto.DtoMapper
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutor
 import com.weedow.spring.data.search.validation.DataSearchValidator
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
@@ -100,6 +101,17 @@ interface SearchDescriptor<T> {
      * @see JpaSpecificationExecutor
      */
     val jpaSpecificationExecutor: JpaSpecificationExecutor<T>
+
+    /**
+     * Returns the [QueryDslSpecificationExecutor] to search the entities.
+     *
+     * If it's not defined, it will be identified automatically by the instance of [QueryDslSpecificationExecutorFactory][com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory].
+     *
+     * @return QueryDslSpecificationExecutor
+     * @see QueryDslSpecificationExecutor
+     * @see com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory
+     */
+    val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<T>?
 
     /**
      * Return list of [EntityJoinHandlers][EntityJoinHandler] to handle the entity joins.

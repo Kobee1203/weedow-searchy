@@ -19,8 +19,15 @@ internal object EntityJoinUtils {
      * @return String representing the join name
      */
     fun getJoinName(entityClass: Class<*>, field: Field): String {
-        val fieldClass = EntityUtils.getFieldClass(field)
-        return if (EntityUtils.isElementCollection(field)) entityClass.canonicalName + JOIN_NAME_SEPARATOR + field.name else fieldClass.canonicalName
+        var fieldClass = field.type
+        if (Collection::class.java.isAssignableFrom(fieldClass)) {
+            fieldClass = EntityUtils.getParameterizedTypes(field)[0]
+        }
+        return if (isElementCollection(field)) entityClass.canonicalName + JOIN_NAME_SEPARATOR + field.name else fieldClass.canonicalName
+    }
+
+    private fun isElementCollection(field: Field): Boolean {
+        return field.getAnnotation(javax.persistence.ElementCollection::class.java) != null
     }
 
     /**

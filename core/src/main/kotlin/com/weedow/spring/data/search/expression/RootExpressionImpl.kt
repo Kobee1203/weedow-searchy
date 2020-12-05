@@ -2,6 +2,8 @@ package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.join.EntityJoin
 import com.weedow.spring.data.search.join.EntityJoins
+import com.weedow.spring.data.search.querydsl.QueryDslBuilder
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
 import org.springframework.data.jpa.domain.Specification
 import javax.persistence.criteria.CriteriaBuilder
 import javax.persistence.criteria.CriteriaQuery
@@ -13,7 +15,7 @@ import javax.persistence.criteria.Root
  * @param expressions [Expression]s
  */
 class RootExpressionImpl<T>(
-        vararg val expressions: Expression
+        vararg val expressions: Expression,
 ) : RootExpression<T> {
 
     companion object {
@@ -38,6 +40,23 @@ class RootExpressionImpl<T>(
         }
 
         expressions.forEach { specification = specification.and(it.toSpecification<T>(entityJoins))!! }
+
+        return specification
+    }
+
+    override fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T> {
+        var specification = QueryDslSpecification { builder: QueryDslBuilder<T> ->
+            builder.distinct()
+
+            val fetchJoins = entityJoins.getJoins(FILTER_FETCH_JOINS)
+            fetchJoins.values.forEach {
+                entityJoins.getPath(it.fieldPath, builder)
+            }
+
+            QueryDslSpecification.NO_PREDICATE
+        }
+
+        expressions.forEach { specification = specification.and(it.toQueryDslSpecification(entityJoins)) }
 
         return specification
     }

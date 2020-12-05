@@ -8,7 +8,7 @@ import com.weedow.spring.data.search.exception.SearchDescriptorNotFound
  *
  * The parameters map contains a field path as a key and a value list associated with the field as value.
  *
- * @see [SearchDescriptor]
+ * @see SearchDescriptor
  */
 interface DataSearchService {
 

@@ -1,6 +1,7 @@
 package com.weedow.spring.data.search.join.handler
 
 import com.weedow.spring.data.search.join.JoinInfo
+import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
 
 /**
  * Default [EntityJoinHandler] implementation.
@@ -9,11 +10,11 @@ import com.weedow.spring.data.search.join.JoinInfo
  */
 class DefaultEntityJoinHandler<T> : EntityJoinHandler<T> {
 
-    override fun supports(entityClass: Class<*>, fieldClass: Class<*>, fieldName: String, joinAnnotation: Annotation): Boolean {
+    override fun supports(propertyInfos: PropertyInfos): Boolean {
         return true
     }
 
-    override fun handle(entityClass: Class<*>, fieldClass: Class<*>, fieldName: String, joinAnnotation: Annotation): JoinInfo {
+    override fun handle(propertyInfos: PropertyInfos): JoinInfo {
         return JoinInfo()
     }
 

@@ -6,9 +6,9 @@ import com.weedow.spring.data.search.expression.RootExpression
 /**
  * Service interface to find all Entities according to the given [RootExpression] and the [SearchDescriptor].
  *
- * @see [RootExpression]
- * @see [SearchDescriptor]
- * @see [com.weedow.spring.data.search.expression.Expression]
+ * @see RootExpression
+ * @see SearchDescriptor
+ * @see com.weedow.spring.data.search.expression.Expression
  */
 interface EntitySearchService {
 

@@ -1,8 +1,16 @@
 package com.weedow.spring.data.search.join
 
-import com.weedow.spring.data.search.utils.*
+import com.querydsl.core.JoinType
+import com.weedow.spring.data.search.querydsl.QueryDslBuilder
+import com.weedow.spring.data.search.querydsl.querytype.ElementType
+import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
+import com.weedow.spring.data.search.querydsl.querytype.QEntity
+import com.weedow.spring.data.search.querydsl.querytype.QPath
+import com.weedow.spring.data.search.utils.FIELD_PATH_SEPARATOR
+import com.weedow.spring.data.search.utils.MAP_KEY
+import com.weedow.spring.data.search.utils.MAP_VALUE
+import com.weedow.spring.data.search.utils.klogger
 import org.hibernate.query.criteria.internal.JoinImplementor
-import java.lang.reflect.Field
 import javax.persistence.criteria.From
 import javax.persistence.criteria.MapJoin
 import javax.persistence.criteria.Path
@@ -24,17 +32,27 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
      *
      * If the field class is the same class as the root entity, the field is considered as already processed.
      *
-     * @param entityClass Class of the Entity
-     * @param field a field of the Entity declared with a with a Join Annotation
-     * @return
+     * @param propertyInfos Information about an Entity field declared with a Join Annotation
+     * @return `true` if the property has been already processed, `false` instead
      */
-    fun alreadyProcessed(entityClass: Class<*>, field: Field): Boolean {
+    fun alreadyProcessed(propertyInfos: PropertyInfos): Boolean {
+        val fieldClass = when (propertyInfos.elementType) {
+            ElementType.SET,
+            ElementType.LIST,
+            ElementType.COLLECTION,
+            ElementType.ARRAY,
+            -> {
+                propertyInfos.parametrizedTypes[0]
+            }
+            else -> propertyInfos.type
+        }
+
         // Do not create a join with the root Entity class
-        if (this.rootClass == EntityUtils.getFieldClass(field)) {
+        if (this.rootClass == fieldClass) {
             return true
         }
 
-        val joinName = EntityJoinUtils.getJoinName(entityClass, field)
+        val joinName = EntityJoinUtils.getJoinName(propertyInfos.parentClass, propertyInfos.parentClass.getDeclaredField(propertyInfos.fieldName))
         return joins.keys.stream().anyMatch { it == joinName }
     }
 
@@ -43,6 +61,20 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
      */
     fun add(entityJoin: EntityJoin) {
         joins[entityJoin.joinName] = entityJoin
+    }
+
+    override fun getPath(fieldPath: String, queryDslBuilder: QueryDslBuilder<*>): QPath<*> {
+        val parts = fieldPath.split(FIELD_PATH_SEPARATOR)
+        val fieldName = parts[parts.size - 1]
+        val parents = parts.subList(0, parts.size - 1)
+
+        var join: QEntity<*> = queryDslBuilder.qRootEntity
+        for (parent in parents) {
+            val qPath = join.get(parent)
+            join = queryDslBuilder.join(qPath, JoinType.LEFTJOIN, true)
+        }
+
+        return join.get(fieldName)
     }
 
     override fun <T> getPath(fieldPath: String, root: Root<T>): Path<*> {
@@ -94,16 +126,18 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
 
         val joinName = EntityJoinUtils.getJoinName(entityClass, field)
         val entityJoin = joins.getOrElse(joinName) {
-            EntityJoin(entityClass, parentPath, field)
+            val fieldPath = EntityJoinUtils.getFieldPath(parentPath, field.name)
+            EntityJoin(fieldPath, field.name, joinName)
         }
 
+        val joinType = toJpaJoinType(entityJoin.joinType)
         for (join in from.joins) {
-            if (join.attribute.name == entityJoin.fieldName && join.joinType == entityJoin.joinType) {
+            if (join.attribute.name == entityJoin.fieldName && join.joinType == joinType) {
                 return join as JoinImplementor<*, *>
             }
         }
         for (join in from.fetches) {
-            if (join.attribute.name == entityJoin.fieldName && join.joinType == entityJoin.joinType) {
+            if (join.attribute.name == entityJoin.fieldName && join.joinType == joinType) {
                 return join as JoinImplementor<*, *>
             }
         }
@@ -112,14 +146,25 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
     }
 
     private fun createJoin(entityJoin: EntityJoin, from: From<*, *>, attributeName: String): JoinImplementor<*, *> {
+        val joinType = toJpaJoinType(entityJoin.joinType)
         val join = if (entityJoin.fetched) {
-            if (log.isDebugEnabled) log.debug("Creating a fetch join to the ${from.javaType.canonicalName}.$attributeName field using the join type ${entityJoin.joinType}")
-            from.fetch<Any, Any>(attributeName, entityJoin.joinType) as JoinImplementor<*, *>
+            if (log.isDebugEnabled) log.debug("Creating a fetch join to the ${from.javaType.canonicalName}.$attributeName field using the join type $joinType")
+            from.fetch<Any, Any>(attributeName, joinType) as JoinImplementor<*, *>
         } else {
-            if (log.isDebugEnabled) log.debug("Creating a join to the ${from.javaType.canonicalName}.$attributeName field using the join type ${entityJoin.joinType}")
-            from.join<Any, Any>(attributeName, entityJoin.joinType) as JoinImplementor<*, *>
+            if (log.isDebugEnabled) log.debug("Creating a join to the ${from.javaType.canonicalName}.$attributeName field using the join type $joinType")
+            from.join<Any, Any>(attributeName, joinType) as JoinImplementor<*, *>
         }
         return join
+    }
+
+    private fun toJpaJoinType(joinType: JoinType): javax.persistence.criteria.JoinType {
+        return when (joinType) {
+            JoinType.JOIN -> javax.persistence.criteria.JoinType.INNER
+            JoinType.INNERJOIN -> javax.persistence.criteria.JoinType.INNER
+            JoinType.LEFTJOIN -> javax.persistence.criteria.JoinType.LEFT
+            JoinType.RIGHTJOIN -> javax.persistence.criteria.JoinType.RIGHT
+            else -> throw IllegalArgumentException("Join Type not supported in JPA: $joinType")
+        }
     }
 
 }

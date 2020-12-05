@@ -9,7 +9,8 @@ import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
 import com.weedow.spring.data.search.descriptor.SearchDescriptorRegistry
 import com.weedow.spring.data.search.join.handler.FetchingAllEntityJoinHandler
-import com.weedow.spring.data.search.join.handler.FetchingEagerEntityJoinHandler
+import com.weedow.spring.data.search.join.handler.FetchingEagerJpaEntityJoinHandler
+import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.sample.dto.PersonDtoMapper
 import com.weedow.spring.data.search.validation.validator.EmailValidator
 import com.weedow.spring.data.search.validation.validator.NotEmptyValidator
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.DependsOn
 
 @Configuration
+@DependsOn("jpaSpecificationExecutorFactory")
 class SampleAppConfiguration : SearchConfigurer {
 
     override fun addSearchDescriptors(registry: SearchDescriptorRegistry) {
@@ -28,16 +30,15 @@ class SampleAppConfiguration : SearchConfigurer {
     fun personSearchDescriptor(): SearchDescriptor<Person> = SearchDescriptorBuilder.builder<Person>().build()
 
     @Bean
-    fun person2SearchDescriptor(personRepository: PersonRepository): SearchDescriptor<Person> = SearchDescriptorBuilder.builder<Person>()
+    fun person2SearchDescriptor(personRepository: PersonRepository, dataSearchContext: DataSearchContext): SearchDescriptor<Person> = SearchDescriptorBuilder.builder<Person>()
             .id("person2")
             .validators(NotEmptyValidator(), EmailValidator("email"))
             .dtoMapper(PersonDtoMapper())
             .jpaSpecificationExecutor(personRepository)
-            .entityJoinHandlers(FetchingEagerEntityJoinHandler())
+            .entityJoinHandlers(FetchingEagerJpaEntityJoinHandler(dataSearchContext))
             .build()
 
     @Bean
-    @DependsOn("jpaSpecificationExecutorFactory")
     fun person3SearchDescriptor(): SearchDescriptor<Person> = SearchDescriptorBuilder.builder<Person>()
             .id("person3")
             .entityJoinHandlers(FetchingAllEntityJoinHandler())

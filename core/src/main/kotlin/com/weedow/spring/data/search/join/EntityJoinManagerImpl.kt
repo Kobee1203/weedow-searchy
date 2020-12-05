@@ -1,11 +1,11 @@
 package com.weedow.spring.data.search.join
 
+import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.join.handler.DefaultEntityJoinHandler
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
-import com.weedow.spring.data.search.utils.EntityUtils
+import com.weedow.spring.data.search.querydsl.querytype.ElementType
 import com.weedow.spring.data.search.utils.klogger
-import org.apache.commons.lang3.reflect.FieldUtils
 import java.util.*
 
 /**
@@ -13,7 +13,7 @@ import java.util.*
  *
  * This implementation computes the Entity joins for a given [SearchDescriptor], and cache the result.
  */
-class EntityJoinManagerImpl : EntityJoinManager {
+class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : EntityJoinManager {
 
     private val joinsBySearchDescriptorId: MutableMap<String, EntityJoins> = HashMap()
 
@@ -40,27 +40,38 @@ class EntityJoinManagerImpl : EntityJoinManager {
     }
 
     private fun doInitEntityJoins(entityClass: Class<*>, parentPath: String, entityJoins: EntityJoinsImpl, entityJoinHandlers: List<EntityJoinHandler<*>>) {
-        for (field in FieldUtils.getAllFieldsList(entityClass)) {
-            val joinAnnotation: Annotation? = EntityUtils.getJoinAnnotationClass(field)?.let { field.getAnnotation(it) }
+        dataSearchContext.getAllPropertyInfos(entityClass).forEach { propertyInfos ->
+
+            val hasJoinAnnotation = propertyInfos.annotations.any { dataSearchContext.joinAnnotations.contains(it.annotationClass.java) }
 
             // Ignore joins for a field without a Join Annotation
-            if (joinAnnotation != null) {
+            if (hasJoinAnnotation) {
                 // Ignore joins for a field having the same class as the root class or an entity already processed
-                if (entityJoins.alreadyProcessed(entityClass, field)) {
-                    continue
+                if (entityJoins.alreadyProcessed(propertyInfos)) {
+                    return
                 }
 
-                val fieldClass = EntityUtils.getFieldClass(field)
-
                 for (entityJoinHandler in entityJoinHandlers) {
-                    if (entityJoinHandler.supports(entityClass, fieldClass, field.name, joinAnnotation)) {
-                        val joinInfo = entityJoinHandler.handle(entityClass, fieldClass, field.name, joinAnnotation)
+                    if (entityJoinHandler.supports(propertyInfos)) {
+                        val joinInfo = entityJoinHandler.handle(propertyInfos)
 
-                        val entityJoin = EntityJoin(entityClass, parentPath, field, joinInfo.joinType, joinInfo.fetched)
+                        val fieldPath = EntityJoinUtils.getFieldPath(parentPath, propertyInfos.fieldName)
+                        val joinName = EntityJoinUtils.getJoinName(propertyInfos.parentClass, propertyInfos.parentClass.getDeclaredField(propertyInfos.fieldName))
+                        val entityJoin = EntityJoin(fieldPath, propertyInfos.fieldName, joinName, joinInfo.joinType, joinInfo.fetched)
                         entityJoins.add(entityJoin)
 
-                        // Recursive loop to handle nested joins, except ElementCollection fields
-                        if (!EntityUtils.isElementCollection(field)) {
+                        // Recursive loop to handle nested Entity joins
+                        val fieldClass = when (propertyInfos.elementType) {
+                            ElementType.SET,
+                            ElementType.LIST,
+                            ElementType.COLLECTION,
+                            ElementType.ARRAY,
+                            -> {
+                                propertyInfos.parametrizedTypes[0]
+                            }
+                            else -> propertyInfos.type
+                        }
+                        if (dataSearchContext.isEntity(fieldClass)) {
                             doInitEntityJoins(fieldClass, entityJoin.fieldPath, entityJoins, entityJoinHandlers)
                         }
 

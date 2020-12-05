@@ -3,78 +3,40 @@ package com.weedow.spring.data.search.utils
 import org.apache.commons.lang3.reflect.FieldUtils
 import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
-import javax.persistence.*
 
 /**
  * Entity utility methods.
  */
 object EntityUtils {
-    /**
-     * List of Join Annotations supported.
-     */
-    private val JOIN_ANNOTATIONS = listOf(
-            OneToOne::class.java,
-            OneToMany::class.java,
-            ManyToMany::class.java,
-            ElementCollection::class.java,
-            ManyToOne::class.java
-    )
 
     /**
-     * Gets an array of [Fields][Field] of the given [Class][clazz], annotated with the given [annotation Class][annotationClass].
+     * Gets the first found [Field] of the given class and its parents (if any) that is annotated with the given annotation.
      *
-     * @param clazz Class where the fields are found
-     * @param annotationClass: Annotation Class present on any field
-     * @return an Array of [Fields][Field].
+     * @param clazz the [Class] to query
+     * @param annotationClass – the [Annotation] that must be present on a field to be matched
+     * @return the [Field] object or `null` if not found
      */
-    fun getFieldsWithAnnotation(clazz: Class<*>, annotationClass: Class<out Annotation>): Array<Field> {
-        return FieldUtils.getAllFieldsList(clazz)
-                .stream()
-                .filter { field: Field -> field.isAnnotationPresent(annotationClass) }
-                .toArray<Field> { size -> arrayOfNulls(size) }
+    fun getFieldWithAnnotation(clazz: Class<*>, annotationClass: Class<out Annotation>): Field? {
+        val fields = FieldUtils.getFieldsWithAnnotation(clazz, annotationClass)
+        return if (fields.isNotEmpty()) fields[0] else null
     }
 
     /**
-     * Gets the type of the given [field].
+     * Gets the [parameterized types][ParameterizedType] of the given field.
      *
-     * @param field [Field] object
-     * @return Class representing the type of the field.
+     * May return an empty list if the field type is not parameterized
+     *
+     * @param field The [Field] to query
+     * @return List of classes representing the actual type arguments to the Field
      */
-    fun getFieldClass(field: Field): Class<*> {
-        var fieldClass = field.type
-        if (Collection::class.java.isAssignableFrom(fieldClass)) {
-            fieldClass = getGenericTypes(field)[0]
+    fun getParameterizedTypes(field: Field): List<Class<*>> {
+        val type = field.type
+        val genericType = field.genericType
+        return when {
+            type.isArray -> listOf(type.componentType)
+            genericType is ParameterizedType -> genericType.actualTypeArguments.map { it as Class<*> }
+            else -> listOf()
         }
-        return fieldClass
     }
 
-    /**
-     * Gets the generic types of the given field.
-     */
-    fun getGenericTypes(field: Field): List<Class<*>> {
-        val genericType = field.genericType as ParameterizedType
-        return genericType.actualTypeArguments.map { it as Class<*> }
-    }
-
-    /**
-     * Gets the [Join Annotation][JOIN_ANNOTATIONS] of the given [field].
-     *
-     * If the field has no [Join Annotation][JOIN_ANNOTATIONS], the methods returns `null`.
-     *
-     * @param field [Field] object
-     * @return Class that extends [Annotation] present on the field, or `null` if no [Join Annotation][JOIN_ANNOTATIONS].
-     */
-    fun getJoinAnnotationClass(field: Field): Class<out Annotation>? {
-        return JOIN_ANNOTATIONS.firstOrNull { annotation: Class<out Annotation> -> field.getAnnotation(annotation) != null }
-    }
-
-    /**
-     * Checks if the given [field] is annotated with [ElementCollection].
-     *
-     * @param field [Field] object
-     * @return `true` if the [field] is annotated with [ElementCollection], `false` instead.
-     */
-    fun isElementCollection(field: Field): Boolean {
-        return field.getAnnotation(ElementCollection::class.java) != null
-    }
 }

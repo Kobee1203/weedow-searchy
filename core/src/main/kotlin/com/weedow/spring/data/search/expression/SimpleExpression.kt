@@ -1,6 +1,8 @@
 package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.join.EntityJoins
+import com.weedow.spring.data.search.querydsl.QueryDslBuilder
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
 import com.weedow.spring.data.search.utils.Keyword.CURRENT_DATE
 import com.weedow.spring.data.search.utils.Keyword.CURRENT_DATE_TIME
 import com.weedow.spring.data.search.utils.Keyword.CURRENT_TIME
@@ -15,7 +17,7 @@ import javax.persistence.criteria.*
 internal data class SimpleExpression(
         private val operator: Operator,
         private val fieldInfo: FieldInfo,
-        private val value: Any
+        private val value: Any,
 ) : Expression {
 
     companion object {
@@ -39,6 +41,27 @@ internal data class SimpleExpression(
                 Operator.GREATER_THAN -> @Suppress("UNCHECKED_CAST") greaterThan(criteriaBuilder, path as Path<Comparable<Any>>, value)
                 Operator.GREATER_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") greaterThanOrEquals(criteriaBuilder, path as Path<Comparable<Any>>, value)
                 Operator.IN -> inPredicate(criteriaBuilder, path, value as List<*>)
+            }
+        }
+    }
+
+    override fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T> {
+        return QueryDslSpecification { builder: QueryDslBuilder<T> ->
+            val path = entityJoins.getPath(fieldInfo.fieldPath, builder)
+            // val path = builder.getPath(fieldInfo.fieldPath)
+
+            when (operator) {
+                Operator.EQUALS -> equals(builder, path.path, value, fieldInfo)
+                /*
+                Operator.MATCHES -> @Suppress("UNCHECKED_CAST") like(builder, path as Path<String>, value as String)
+                Operator.IMATCHES -> @Suppress("UNCHECKED_CAST") ilike(builder, path as Path<String>, value as String)
+                Operator.LESS_THAN -> @Suppress("UNCHECKED_CAST") lessThan(builder, path as Path<Comparable<Any>>, value as Comparable<Any>)
+                Operator.LESS_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") lessThanOrEquals(builder, path as Path<Comparable<Any>>, value as Comparable<Any>)
+                Operator.GREATER_THAN -> @Suppress("UNCHECKED_CAST") greaterThan(builder, path as Path<Comparable<Any>>, value as Comparable<Any>)
+                Operator.GREATER_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") greaterThanOrEquals(builder, path as Path<Comparable<Any>>, value as Comparable<Any>)
+                Operator.IN -> inPredicate(builder, path, value as List<*>)
+                */
+                else -> throw IllegalArgumentException("Operator not handled: $operator")
             }
         }
     }
@@ -120,6 +143,16 @@ internal data class SimpleExpression(
         val inClause = criteriaBuilder.`in`(path)
         values.forEach { inClause.value(it) }
         return inClause
+    }
+
+    //////////////////////////////////////
+
+    private fun equals(queryDslBuilder: QueryDslBuilder<*>, path: com.querydsl.core.types.Path<*>, value: Any, fieldInfo: FieldInfo): com.querydsl.core.types.Predicate {
+        return if (value === NullValue) {
+            queryDslBuilder.isNull(path)
+        } else {
+            queryDslBuilder.equal(path, value)
+        }
     }
 
 }

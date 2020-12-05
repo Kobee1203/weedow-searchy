@@ -1,6 +1,8 @@
 package com.weedow.spring.data.search.expression
 
+import com.querydsl.core.types.dsl.Expressions
 import com.weedow.spring.data.search.join.EntityJoins
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
 import org.springframework.data.jpa.domain.Specification
 
 /**
@@ -8,7 +10,7 @@ import org.springframework.data.jpa.domain.Specification
  */
 internal data class LogicalExpression(
         private val logicalOperator: LogicalOperator,
-        private val expressions: List<Expression>
+        private val expressions: List<Expression>,
 ) : Expression {
 
     override fun toFieldExpressions(negated: Boolean): Collection<FieldExpression> {
@@ -22,6 +24,15 @@ internal data class LogicalExpression(
             lastSpecification = if (logicalOperator == LogicalOperator.OR) lastSpecification.or(specification)!! else lastSpecification.and(specification)!!
         }
         return Specification.where(lastSpecification)!!
+    }
+
+    override fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T> {
+        var lastSpecification = QueryDslSpecification<T> { Expressions.asBoolean(true).isTrue }
+        expressions.forEach { expression ->
+            val specification = expression.toQueryDslSpecification<T>(entityJoins)
+            lastSpecification = if (logicalOperator == LogicalOperator.OR) lastSpecification.or(specification) else lastSpecification.and(specification)
+        }
+        return lastSpecification
     }
 
 }

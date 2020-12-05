@@ -1,8 +1,10 @@
 package com.weedow.spring.data.search.join.handler
 
+import com.querydsl.core.JoinType
+import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.join.JoinInfo
+import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
 import javax.persistence.*
-import javax.persistence.criteria.JoinType
 
 /**
  * [EntityJoinHandler] implementation to fetch all fields (entity fields and nested fields included) with Join Annotation defining [FetchType.EAGER].
@@ -12,18 +14,21 @@ import javax.persistence.criteria.JoinType
  * _Example: `A` has a relationship with `B` using `@OneToMany` annotation and `FetchType.EAGER`, and `A` has a relationship with `C` using `@OneToMany` annotation and `FetchType.LAZY`.
  * When we search for `A`, we retrieve `A` with just data from `B`, but not `C`._
  */
-class FetchingEagerEntityJoinHandler<T> : EntityJoinHandler<T> {
+class FetchingEagerJpaEntityJoinHandler<T>(
+        private val dataSearchContext: DataSearchContext,
+) : EntityJoinHandler<T> {
 
-    override fun supports(entityClass: Class<*>, fieldClass: Class<*>, fieldName: String, joinAnnotation: Annotation): Boolean {
+    override fun supports(propertyInfos: PropertyInfos): Boolean {
+        val joinAnnotation = propertyInfos.annotations.firstOrNull { dataSearchContext.joinAnnotations.contains(it.annotationClass.java) }
         val fetchType = getFetchType(joinAnnotation)
         return FetchType.EAGER == fetchType
     }
 
-    override fun handle(entityClass: Class<*>, fieldClass: Class<*>, fieldName: String, joinAnnotation: Annotation): JoinInfo {
-        return JoinInfo(JoinType.LEFT, true)
+    override fun handle(propertyInfos: PropertyInfos): JoinInfo {
+        return JoinInfo(JoinType.LEFTJOIN, true)
     }
 
-    private fun getFetchType(joinAnnotation: Annotation): FetchType {
+    private fun getFetchType(joinAnnotation: Annotation?): FetchType {
         return when (joinAnnotation) {
             is OneToOne -> joinAnnotation.fetch
             is OneToMany -> joinAnnotation.fetch

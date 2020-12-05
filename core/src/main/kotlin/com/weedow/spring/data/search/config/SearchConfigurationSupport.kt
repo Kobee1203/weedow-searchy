@@ -1,6 +1,8 @@
 package com.weedow.spring.data.search.config
 
 import com.weedow.spring.data.search.alias.*
+import com.weedow.spring.data.search.context.ConfigurableDataSearchContext
+import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.converter.StringToDateConverter
 import com.weedow.spring.data.search.converter.StringToOffsetDateTimeConverter
 import com.weedow.spring.data.search.descriptor.*
@@ -16,28 +18,30 @@ import com.weedow.spring.data.search.fieldpath.FieldPathResolver
 import com.weedow.spring.data.search.fieldpath.FieldPathResolverImpl
 import com.weedow.spring.data.search.join.EntityJoinManager
 import com.weedow.spring.data.search.join.EntityJoinManagerImpl
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationService
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationServiceImpl
 import com.weedow.spring.data.search.service.DataSearchService
 import com.weedow.spring.data.search.service.DataSearchServiceImpl
 import com.weedow.spring.data.search.service.EntitySearchService
 import com.weedow.spring.data.search.service.EntitySearchServiceImpl
-import com.weedow.spring.data.search.specification.JpaSpecificationService
-import com.weedow.spring.data.search.specification.JpaSpecificationServiceImpl
 import com.weedow.spring.data.search.validation.DataSearchErrorsFactory
 import com.weedow.spring.data.search.validation.DataSearchErrorsFactoryImpl
 import com.weedow.spring.data.search.validation.DataSearchValidationService
 import com.weedow.spring.data.search.validation.DataSearchValidationServiceImpl
 import org.springframework.beans.factory.ObjectProvider
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.domain.EntityScanner
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.DependsOn
+import org.springframework.context.event.ContextRefreshedEvent
+import org.springframework.context.event.EventListener
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.converter.Converter
 import org.springframework.core.convert.converter.ConverterRegistry
 import org.springframework.core.convert.support.ConfigurableConversionService
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.data.convert.Jsr310Converters
-import javax.annotation.PreDestroy
-import javax.persistence.EntityManager
 
 /**
  * Main class providing the configuration of Spring Data Search.
@@ -45,51 +49,17 @@ import javax.persistence.EntityManager
  */
 open class SearchConfigurationSupport {
 
-    /**
-     * Inject automatically the current [EntityManager] in order to initialize [JpaSpecificationExecutorFactory].
-     */
-    @Autowired(required = false)
-    fun setEntityManager(entityManager: EntityManager) {
-        JpaSpecificationExecutorFactory.init(entityManager)
-    }
+    @EventListener
+    fun handleContextRefreshEvent(cre: ContextRefreshedEvent) {
+        val dataSearchContext = cre.applicationContext.getBean(DataSearchContext::class.java)
 
-    /**
-     * Reset [JpaSpecificationExecutorFactory].
-     */
-    @PreDestroy
-    fun resetJpaSpecificationExecutorFactory() {
-        JpaSpecificationExecutorFactory.reset()
+        if (dataSearchContext is ConfigurableDataSearchContext) {
+            val entityClasses = EntityScanner(cre.applicationContext).scan(*dataSearchContext.entityAnnotations.toTypedArray())
+            entityClasses.forEach { entityClass ->
+                dataSearchContext.add(entityClass)
+            }
+        }
     }
-
-    /**
-     * Bean to expose the [JpaSpecificationExecutorFactory].
-     *
-     * It is useful when an application creates an [SearchDescriptor] Bean without a specific [JpaSpecificationExecutor][org.springframework.data.jpa.repository.JpaSpecificationExecutor].
-     * In this case, [@DependsOn][org.springframework.context.annotation.DependsOn] must be used to prevent an exception if the [SearchDescriptor] Bean is initialized before [JpaSpecificationExecutorFactory].
-     *
-     * ```java
-     * @Configuration
-     * public class SearchDescriptorConfiguration {
-     *   @Bean
-     *   @DependsOn("jpaSpecificationExecutorFactory")
-     *   SearchDescriptor<Person> personSearchDescriptor() {
-     *     return new SearchDescriptorBuilder<Person>(Person.class).build();
-     *   }
-     * }
-     * ```
-     */
-    @Bean
-    open fun jpaSpecificationExecutorFactory(): JpaSpecificationExecutorFactory {
-        return JpaSpecificationExecutorFactory
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    open fun jpaSpecificationService(): JpaSpecificationService {
-        return JpaSpecificationServiceImpl()
-    }
-
-    /////////////////////
 
     @Bean
     @ConditionalOnMissingBean
@@ -127,7 +97,8 @@ open class SearchConfigurationSupport {
             searchDescriptorService: SearchDescriptorService,
             expressionMapper: ExpressionMapper,
             dataSearchValidationService: DataSearchValidationService,
-            entitySearchService: EntitySearchService): DataSearchService {
+            entitySearchService: EntitySearchService,
+    ): DataSearchService {
         return DataSearchServiceImpl(searchDescriptorService, expressionMapper, dataSearchValidationService, entitySearchService)
     }
 
@@ -145,14 +116,23 @@ open class SearchConfigurationSupport {
 
     @Bean
     @ConditionalOnMissingBean
-    open fun entitySearchService(jpaSpecificationService: JpaSpecificationService, entityJoinManager: EntityJoinManager): EntitySearchServiceImpl {
-        return EntitySearchServiceImpl(jpaSpecificationService, entityJoinManager)
+    open fun entitySearchService(
+            queryDslSpecificationService: QueryDslSpecificationService,
+            queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory,
+    ): EntitySearchServiceImpl {
+        return EntitySearchServiceImpl(queryDslSpecificationService, queryDslSpecificationExecutorFactory)
     }
 
     @Bean
     @ConditionalOnMissingBean
-    open fun entityJoinManager(): EntityJoinManager {
-        return EntityJoinManagerImpl()
+    open fun queryDslSpecificationService(entityJoinManager: EntityJoinManager): QueryDslSpecificationService {
+        return QueryDslSpecificationServiceImpl(entityJoinManager)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun entityJoinManager(dataSearchContext: DataSearchContext): EntityJoinManager {
+        return EntityJoinManagerImpl(dataSearchContext)
     }
 
     /**

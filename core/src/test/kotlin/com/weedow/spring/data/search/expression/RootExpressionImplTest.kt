@@ -1,6 +1,7 @@
 package com.weedow.spring.data.search.expression
 
 import com.nhaarman.mockitokotlin2.*
+import com.querydsl.core.JoinType
 import com.weedow.spring.data.search.join.EntityJoin
 import com.weedow.spring.data.search.join.EntityJoins
 import org.assertj.core.api.Assertions.assertThat
@@ -8,7 +9,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.data.jpa.domain.Specification
-import javax.persistence.criteria.*
+import javax.persistence.criteria.CriteriaBuilder
+import javax.persistence.criteria.CriteriaQuery
+import javax.persistence.criteria.Predicate
+import javax.persistence.criteria.Root
 
 @ExtendWith(MockitoExtension::class)
 internal class RootExpressionImplTest {
@@ -80,8 +84,8 @@ internal class RootExpressionImplTest {
         val fieldPath1 = "entity.myJoin1"
         val fieldPath2 = "entity.myJoin2"
         val fetchJoins = mapOf(
-                "myJoin1" to EntityJoin(fieldPath1, "myJoin1", "myJoin1", JoinType.LEFT, true),
-                "myJoin2" to EntityJoin(fieldPath2, "myJoin2", "myJoin2", JoinType.LEFT, true)
+                "myJoin1" to EntityJoin(fieldPath1, "myJoin1", "myJoin1", JoinType.LEFTJOIN, true),
+                "myJoin2" to EntityJoin(fieldPath2, "myJoin2", "myJoin2", JoinType.LEFTJOIN, true)
         )
         whenever(entityJoins.getJoins(RootExpressionImpl.FILTER_FETCH_JOINS)).thenReturn(fetchJoins)
 

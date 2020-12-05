@@ -5,7 +5,7 @@ import com.weedow.spring.data.search.join.EntityJoins
 import org.springframework.data.jpa.domain.Specification
 
 /**
- * Service interface to create a [Specification] to be used by the [DataSearchService][com.weedow.spring.data.search.service.DataSearchService].
+ * Service interface to create a [Specification] to be used by the [EntitySearchService][com.weedow.spring.data.search.service.EntitySearchService].
  */
 interface JpaSpecificationService {
 

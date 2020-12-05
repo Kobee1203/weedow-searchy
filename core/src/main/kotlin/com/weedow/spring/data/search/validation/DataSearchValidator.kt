@@ -64,7 +64,7 @@ interface DataSearchValidator {
      *
      * This method can be overridden to change the default behavior.
      *
-     * @see [com.weedow.spring.data.search.validation.validator.NotEmptyValidator]
+     * @see com.weedow.spring.data.search.validation.validator.NotEmptyValidator
      */
     @JvmDefault
     fun validate(fieldExpressions: Collection<FieldExpression>, errors: DataSearchErrors) {

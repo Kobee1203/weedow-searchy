@@ -34,7 +34,7 @@ class FieldPathResolverImpl(private val aliasResolutionService: AliasResolutionS
                 fieldName = aliasResolutionService.resolve(parentClass, fieldPart)
                 fieldClass =
                         if (Map::class.java.isAssignableFrom(parentClass)) {
-                            val genericTypes = EntityUtils.getGenericTypes(field!!)
+                            val genericTypes = EntityUtils.getParameterizedTypes(field!!)
                             when (fieldName) {
                                 MAP_KEY -> genericTypes[0]
                                 MAP_VALUE -> genericTypes[1]
@@ -42,7 +42,11 @@ class FieldPathResolverImpl(private val aliasResolutionService: AliasResolutionS
                             }
                         } else {
                             field = parentClass.getDeclaredField(fieldName)
-                            EntityUtils.getFieldClass(field)
+                            if (Collection::class.java.isAssignableFrom(field.type)) {
+                                EntityUtils.getParameterizedTypes(field!!)[0]
+                            } else {
+                                field.type
+                            }
                         }
                 resolvedFieldPath.add(fieldName)
             }
