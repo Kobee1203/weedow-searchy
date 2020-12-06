@@ -69,7 +69,7 @@ class ExpressionParserVisitorImpl(
         val operatorInfo = getOperatorInfo(ctx)
 
         val fieldPath = ctx.field_path().text
-        val valueRuleContext = ctx.string_value() ?: ctx.number_value() ?: ctx.boolean_value()
+        val valueRuleContext = ctx.string_value() ?: ctx.number_value() ?: ctx.date_value() ?: ctx.boolean_value()
         val value = cleanValue(valueRuleContext)
         val fieldValues = listOf(value)
 
@@ -91,7 +91,7 @@ class ExpressionParserVisitorImpl(
         val fieldPath = ctx.field_path().text
         val negated = ctx.K_NOT() != null
         val fieldValues = ctx.value().map {
-            val valueRuleContext = it.string_value() ?: it.number_value() ?: it.boolean_value()
+            val valueRuleContext = it.string_value() ?: it.number_value() ?: it.date_value() ?: it.boolean_value()
             cleanValue(valueRuleContext)
         }.toList()
 

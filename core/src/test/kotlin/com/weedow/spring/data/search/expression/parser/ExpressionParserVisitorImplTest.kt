@@ -222,6 +222,7 @@ internal class ExpressionParserVisitorImplTest {
         }
         whenever(ctx.boolean_value()).thenReturn(booleanValueContext)
         whenever(ctx.number_value()).thenReturn(null)
+        whenever(ctx.date_value()).thenReturn(null)
         whenever(ctx.string_value()).thenReturn(null)
 
         val operatorRuleContext = mock<QueryParser.Boolean_comparison_operatorContext> {
@@ -384,16 +385,16 @@ internal class ExpressionParserVisitorImplTest {
         }
         val values = listOf<QueryParser.ValueContext>(
                 mock {
-                    on {this.string_value()}.thenReturn(valueContext1)
+                    on { this.string_value() }.thenReturn(valueContext1)
                 },
                 mock {
-                    on {this.string_value()}.thenReturn(null)
-                    on {this.number_value()}.thenReturn(valueContext2)
+                    on { this.string_value() }.thenReturn(null)
+                    on { this.number_value() }.thenReturn(valueContext2)
                 },
                 mock {
-                    on {this.string_value()}.thenReturn(null)
-                    on {this.number_value()}.thenReturn(null)
-                    on {this.boolean_value()}.thenReturn(valueContext3)
+                    on { this.string_value() }.thenReturn(null)
+                    on { this.number_value() }.thenReturn(null)
+                    on { this.boolean_value() }.thenReturn(valueContext3)
                 }
         )
 

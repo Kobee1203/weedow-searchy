@@ -48,7 +48,7 @@ internal class ExpressionParserImplTest {
         assertThatThrownBy { expressionParser.parse(query, rootClass) }
                 .isInstanceOf(ExpressionParserException::class.java)
                 .hasMessage("400 BAD_REQUEST \"Syntax Errors: [\n" +
-                        "line 1:6 no viable alternative at input 'AAAAABBBBB' - [@1,6:10='BBBBB',<25>,1:6]\n" +
+                        "line 1:6 no viable alternative at input 'AAAAABBBBB' - [@1,6:10='BBBBB',<29>,1:6]\n" +
                         "]\"")
 
         verifyZeroInteractions(expressionParserVisitorFactory)
