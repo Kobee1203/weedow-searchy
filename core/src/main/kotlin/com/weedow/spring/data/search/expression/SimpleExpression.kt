@@ -34,10 +34,10 @@ internal data class SimpleExpression(
                 Operator.EQUALS -> equals(criteriaBuilder, path, value, fieldInfo)
                 Operator.MATCHES -> @Suppress("UNCHECKED_CAST") like(criteriaBuilder, path as Path<String>, value as String)
                 Operator.IMATCHES -> @Suppress("UNCHECKED_CAST") ilike(criteriaBuilder, path as Path<String>, value as String)
-                Operator.LESS_THAN -> @Suppress("UNCHECKED_CAST") lessThan(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
-                Operator.LESS_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") lessThanOrEquals(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
-                Operator.GREATER_THAN -> @Suppress("UNCHECKED_CAST") greaterThan(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
-                Operator.GREATER_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") greaterThanOrEquals(criteriaBuilder, path as Path<Comparable<Any>>, value as Comparable<Any>)
+                Operator.LESS_THAN -> @Suppress("UNCHECKED_CAST") lessThan(criteriaBuilder, path as Path<Comparable<Any>>, value)
+                Operator.LESS_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") lessThanOrEquals(criteriaBuilder, path as Path<Comparable<Any>>, value)
+                Operator.GREATER_THAN -> @Suppress("UNCHECKED_CAST") greaterThan(criteriaBuilder, path as Path<Comparable<Any>>, value)
+                Operator.GREATER_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") greaterThanOrEquals(criteriaBuilder, path as Path<Comparable<Any>>, value)
                 Operator.IN -> inPredicate(criteriaBuilder, path, value as List<*>)
             }
         }
@@ -65,7 +65,7 @@ internal data class SimpleExpression(
                     @Suppress("UNCHECKED_CAST")
                     criteriaBuilder.isMember(value, path as javax.persistence.criteria.Expression<Collection<*>>)
                 } else {
-                    val expression = convertValueToExpression(criteriaBuilder, value)
+                    val expression = convertValueToExpression(criteriaBuilder, value, path.javaType)
                     return criteriaBuilder.equal(path, expression)
                 }
             }
@@ -86,32 +86,33 @@ internal data class SimpleExpression(
         )
     }
 
-    private fun <Y : Comparable<Any>> lessThan(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Y): Predicate {
-        val expression = convertValueToExpression(criteriaBuilder, value)
+    private fun <Y : Comparable<Y>> lessThan(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Any): Predicate {
+        val expression = convertValueToExpression(criteriaBuilder, value, path.javaType)
         return criteriaBuilder.lessThan(path, expression)
     }
 
-    private fun <Y : Comparable<Any>> lessThanOrEquals(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Y): Predicate {
-        val expression = convertValueToExpression(criteriaBuilder, value)
+    private fun <Y : Comparable<Y>> lessThanOrEquals(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Any): Predicate {
+        val expression = convertValueToExpression(criteriaBuilder, value, path.javaType)
         return criteriaBuilder.lessThanOrEqualTo(path, expression)
     }
 
-    private fun <Y : Comparable<Any>> greaterThan(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Y): Predicate {
-        val expression = convertValueToExpression(criteriaBuilder, value)
+    private fun <Y : Comparable<Y>> greaterThan(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Any): Predicate {
+        val expression = convertValueToExpression(criteriaBuilder, value, path.javaType)
         return criteriaBuilder.greaterThan(path, expression)
     }
 
-    private fun <Y : Comparable<Any>> greaterThanOrEquals(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Y): Predicate {
-        val expression = convertValueToExpression(criteriaBuilder, value)
+    private fun <Y : Comparable<Y>> greaterThanOrEquals(criteriaBuilder: CriteriaBuilder, path: Path<Y>, value: Any): Predicate {
+        val expression = convertValueToExpression(criteriaBuilder, value, path.javaType)
         return criteriaBuilder.greaterThanOrEqualTo(path, expression)
     }
 
-    private fun convertValueToExpression(criteriaBuilder: CriteriaBuilder, value: Any): javax.persistence.criteria.Expression<Comparable<Any>> {
+    @Suppress("UNCHECKED_CAST")
+    private fun <Y> convertValueToExpression(criteriaBuilder: CriteriaBuilder, value: Any, @Suppress("UNUSED_PARAMETER") type: Class<Y>): javax.persistence.criteria.Expression<Y> {
         return when {
-            CURRENT_DATE === value -> criteriaBuilder.currentDate() as javax.persistence.criteria.Expression<Comparable<Any>>
-            CURRENT_TIME === value -> criteriaBuilder.currentTime() as javax.persistence.criteria.Expression<Comparable<Any>>
-            CURRENT_DATE_TIME === value -> criteriaBuilder.currentTimestamp() as javax.persistence.criteria.Expression<Comparable<Any>>
-            else -> criteriaBuilder.literal(value) as javax.persistence.criteria.Expression<Comparable<Any>>
+            CURRENT_DATE === value -> criteriaBuilder.currentDate() as javax.persistence.criteria.Expression<Y>
+            CURRENT_TIME === value -> criteriaBuilder.currentTime() as javax.persistence.criteria.Expression<Y>
+            CURRENT_DATE_TIME === value -> criteriaBuilder.currentTimestamp() as javax.persistence.criteria.Expression<Y>
+            else -> criteriaBuilder.literal(value) as javax.persistence.criteria.Expression<Y>
         }
     }
 

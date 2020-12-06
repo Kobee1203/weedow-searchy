@@ -36,7 +36,9 @@ internal class SimpleExpressionTest {
         val root = mock<Root<Person>>()
         val criteriaBuilder = mock<CriteriaBuilder>()
 
-        val path = mock<Path<*>>()
+        val path = mock<Path<String>> {
+            on { this.javaType }.thenReturn(String::class.java)
+        }
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
@@ -272,7 +274,9 @@ internal class SimpleExpressionTest {
         val root = mock<Root<Person>>()
         val criteriaBuilder = mock<CriteriaBuilder>()
 
-        val path = mock<Path<Double>>()
+        val path = mock<Path<Double>> {
+            on { this.javaType }.thenReturn(Double::class.java)
+        }
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
@@ -299,7 +303,9 @@ internal class SimpleExpressionTest {
         val root = mock<Root<Person>>()
         val criteriaBuilder = mock<CriteriaBuilder>()
 
-        val path = mock<Path<Double>>()
+        val path = mock<Path<Double>> {
+            on { this.javaType }.thenReturn(Double::class.java)
+        }
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
@@ -326,7 +332,9 @@ internal class SimpleExpressionTest {
         val root = mock<Root<Person>>()
         val criteriaBuilder = mock<CriteriaBuilder>()
 
-        val path = mock<Path<Double>>()
+        val path = mock<Path<Double>> {
+            on { this.javaType }.thenReturn(Double::class.java)
+        }
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
@@ -353,7 +361,9 @@ internal class SimpleExpressionTest {
         val root = mock<Root<Person>>()
         val criteriaBuilder = mock<CriteriaBuilder>()
 
-        val path = mock<Path<Double>>()
+        val path = mock<Path<Double>> {
+            on { this.javaType }.thenReturn(Double::class.java)
+        }
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
@@ -416,7 +426,9 @@ internal class SimpleExpressionTest {
         val root = mock<Root<Person>>()
         val criteriaBuilder = mock<CriteriaBuilder>()
 
-        val path = mock<Path<*>>()
+        val path = mock<Path<Date>> {
+            on { this.javaType }.thenReturn(Date::class.java)
+        }
         whenever(entityJoins.getPath(fieldInfo.fieldPath, root)).thenReturn(path)
 
         val predicate = mock<Predicate>()
