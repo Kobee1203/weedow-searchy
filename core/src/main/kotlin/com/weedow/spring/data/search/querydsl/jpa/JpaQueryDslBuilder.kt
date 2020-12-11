@@ -2,27 +2,34 @@ package com.weedow.spring.data.search.querydsl.jpa
 
 import com.querydsl.core.JoinType
 import com.querydsl.core.types.*
+import com.querydsl.core.types.dsl.DateExpression
+import com.querydsl.core.types.dsl.DateTimeExpression
 import com.querydsl.core.types.dsl.Expressions
+import com.querydsl.core.types.dsl.TimeExpression
 import com.querydsl.jpa.JPQLOps
 import com.querydsl.jpa.impl.AbstractJPAQuery
 import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.querydsl.QueryDslBuilder
-import com.weedow.spring.data.search.querydsl.querytype.ElementType
-import com.weedow.spring.data.search.querydsl.querytype.QEntity
-import com.weedow.spring.data.search.querydsl.querytype.QPath
+import com.weedow.spring.data.search.querydsl.querytype.*
+import com.weedow.spring.data.search.utils.Keyword
+
 
 class JpaQueryDslBuilder<T>(
-        private val dataSearchContext: DataSearchContext,
-        private val query: AbstractJPAQuery<T, *>,
-        override val qRootEntity: QEntity<out T>,
+    private val dataSearchContext: DataSearchContext,
+    private val query: AbstractJPAQuery<T, *>,
+    override val qEntityRoot: QEntityRoot<T>,
 ) : QueryDslBuilder<T> {
 
     override fun distinct() {
         query.distinct()
     }
 
-    override fun join(qPath: QPath<*>, joinType: JoinType, fetched: Boolean): QEntity<*> {
+    override fun join(qPath: QPath<*>, joinType: JoinType, fetched: Boolean): QEntityJoin<*> {
         val elementType = qPath.propertyInfos.elementType
+
+        if (elementType == ElementType.MAP_KEY || elementType == ElementType.MAP_VALUE) {
+            return QEntityJoinImpl(dataSearchContext.get(qPath.propertyInfos.type), qPath)
+        }
 
         val path = qPath.path
 
@@ -38,7 +45,7 @@ class JpaQueryDslBuilder<T>(
             else -> throw IllegalArgumentException("Could not identify the alias type for the QPath of type '$elementType': $qPath")
         }
 
-        val alias = dataSearchContext.get(aliasType)
+        val alias = createAlias(aliasType, qPath)
 
         val join = when (joinType) {
             JoinType.JOIN -> join(elementType, path, alias)
@@ -53,7 +60,13 @@ class JpaQueryDslBuilder<T>(
             query.fetchJoin()
         }
 
-        return join
+        return QEntityJoinImpl(join, qPath)
+    }
+
+    private fun <E> createAlias(aliasType: Class<E>, qPath: QPath<*>): QEntity<E> {
+        return dataSearchContext.get(aliasType) { entityClazz ->
+            QEntityImpl(dataSearchContext, entityClazz, qPath.propertyInfos.fieldName)
+        }
     }
 
     private fun <E> join(elementType: ElementType, path: Path<*>, alias: QEntity<E>): QEntity<*> {
@@ -64,6 +77,7 @@ class JpaQueryDslBuilder<T>(
             -> query.join(path as CollectionExpression<*, E>, alias)
             ElementType.MAP -> query.join(path as MapExpression<*, E>, alias)
             ElementType.ENTITY -> query.join(path as QEntity<E>, alias)
+            else -> throw IllegalArgumentException("Could not create a join with the following: element type=$elementType, path=$path, alias: $alias")
         }
 
         return alias
@@ -77,6 +91,7 @@ class JpaQueryDslBuilder<T>(
             -> query.innerJoin(path as CollectionExpression<*, E>, alias)
             ElementType.MAP -> query.innerJoin(path as MapExpression<*, E>, alias)
             ElementType.ENTITY -> query.innerJoin(path as QEntity<E>, alias)
+            else -> throw IllegalArgumentException("Could not create an inner join with the following: element type=$elementType, path=$path, alias: $alias")
         }
 
         return alias
@@ -90,6 +105,7 @@ class JpaQueryDslBuilder<T>(
             -> query.leftJoin(path as CollectionExpression<*, E>, alias)
             ElementType.MAP -> query.leftJoin(path as MapExpression<*, E>, alias)
             ElementType.ENTITY -> query.leftJoin(path as QEntity<E>, alias)
+            else -> throw IllegalArgumentException("Could not create a left join with the following: element type=$elementType, path=$path, alias: $alias")
         }
 
         return alias
@@ -103,6 +119,7 @@ class JpaQueryDslBuilder<T>(
             -> query.rightJoin(path as CollectionExpression<*, E>, alias)
             ElementType.MAP -> query.rightJoin(path as MapExpression<*, E>, alias)
             ElementType.ENTITY -> query.rightJoin(path as QEntity<E>, alias)
+            else -> throw IllegalArgumentException("Could not create a right join with the following: element type=$elementType, path=$path, alias: $alias")
         }
 
         return alias
@@ -151,7 +168,7 @@ class JpaQueryDslBuilder<T>(
 
     override fun equal(path: Path<*>, value: Any): Predicate {
         val type = path.type
-        val expressionValue = Expressions.constant(value)
+        val expressionValue = convertValueToExpression(value)
         return when {
             Collection::class.java.isAssignableFrom(type) -> {
                 Expressions.predicate(JPQLOps.MEMBER_OF, expressionValue, path)
@@ -176,4 +193,53 @@ class JpaQueryDslBuilder<T>(
             }
         }
     }
+
+    override fun like(path: Path<String>, value: String): Predicate {
+        val expressionValue = Expressions.constant(value.replace("*", "%"))
+        return Expressions.predicate(Ops.LIKE, path, expressionValue)
+    }
+
+    override fun ilike(path: Path<String>, value: String): Predicate {
+        val expressionValue = Expressions.constant(value.replace("*", "%").toLowerCase())
+        return Expressions.predicate(Ops.LIKE_IC, path, expressionValue)
+    }
+
+    override fun lessThan(path: Path<*>, value: Any): Predicate {
+        val expressionValue = convertValueToExpression(value)
+        return Expressions.predicate(Ops.LT, path, expressionValue)
+    }
+
+    override fun lessThanOrEquals(path: Path<*>, value: Any): Predicate {
+        val expressionValue = convertValueToExpression(value)
+        return Expressions.predicate(Ops.LOE, path, expressionValue)
+    }
+
+    override fun greaterThan(path: Path<*>, value: Any): Predicate {
+        val expressionValue = convertValueToExpression(value)
+        return Expressions.predicate(Ops.GT, path, expressionValue)
+    }
+
+    override fun greaterThanOrEquals(path: Path<*>, value: Any): Predicate {
+        val expressionValue = convertValueToExpression(value)
+        return Expressions.predicate(Ops.GOE, path, expressionValue)
+    }
+
+    override fun `in`(path: Path<*>, values: Collection<*>): Predicate {
+        return if (values.size == 1) {
+            equal(path, values.iterator().next()!!)
+        } else {
+            val expressionValue = Expressions.constant(values)
+            Expressions.predicate(Ops.IN, path, expressionValue)
+        }
+    }
+
+    private fun convertValueToExpression(value: Any): Expression<*> {
+        return when {
+            Keyword.CURRENT_DATE === value -> DateExpression.currentDate()
+            Keyword.CURRENT_TIME === value -> TimeExpression.currentTime()
+            Keyword.CURRENT_DATE_TIME === value -> DateTimeExpression.currentTimestamp()
+            else -> Expressions.constant(value)
+        }
+    }
+
 }

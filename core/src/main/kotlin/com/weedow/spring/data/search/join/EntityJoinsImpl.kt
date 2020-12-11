@@ -4,7 +4,7 @@ import com.querydsl.core.JoinType
 import com.weedow.spring.data.search.querydsl.QueryDslBuilder
 import com.weedow.spring.data.search.querydsl.querytype.ElementType
 import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
-import com.weedow.spring.data.search.querydsl.querytype.QEntity
+import com.weedow.spring.data.search.querydsl.querytype.QEntityJoin
 import com.weedow.spring.data.search.querydsl.querytype.QPath
 import com.weedow.spring.data.search.utils.FIELD_PATH_SEPARATOR
 import com.weedow.spring.data.search.utils.MAP_KEY
@@ -63,12 +63,12 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         joins[entityJoin.joinName] = entityJoin
     }
 
-    override fun getPath(fieldPath: String, queryDslBuilder: QueryDslBuilder<*>): QPath<*> {
+    override fun getQPath(fieldPath: String, queryDslBuilder: QueryDslBuilder<*>): QPath<*> {
         val parts = fieldPath.split(FIELD_PATH_SEPARATOR)
         val fieldName = parts[parts.size - 1]
         val parents = parts.subList(0, parts.size - 1)
 
-        var join: QEntity<*> = queryDslBuilder.qRootEntity
+        var join: QEntityJoin<*> = queryDslBuilder.qEntityRoot
         for (parent in parents) {
             val qPath = join.get(parent)
             join = queryDslBuilder.join(qPath, JoinType.LEFTJOIN, true)
@@ -115,7 +115,7 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         return when (attributeName) {
             MAP_KEY -> mapJoin.key()
             MAP_VALUE -> mapJoin.value()
-            else -> throw IllegalArgumentException("The attribute name '$attributeName' is not authorized for a parent Map Join")
+            else -> throw IllegalArgumentException("The attribute name '$attributeName' is not authorized for a parent Map Join") /* mapJoin.get<Any>(attributeName) */
         }
     }
 

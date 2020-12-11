@@ -10,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQuery
 import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.querydsl.jpa.JpaQueryDslBuilder
 import com.weedow.spring.data.search.querydsl.jpa.addMissingTemplates
+import com.weedow.spring.data.search.querydsl.querytype.QEntityRootImpl
 import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
 import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutor
 import org.springframework.data.jpa.repository.support.CrudMethodMetadata
@@ -59,6 +60,7 @@ class JpaQueryDslSpecificationExecutor<T>(
         return if (type == null) query else query.setLockMode(type)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun doCreateQuery(specification: QueryDslSpecification<T>?): AbstractJPAQuery<T, *> {
         var query: AbstractJPAQuery<T, *> = querydsl.createQuery(path) as AbstractJPAQuery<T, *>
 
@@ -103,7 +105,7 @@ class JpaQueryDslSpecificationExecutor<T>(
     }
 
     private fun createQueryDslBuilder(query: AbstractJPAQuery<T, *>) =
-            JpaQueryDslBuilder(dataSearchContext, query, dataSearchContext.get(path.type))
+            JpaQueryDslBuilder(dataSearchContext, query, QEntityRootImpl(dataSearchContext.get(path.type)))
 
     private fun getRepositoryMethodMetadata() = metadata
 

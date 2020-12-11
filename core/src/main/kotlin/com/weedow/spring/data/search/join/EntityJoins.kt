@@ -10,7 +10,7 @@ import javax.persistence.criteria.Root
  */
 interface EntityJoins {
 
-    fun getPath(fieldPath: String, queryDslBuilder: QueryDslBuilder<*>): QPath<*>
+    fun getQPath(fieldPath: String, queryDslBuilder: QueryDslBuilder<*>): QPath<*>
 
     /**
      * Returns the [Path] corresponding to given [field path][fieldPath] relative to the specified [Root].

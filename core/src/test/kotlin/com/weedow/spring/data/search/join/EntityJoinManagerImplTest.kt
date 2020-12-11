@@ -13,7 +13,7 @@ import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
 import com.weedow.spring.data.search.querydsl.querytype.ElementType
 import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
-import com.weedow.spring.data.search.querydsl.querytype.QEntity
+import com.weedow.spring.data.search.querydsl.querytype.QEntityImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -47,10 +47,12 @@ internal class EntityJoinManagerImplTest {
             on { this.entityJoinHandlers }.doReturn(emptyList())
         }
 
-        whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(listOf(
+        whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
+            listOf(
                 propertyInfos(entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
                 propertyInfos(entityClass, "lastName", ElementType.STRING, emptyList(), StringPath::class.java)
-        ))
+            )
+        )
 
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
@@ -70,16 +72,20 @@ internal class EntityJoinManagerImplTest {
             on { this.entityJoinHandlers }.doReturn(emptyList())
         }
 
-        whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(listOf(
+        whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
+            listOf(
                 propertyInfos(entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(entityClass, "myJoin", ElementType.ENTITY, emptyList(), QEntity::class.java)
-        ))
+                propertyInfos(entityClass, "myJoin", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+            )
+        )
 
         val otherEntityClass = EntityWithJoins.OtherEntity::class.java
         whenever(dataSearchContext.isEntity(otherEntityClass)).thenReturn(true)
-        whenever(dataSearchContext.getAllPropertyInfos(otherEntityClass)).thenReturn(listOf(
+        whenever(dataSearchContext.getAllPropertyInfos(otherEntityClass)).thenReturn(
+            listOf(
                 propertyInfos(otherEntityClass, "id", ElementType.STRING, emptyList(), StringPath::class.java)
-        ))
+            )
+        )
 
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
@@ -88,12 +94,12 @@ internal class EntityJoinManagerImplTest {
 
         val joinName = otherEntityClass.canonicalName
         assertThat(entityJoins.getJoins().keys)
-                .containsExactly(joinName)
+            .containsExactly(joinName)
 
         assertThat(entityJoins.getJoins().values)
-                .containsExactly(
-                        EntityJoin("myJoin", "myJoin", joinName)
-                )
+            .containsExactly(
+                EntityJoin("myJoin", "myJoin", joinName)
+            )
 
         verifyNoMoreInteractions(dataSearchContext)
     }
@@ -108,17 +114,21 @@ internal class EntityJoinManagerImplTest {
             on { this.entityJoinHandlers }.doReturn(listOf(EntityWithMultipleJoins().MyEntityJoinHandler()))
         }
 
-        whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(listOf(
+        whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
+            listOf(
                 propertyInfos(entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(entityClass, "myJoin1", ElementType.ENTITY, emptyList(), QEntity::class.java)
-        ))
+                propertyInfos(entityClass, "myJoin1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+            )
+        )
 
         val otherEntityClass = EntityWithMultipleJoins.OtherEntity::class.java
         whenever(dataSearchContext.isEntity(otherEntityClass)).thenReturn(true)
-        whenever(dataSearchContext.getAllPropertyInfos(otherEntityClass)).thenReturn(listOf(
+        whenever(dataSearchContext.getAllPropertyInfos(otherEntityClass)).thenReturn(
+            listOf(
                 propertyInfos(otherEntityClass, "id", ElementType.STRING, emptyList(), StringPath::class.java),
                 propertyInfos(otherEntityClass, "myJoin2", ElementType.SET, listOf(String::class.java), StringPath::class.java)
-        ))
+            )
+        )
         whenever(dataSearchContext.isEntity(String::class.java)).thenReturn(false) // myJoin2
 
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
@@ -130,13 +140,13 @@ internal class EntityJoinManagerImplTest {
         val joinName2 = otherEntityClass.canonicalName + "." + "myJoin2"
 
         assertThat(entityJoins.getJoins().keys)
-                .containsExactly(joinName1, joinName2)
+            .containsExactly(joinName1, joinName2)
 
         assertThat(entityJoins.getJoins().values)
-                .containsExactlyInAnyOrder(
-                        EntityJoin("myJoin1", "myJoin1", joinName1),
-                        EntityJoin("myJoin1.myJoin2", "myJoin2", joinName2, JoinType.LEFTJOIN, true)
-                )
+            .containsExactlyInAnyOrder(
+                EntityJoin("myJoin1", "myJoin1", joinName1),
+                EntityJoin("myJoin1.myJoin2", "myJoin2", joinName2, JoinType.LEFTJOIN, true)
+            )
 
         verifyNoMoreInteractions(dataSearchContext)
     }
@@ -150,25 +160,31 @@ internal class EntityJoinManagerImplTest {
             on { this.entityJoinHandlers }.doReturn(emptyList())
         }
 
-        whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(listOf(
+        whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
+            listOf(
                 propertyInfos(entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(entityClass, "myJoin1", ElementType.ENTITY, emptyList(), QEntity::class.java),
-                propertyInfos(entityClass, "myJoin2", ElementType.ENTITY, emptyList(), QEntity::class.java)
-        ))
+                propertyInfos(entityClass, "myJoin1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java),
+                propertyInfos(entityClass, "myJoin2", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+            )
+        )
 
         val myEntity1Class = EntityWithBidirectionalJoins.MyEntity1::class.java
         whenever(dataSearchContext.isEntity(myEntity1Class)).thenReturn(true)
-        whenever(dataSearchContext.getAllPropertyInfos(myEntity1Class)).thenReturn(listOf(
+        whenever(dataSearchContext.getAllPropertyInfos(myEntity1Class)).thenReturn(
+            listOf(
                 propertyInfos(myEntity1Class, "id", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(myEntity1Class, "parent", ElementType.ENTITY, emptyList(), QEntity::class.java)
-        ))
+                propertyInfos(myEntity1Class, "parent", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+            )
+        )
 
         val myEntity2Class = EntityWithBidirectionalJoins.MyEntity2::class.java
         whenever(dataSearchContext.isEntity(myEntity2Class)).thenReturn(true)
-        whenever(dataSearchContext.getAllPropertyInfos(myEntity2Class)).thenReturn(listOf(
+        whenever(dataSearchContext.getAllPropertyInfos(myEntity2Class)).thenReturn(
+            listOf(
                 propertyInfos(myEntity2Class, "id", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(myEntity2Class, "myEntity1", ElementType.ENTITY, emptyList(), QEntity::class.java)
-        ))
+                propertyInfos(myEntity2Class, "myEntity1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+            )
+        )
 
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
@@ -179,64 +195,70 @@ internal class EntityJoinManagerImplTest {
         val joinName2 = EntityWithBidirectionalJoins.MyEntity2::class.java.canonicalName
 
         assertThat(entityJoins.getJoins().keys)
-                .containsExactly(joinName1, joinName2)
+            .containsExactly(joinName1, joinName2)
 
         assertThat(entityJoins.getJoins().values)
-                .containsExactlyInAnyOrder(
-                        EntityJoin("myJoin1", "myJoin1", joinName1),
-                        EntityJoin("myJoin2", "myJoin2", joinName2)
-                )
+            .containsExactlyInAnyOrder(
+                EntityJoin("myJoin1", "myJoin1", joinName1),
+                EntityJoin("myJoin2", "myJoin2", joinName2)
+            )
 
         verifyNoMoreInteractions(dataSearchContext)
     }
 
-    private fun propertyInfos(clazz: Class<*>, fieldName: String, elementType: ElementType, parameterizedTypes: List<Class<*>>, queryType: Class<out SimpleExpression<*>>): PropertyInfos {
+    private fun propertyInfos(
+        clazz: Class<*>,
+        fieldName: String,
+        elementType: ElementType,
+        parameterizedTypes: List<Class<*>>,
+        queryType: Class<out SimpleExpression<*>>
+    ): PropertyInfos {
         val field = clazz.getDeclaredField(fieldName)
         return PropertyInfos(
-                clazz,
-                fieldName,
-                elementType,
-                field.type,
-                parameterizedTypes,
-                field.annotations.toList(),
-                queryType
+            clazz,
+            fieldName,
+            elementType,
+            field.type,
+            parameterizedTypes,
+            field.annotations.toList(),
+            queryType
         )
     }
 
     internal data class EntityWithNoJoins(
-            @Column(nullable = false)
-            val firstName: String = "",
+        @Column(nullable = false)
+        val firstName: String = "",
 
-            @Column(nullable = false)
-            val lastName: String = "",
+        @Column(nullable = false)
+        val lastName: String = "",
     )
 
     internal data class EntityWithJoins(
-            @Column(nullable = false)
-            val firstName: String = "",
+        @Column(nullable = false)
+        val firstName: String = "",
 
-            @OneToMany
-            val myJoin: OtherEntity? = null,
+        @OneToMany
+        val myJoin: OtherEntity? = null,
     ) {
         inner class OtherEntity(
-                @Column(nullable = false)
-                val id: String = "",
+            @Column(nullable = false)
+            val id: String = "",
         )
     }
 
     internal data class EntityWithMultipleJoins(
-            @Column(nullable = false)
-            val firstName: String = "",
+        @Column(nullable = false)
+        val firstName: String = "",
 
-            @OneToMany
-            val myJoin1: OtherEntity? = null,
+        @OneToMany
+        val myJoin1: OtherEntity? = null,
     ) {
         inner class OtherEntity(
-                @Column(nullable = false)
-                val id: String = "",
+            @Column(nullable = false)
+            val id: String = "",
 
-                @ElementCollection
-                val myJoin2: Set<String>,
+            @ElementCollection
+            val myJoin2: Set<String>,
         )
 
         inner class MyEntityJoinHandler : EntityJoinHandler<EntityWithMultipleJoins> {
@@ -251,29 +273,29 @@ internal class EntityJoinManagerImplTest {
     }
 
     internal data class EntityWithBidirectionalJoins(
-            @Column(nullable = false)
-            val firstName: String = "",
+        @Column(nullable = false)
+        val firstName: String = "",
 
-            @OneToMany
-            val myJoin1: MyEntity1? = null,
+        @OneToMany
+        val myJoin1: MyEntity1? = null,
 
-            @OneToMany
-            val myJoin2: MyEntity2? = null,
+        @OneToMany
+        val myJoin2: MyEntity2? = null,
     ) {
         inner class MyEntity1(
-                @Column(nullable = false)
-                val id: String = "",
+            @Column(nullable = false)
+            val id: String = "",
 
-                @ManyToOne
-                val parent: EntityWithBidirectionalJoins? = null,
+            @ManyToOne
+            val parent: EntityWithBidirectionalJoins? = null,
         )
 
         inner class MyEntity2(
-                @Column(nullable = false)
-                val id: String = "",
+            @Column(nullable = false)
+            val id: String = "",
 
-                @OneToOne
-                val myEntity1: MyEntity1? = null,
+            @OneToOne
+            val myEntity1: MyEntity1? = null,
         )
     }
 

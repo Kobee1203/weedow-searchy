@@ -15,9 +15,9 @@ import javax.persistence.criteria.*
  * Expression to compare the field value with the given [value] according to the given [Operator].
  */
 internal data class SimpleExpression(
-        private val operator: Operator,
-        private val fieldInfo: FieldInfo,
-        private val value: Any,
+    private val operator: Operator,
+    private val fieldInfo: FieldInfo,
+    private val value: Any,
 ) : Expression {
 
     companion object {
@@ -47,20 +47,17 @@ internal data class SimpleExpression(
 
     override fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T> {
         return QueryDslSpecification { builder: QueryDslBuilder<T> ->
-            val path = entityJoins.getPath(fieldInfo.fieldPath, builder)
-            // val path = builder.getPath(fieldInfo.fieldPath)
+            val qpath = entityJoins.getQPath(fieldInfo.fieldPath, builder)
 
             when (operator) {
-                Operator.EQUALS -> equals(builder, path.path, value, fieldInfo)
-                /*
-                Operator.MATCHES -> @Suppress("UNCHECKED_CAST") like(builder, path as Path<String>, value as String)
-                Operator.IMATCHES -> @Suppress("UNCHECKED_CAST") ilike(builder, path as Path<String>, value as String)
-                Operator.LESS_THAN -> @Suppress("UNCHECKED_CAST") lessThan(builder, path as Path<Comparable<Any>>, value as Comparable<Any>)
-                Operator.LESS_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") lessThanOrEquals(builder, path as Path<Comparable<Any>>, value as Comparable<Any>)
-                Operator.GREATER_THAN -> @Suppress("UNCHECKED_CAST") greaterThan(builder, path as Path<Comparable<Any>>, value as Comparable<Any>)
-                Operator.GREATER_THAN_OR_EQUALS -> @Suppress("UNCHECKED_CAST") greaterThanOrEquals(builder, path as Path<Comparable<Any>>, value as Comparable<Any>)
-                Operator.IN -> inPredicate(builder, path, value as List<*>)
-                */
+                Operator.EQUALS -> equals(builder, qpath.path, value)
+                Operator.MATCHES -> like(builder, qpath.path as com.querydsl.core.types.Path<String>, value as String)
+                Operator.IMATCHES -> ilike(builder, qpath.path as com.querydsl.core.types.Path<String>, value as String)
+                Operator.LESS_THAN -> lessThan(builder, qpath.path, value)
+                Operator.LESS_THAN_OR_EQUALS -> lessThanOrEquals(builder, qpath.path, value)
+                Operator.GREATER_THAN -> greaterThan(builder, qpath.path, value)
+                Operator.GREATER_THAN_OR_EQUALS -> greaterThanOrEquals(builder, qpath.path, value)
+                Operator.IN -> inPredicate(builder, qpath.path, value as List<*>)
                 else -> throw IllegalArgumentException("Operator not handled: $operator")
             }
         }
@@ -97,15 +94,15 @@ internal data class SimpleExpression(
 
     private fun like(criteriaBuilder: CriteriaBuilder, path: Path<String>, value: String): Predicate {
         return criteriaBuilder.like(
-                path,
-                criteriaBuilder.literal(value.replace("*", "%"))
+            path,
+            criteriaBuilder.literal(value.replace("*", "%"))
         )
     }
 
     private fun ilike(criteriaBuilder: CriteriaBuilder, path: Path<String>, value: String): Predicate {
         return criteriaBuilder.like(
-                criteriaBuilder.lower(path),
-                criteriaBuilder.lower(criteriaBuilder.literal(value.replace("*", "%")))
+            criteriaBuilder.lower(path),
+            criteriaBuilder.lower(criteriaBuilder.literal(value.replace("*", "%")))
         )
     }
 
@@ -130,7 +127,11 @@ internal data class SimpleExpression(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <Y> convertValueToExpression(criteriaBuilder: CriteriaBuilder, value: Any, @Suppress("UNUSED_PARAMETER") type: Class<Y>): javax.persistence.criteria.Expression<Y> {
+    private fun <Y> convertValueToExpression(
+        criteriaBuilder: CriteriaBuilder,
+        value: Any,
+        @Suppress("UNUSED_PARAMETER") type: Class<Y>
+    ): javax.persistence.criteria.Expression<Y> {
         return when {
             CURRENT_DATE === value -> criteriaBuilder.currentDate() as javax.persistence.criteria.Expression<Y>
             CURRENT_TIME === value -> criteriaBuilder.currentTime() as javax.persistence.criteria.Expression<Y>
@@ -147,12 +148,40 @@ internal data class SimpleExpression(
 
     //////////////////////////////////////
 
-    private fun equals(queryDslBuilder: QueryDslBuilder<*>, path: com.querydsl.core.types.Path<*>, value: Any, fieldInfo: FieldInfo): com.querydsl.core.types.Predicate {
+    private fun equals(queryDslBuilder: QueryDslBuilder<*>, path: com.querydsl.core.types.Path<*>, value: Any): com.querydsl.core.types.Predicate {
         return if (value === NullValue) {
             queryDslBuilder.isNull(path)
         } else {
             queryDslBuilder.equal(path, value)
         }
+    }
+
+    private fun like(queryDslBuilder: QueryDslBuilder<*>, path: com.querydsl.core.types.Path<String>, value: String): com.querydsl.core.types.Predicate {
+        return queryDslBuilder.like(path, value)
+    }
+
+    private fun ilike(queryDslBuilder: QueryDslBuilder<*>, path: com.querydsl.core.types.Path<String>, value: String): com.querydsl.core.types.Predicate {
+        return queryDslBuilder.ilike(path, value)
+    }
+
+    private fun lessThan(queryDslBuilder: QueryDslBuilder<*>, path: com.querydsl.core.types.Path<*>, value: Any): com.querydsl.core.types.Predicate {
+        return queryDslBuilder.lessThan(path, value)
+    }
+
+    private fun lessThanOrEquals(queryDslBuilder: QueryDslBuilder<*>, path: com.querydsl.core.types.Path<*>, value: Any): com.querydsl.core.types.Predicate {
+        return queryDslBuilder.lessThanOrEquals(path, value)
+    }
+
+    private fun greaterThan(queryDslBuilder: QueryDslBuilder<*>, path: com.querydsl.core.types.Path<*>, value: Any): com.querydsl.core.types.Predicate {
+        return queryDslBuilder.greaterThan(path, value)
+    }
+
+    private fun greaterThanOrEquals(queryDslBuilder: QueryDslBuilder<*>, path: com.querydsl.core.types.Path<*>, value: Any): com.querydsl.core.types.Predicate {
+        return queryDslBuilder.greaterThanOrEquals(path, value)
+    }
+
+    private fun inPredicate(queryDslBuilder: QueryDslBuilder<*>, path: com.querydsl.core.types.Path<*>, value: Collection<*>): com.querydsl.core.types.Predicate {
+        return queryDslBuilder.`in`(path, value)
     }
 
 }

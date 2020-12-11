@@ -4,16 +4,17 @@ import com.querydsl.core.JoinType
 import com.querydsl.core.types.Expression
 import com.querydsl.core.types.Path
 import com.querydsl.core.types.Predicate
-import com.weedow.spring.data.search.querydsl.querytype.QEntity
+import com.weedow.spring.data.search.querydsl.querytype.QEntityJoin
+import com.weedow.spring.data.search.querydsl.querytype.QEntityRoot
 import com.weedow.spring.data.search.querydsl.querytype.QPath
 
 interface QueryDslBuilder<T> {
 
-    val qRootEntity: QEntity<out T>
+    val qEntityRoot: QEntityRoot<T>
 
     fun distinct()
 
-    fun join(qPath: QPath<*>, joinType: JoinType, fetched: Boolean): QEntity<*>
+    fun join(qPath: QPath<*>, joinType: JoinType, fetched: Boolean): QEntityJoin<*>
 
     /**
      * Create a conjunction of the given boolean expressions.
@@ -60,6 +61,23 @@ interface QueryDslBuilder<T> {
      * @return not predicate
      */
     fun not(restriction: Expression<Boolean>): Predicate
+
     fun equal(path: Path<*>, value: Any): Predicate
+
     fun isNull(path: Path<*>): Predicate
+
+    fun like(path: Path<String>, value: String): Predicate
+
+    fun ilike(path: Path<String>, value: String): Predicate
+
+    fun lessThan(path: Path<*>, value: Any): Predicate
+
+    fun lessThanOrEquals(path: Path<*>, value: Any): Predicate
+
+    fun greaterThan(path: Path<*>, value: Any): Predicate
+
+    fun greaterThanOrEquals(path: Path<*>, value: Any): Predicate
+
+    fun `in`(path: Path<*>, values: Collection<*>): Predicate
+
 }

@@ -9,7 +9,10 @@ interface DataSearchContext {
 
     val joinAnnotations: List<Class<out Annotation>>
 
-    fun <E> get(entityClass: Class<E>): QEntity<E>
+    fun <E> get(
+        entityClass: Class<E>,
+        default: (entityClazz: Class<E>) -> QEntity<E> = { entityClazz -> throw IllegalArgumentException("Could not found the QEntity for $entityClazz") }
+    ): QEntity<E>
 
     fun getAllPropertyInfos(entityClass: Class<*>): List<PropertyInfos>
 

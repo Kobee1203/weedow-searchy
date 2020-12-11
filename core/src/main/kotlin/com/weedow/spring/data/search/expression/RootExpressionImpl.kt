@@ -50,7 +50,7 @@ class RootExpressionImpl<T>(
 
             val fetchJoins = entityJoins.getJoins(FILTER_FETCH_JOINS)
             fetchJoins.values.forEach {
-                entityJoins.getPath(it.fieldPath, builder)
+                entityJoins.getQPath(it.fieldPath, builder)
             }
 
             QueryDslSpecification.NO_PREDICATE
