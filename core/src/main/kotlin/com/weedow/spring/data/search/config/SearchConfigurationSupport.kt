@@ -31,9 +31,9 @@ import com.weedow.spring.data.search.validation.DataSearchValidationService
 import com.weedow.spring.data.search.validation.DataSearchValidationServiceImpl
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.domain.EntityScanner
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.DependsOn
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.core.convert.ConversionService
@@ -116,11 +116,22 @@ open class SearchConfigurationSupport {
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = ["spring.data.search.entity-search-service"], havingValue = "default", matchIfMissing = true)
     open fun entitySearchService(
             queryDslSpecificationService: QueryDslSpecificationService,
             queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory,
-    ): EntitySearchServiceImpl {
+    ): EntitySearchService {
         return EntitySearchServiceImpl(queryDslSpecificationService, queryDslSpecificationExecutorFactory)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = ["spring.data.search.entity-search-service"], havingValue = "jpa", matchIfMissing = false)
+    open fun jpaEntitySearchService(
+        jpaSpecificationService: com.weedow.spring.data.search.specification.JpaSpecificationService,
+        entityJoinManager: EntityJoinManager,
+    ): EntitySearchService {
+        return com.weedow.spring.data.search.service.JpaEntitySearchServiceImpl(jpaSpecificationService, entityJoinManager)
     }
 
     @Bean
