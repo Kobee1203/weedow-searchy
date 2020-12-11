@@ -54,7 +54,15 @@ class Person(
                 joinColumns = [JoinColumn(name = "person_id", referencedColumnName = "id")])
         @MapKeyColumn(name = "characteristic_name")
         @Column(name = "value")
-        val characteristics: Map<String, String>? = null
+        val characteristics: Map<String, String>? = null,
+
+        @ElementCollection
+        @CollectionTable(
+                name = "person_tasks",
+                joinColumns = [JoinColumn(name = "person_id", referencedColumnName = "id")])
+        @MapKeyJoinColumn(name = "task_id")
+        @Column(name = "task_date")
+        val tasks: Map<Task, LocalDateTime>? = null,
 
 ) : JpaPersistable<Long>() {
     override fun equals(other: Any?): Boolean {
