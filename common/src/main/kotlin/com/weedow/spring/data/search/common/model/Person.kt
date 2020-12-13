@@ -35,8 +35,8 @@ class Person(
         @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
         @JoinTable(
                 name = "person_address",
-                joinColumns = [JoinColumn(name = "personId")],
-                inverseJoinColumns = [JoinColumn(name = "addressId")])
+                joinColumns = [JoinColumn(name = "person_id")],
+                inverseJoinColumns = [JoinColumn(name = "address_id")])
         @JsonIgnoreProperties("persons")
         val addressEntities: Set<Address>? = null,
 

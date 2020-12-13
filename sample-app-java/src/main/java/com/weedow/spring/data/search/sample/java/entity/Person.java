@@ -39,8 +39,8 @@ public class Person extends JpaPersistable<Long> {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "person_address",
-            joinColumns = {@JoinColumn(name = "personId")},
-            inverseJoinColumns = {@JoinColumn(name = "addressId")})
+            joinColumns = {@JoinColumn(name = "person_id")},
+            inverseJoinColumns = {@JoinColumn(name = "address_id")})
     @JsonIgnoreProperties("persons")
     private Set<Address> addressEntities;
 
@@ -59,6 +59,14 @@ public class Person extends JpaPersistable<Long> {
     @MapKeyColumn(name = "characteristic_name")
     @Column(name = "value")
     private Map<String, String> characteristics;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "person_tasks",
+            joinColumns = {@JoinColumn(name = "person_id", referencedColumnName = "id")})
+    @MapKeyJoinColumn(name = "task_id")
+    @Column(name = "task_date")
+    private Map<Task, LocalDateTime> tasks;
 
     public String getFirstName() {
         return firstName;
@@ -135,6 +143,15 @@ public class Person extends JpaPersistable<Long> {
 
     public Person setCharacteristics(Map<String, String> characteristics) {
         this.characteristics = characteristics;
+        return this;
+    }
+
+    public Map<Task, LocalDateTime> getTasks() {
+        return tasks;
+    }
+
+    public Person setTasks(Map<Task, LocalDateTime> tasks) {
+        this.tasks = tasks;
         return this;
     }
 
