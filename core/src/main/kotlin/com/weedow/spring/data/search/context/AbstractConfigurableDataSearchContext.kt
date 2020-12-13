@@ -12,6 +12,10 @@ import java.lang.reflect.Modifier
 
 abstract class AbstractConfigurableDataSearchContext : ConfigurableDataSearchContext {
 
+    companion object {
+        private const val JOIN_NAME_SEPARATOR = "."
+    }
+
     private val qEntities = mutableMapOf<Class<*>, QEntity<*>>()
 
     @Suppress("UNCHECKED_CAST")
@@ -32,6 +36,10 @@ abstract class AbstractConfigurableDataSearchContext : ConfigurableDataSearchCon
             .map { field -> getPropertyInfos(entityClass, field) }
     }
 
+    override fun isEntity(clazz: Class<*>): Boolean {
+        return entityAnnotations.any { clazz.getAnnotation(it) != null }
+    }
+
     private fun getPropertyInfos(parentClass: Class<*>, field: Field): PropertyInfos {
         val fieldName = field.name
         val fieldType = field.type.kotlin.javaObjectType
@@ -39,11 +47,8 @@ abstract class AbstractConfigurableDataSearchContext : ConfigurableDataSearchCon
         val parameterizedTypes = getParameterizedTypes(elementType, field)
         val annotations = field.annotations.toList()
         val queryType = getQueryType(elementType, parameterizedTypes)
-        return PropertyInfos(parentClass, fieldName, elementType, fieldType, parameterizedTypes, annotations, queryType)
-    }
-
-    override fun isEntity(clazz: Class<*>): Boolean {
-        return entityAnnotations.any { clazz.getAnnotation(it) != null }
+        val qName = getQName(parentClass, fieldType, parameterizedTypes, elementType, fieldName)
+        return PropertyInfos(qName, parentClass, fieldName, elementType, fieldType, parameterizedTypes, annotations, queryType)
     }
 
     private fun getParameterizedTypes(elementType: ElementType, field: Field) =
@@ -52,7 +57,6 @@ abstract class AbstractConfigurableDataSearchContext : ConfigurableDataSearchCon
             ElementType.SET,
             ElementType.COLLECTION,
             ElementType.MAP,
-            ElementType.ARRAY,
             -> {
                 EntityUtils.getParameterizedTypes(field)
             }
@@ -65,7 +69,6 @@ abstract class AbstractConfigurableDataSearchContext : ConfigurableDataSearchCon
             ElementType.LIST,
             ElementType.SET,
             ElementType.COLLECTION,
-            ElementType.ARRAY,
             -> {
                 ElementType.get(parameterizedTypes[0], this).pathClass
             }
@@ -74,5 +77,19 @@ abstract class AbstractConfigurableDataSearchContext : ConfigurableDataSearchCon
             }
             else -> elementType.pathClass
         } as Class<out SimpleExpression<*>>
+
+    private fun getQName(entityClass: Class<*>, fieldType: Class<*>, parameterizedTypes: List<Class<*>>, elementType: ElementType, fieldName: String): String {
+        val fieldClass = when (elementType) {
+            ElementType.SET,
+            ElementType.LIST,
+            ElementType.COLLECTION,
+            -> {
+                parameterizedTypes[0]
+            }
+            else -> fieldType
+        }
+
+        return if (isEntity(fieldClass)) fieldClass.canonicalName else entityClass.canonicalName + JOIN_NAME_SEPARATOR + fieldName
+    }
 
 }

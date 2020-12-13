@@ -46,6 +46,8 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
 
             // Ignore joins for a field without a Join Annotation
             if (hasJoinAnnotation) {
+                val fieldPath = EntityJoinUtils.getFieldPath(parentPath, propertyInfos.fieldName)
+
                 // Ignore joins for a field having the same class as the root class or an entity already processed
                 if (entityJoins.alreadyProcessed(propertyInfos)) {
                     return
@@ -55,9 +57,7 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
                     if (entityJoinHandler.supports(propertyInfos)) {
                         val joinInfo = entityJoinHandler.handle(propertyInfos)
 
-                        val fieldPath = EntityJoinUtils.getFieldPath(parentPath, propertyInfos.fieldName)
-                        val joinName = EntityJoinUtils.getJoinName(propertyInfos.parentClass, propertyInfos.parentClass.getDeclaredField(propertyInfos.fieldName))
-                        val entityJoin = EntityJoin(fieldPath, propertyInfos.fieldName, joinName, joinInfo.joinType, joinInfo.fetched)
+                        val entityJoin = EntityJoin(fieldPath, propertyInfos.fieldName, propertyInfos.qName, joinInfo.joinType, joinInfo.fetched)
                         entityJoins.add(entityJoin)
 
                         // Recursive loop to handle nested Entity joins
@@ -65,9 +65,8 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
                             ElementType.SET,
                             ElementType.LIST,
                             ElementType.COLLECTION,
-                            ElementType.ARRAY,
                             -> {
-                                propertyInfos.parametrizedTypes[0]
+                                propertyInfos.parameterizedTypes[0]
                             }
                             else -> propertyInfos.type
                         }

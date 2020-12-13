@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.DateExpression
 import com.querydsl.core.types.dsl.DateTimeExpression
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.TimeExpression
+import com.querydsl.jpa.JPAQueryMixin
 import com.querydsl.jpa.JPQLOps
 import com.querydsl.jpa.impl.AbstractJPAQuery
 import com.weedow.spring.data.search.context.DataSearchContext
@@ -28,25 +29,41 @@ class JpaQueryDslBuilder<T>(
         val elementType = qPath.propertyInfos.elementType
 
         if (elementType == ElementType.MAP_KEY || elementType == ElementType.MAP_VALUE) {
-            return QEntityJoinImpl(dataSearchContext.get(qPath.propertyInfos.type), qPath)
+            return QEntityJoinImpl(QEntityImpl(dataSearchContext, qPath.propertyInfos.type, qPath.path.metadata)/*dataSearchContext.get(qPath.propertyInfos.type)*/, qPath)
         }
 
-        val path = qPath.path
+        val joinExpression = query.metadata.joins
+            .firstOrNull {
+                val target = it.target
+                target is Operation
+                        && target.operator === Ops.ALIAS
+                        && target.getArg(0).toString() == qPath.path.toString()
+            }
+
+        if (joinExpression != null) {
+            if (fetched && !joinExpression.hasFlag(JPAQueryMixin.FETCH)) {
+                joinExpression.flags.add(JPAQueryMixin.FETCH)
+            }
+            val alias = (joinExpression.target as Operation).getArg(1) as QEntity<*>
+            return QEntityJoinImpl(alias, qPath)
+        }
+
 
         var aliasType = when (elementType) {
             ElementType.SET,
             ElementType.LIST,
             ElementType.COLLECTION,
             -> {
-                qPath.propertyInfos.parametrizedTypes[0]
+                qPath.propertyInfos.parameterizedTypes[0]
             }
-            ElementType.MAP -> qPath.propertyInfos.parametrizedTypes[1]
+            ElementType.MAP -> qPath.propertyInfos.parameterizedTypes[1]
             ElementType.ENTITY -> qPath.propertyInfos.type
             else -> throw IllegalArgumentException("Could not identify the alias type for the QPath of type '$elementType': $qPath")
         }
 
         val alias = createAlias(aliasType, qPath)
 
+        val path = qPath.path
         val join = when (joinType) {
             JoinType.JOIN -> join(elementType, path, alias)
             JoinType.INNERJOIN -> innerJoin(elementType, path, alias)
@@ -65,7 +82,7 @@ class JpaQueryDslBuilder<T>(
 
     private fun <E> createAlias(aliasType: Class<E>, qPath: QPath<*>): QEntity<E> {
         return dataSearchContext.get(aliasType) { entityClazz ->
-            QEntityImpl(dataSearchContext, entityClazz, qPath.propertyInfos.fieldName)
+            QEntityAliasImpl(entityClazz, qPath.propertyInfos.fieldName)
         }
     }
 

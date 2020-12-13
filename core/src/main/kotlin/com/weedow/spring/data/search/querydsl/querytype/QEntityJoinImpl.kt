@@ -18,9 +18,20 @@ class QEntityJoinImpl<T>(
     override fun get(fieldName: String): QPath<*> {
         val propertyInfos = qPath.propertyInfos
         return if (propertyInfos.elementType == ElementType.MAP) {
+            val alias = qEntity.metadata.element.toString()
             when (fieldName) {
-                MAP_KEY -> createQPath(0, ElementType.MAP_KEY, propertyInfos)
-                MAP_VALUE -> createQPath(1, ElementType.MAP_VALUE, propertyInfos)
+                MAP_KEY -> createQPath(
+                    ElementType.MAP_KEY,
+                    propertyInfos.parameterizedTypes[0],
+                    PathMetadataFactory.forVariable("key($alias)"),
+                    propertyInfos
+                )
+                MAP_VALUE -> createQPath(
+                    ElementType.MAP_VALUE,
+                    propertyInfos.parameterizedTypes[1],
+                    PathMetadataFactory.forVariable(alias),
+                    propertyInfos
+                )
                 else -> throw IllegalArgumentException("The attribute name '$fieldName' is not authorized for a parent Map")
             }
         } else {
@@ -40,20 +51,21 @@ class QEntityJoinImpl<T>(
 
     override fun getAnnotatedElement(): AnnotatedElement = qEntity.annotatedElement
 
-    private fun createQPath(idx: Int, elementType: ElementType, propertyInfos: PropertyInfos) = QPathImpl(
-        Expressions.path(propertyInfos.parametrizedTypes[idx], PathMetadataFactory.forVariable(propertyInfos.fieldName)),
-        getParameterizedPropertyInfos(idx, elementType, propertyInfos)
-    )
+    private fun createQPath(elementType: ElementType, parameterizedType: Class<*>, pathMetadata: PathMetadata, propertyInfos: PropertyInfos): QPathImpl<*> {
+        return QPathImpl(
+            Expressions.path(parameterizedType, pathMetadata),
+            getParameterizedPropertyInfos(parameterizedType, elementType, propertyInfos)
+        )
+    }
 
     @Suppress("UNCHECKED_CAST")
-    private fun getParameterizedPropertyInfos(idx: Int, elementType: ElementType, propertyInfos: PropertyInfos): PropertyInfos {
-        val parameterizedType = propertyInfos.parametrizedTypes[idx]
+    private fun getParameterizedPropertyInfos(parameterizedType: Class<*>, elementType: ElementType, propertyInfos: PropertyInfos): PropertyInfos {
         return propertyInfos.copy(
             parentClass = propertyInfos.parentClass,
             fieldName = propertyInfos.fieldName,
             elementType = elementType,
             type = parameterizedType,
-            parametrizedTypes = emptyList(),
+            parameterizedTypes = emptyList(),
             annotations = emptyList(),
             queryType = elementType.pathClass as Class<out SimpleExpression<*>>
         )

@@ -49,8 +49,8 @@ internal class EntityJoinManagerImplTest {
 
         whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
             listOf(
-                propertyInfos(entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(entityClass, "lastName", ElementType.STRING, emptyList(), StringPath::class.java)
+                propertyInfos("${entityClass.canonicalName}.firstName", entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
+                propertyInfos("${entityClass.canonicalName}.lastName", entityClass, "lastName", ElementType.STRING, emptyList(), StringPath::class.java)
             )
         )
 
@@ -74,8 +74,8 @@ internal class EntityJoinManagerImplTest {
 
         whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
             listOf(
-                propertyInfos(entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(entityClass, "myJoin", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+                propertyInfos("${entityClass.canonicalName}.firstName", entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
+                propertyInfos(EntityWithJoins.OtherEntity::class.java.canonicalName, entityClass, "myJoin", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
             )
         )
 
@@ -83,7 +83,7 @@ internal class EntityJoinManagerImplTest {
         whenever(dataSearchContext.isEntity(otherEntityClass)).thenReturn(true)
         whenever(dataSearchContext.getAllPropertyInfos(otherEntityClass)).thenReturn(
             listOf(
-                propertyInfos(otherEntityClass, "id", ElementType.STRING, emptyList(), StringPath::class.java)
+                propertyInfos("${otherEntityClass.canonicalName}.id", otherEntityClass, "id", ElementType.STRING, emptyList(), StringPath::class.java)
             )
         )
 
@@ -116,8 +116,8 @@ internal class EntityJoinManagerImplTest {
 
         whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
             listOf(
-                propertyInfos(entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(entityClass, "myJoin1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+                propertyInfos("${entityClass.canonicalName}.firstName", entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
+                propertyInfos(EntityWithMultipleJoins.OtherEntity::class.java.canonicalName, entityClass, "myJoin1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
             )
         )
 
@@ -125,8 +125,8 @@ internal class EntityJoinManagerImplTest {
         whenever(dataSearchContext.isEntity(otherEntityClass)).thenReturn(true)
         whenever(dataSearchContext.getAllPropertyInfos(otherEntityClass)).thenReturn(
             listOf(
-                propertyInfos(otherEntityClass, "id", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(otherEntityClass, "myJoin2", ElementType.SET, listOf(String::class.java), StringPath::class.java)
+                propertyInfos("${entityClass.canonicalName}.id", otherEntityClass, "id", ElementType.STRING, emptyList(), StringPath::class.java),
+                propertyInfos("${otherEntityClass.canonicalName}.myJoin2", otherEntityClass, "myJoin2", ElementType.SET, listOf(String::class.java), StringPath::class.java)
             )
         )
         whenever(dataSearchContext.isEntity(String::class.java)).thenReturn(false) // myJoin2
@@ -162,9 +162,9 @@ internal class EntityJoinManagerImplTest {
 
         whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
             listOf(
-                propertyInfos(entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(entityClass, "myJoin1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java),
-                propertyInfos(entityClass, "myJoin2", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+                propertyInfos("${entityClass.canonicalName}.firstName", entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
+                propertyInfos(EntityWithBidirectionalJoins.MyEntity1::class.java.canonicalName, entityClass, "myJoin1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java),
+                propertyInfos(EntityWithBidirectionalJoins.MyEntity2::class.java.canonicalName, entityClass, "myJoin2", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
             )
         )
 
@@ -172,8 +172,8 @@ internal class EntityJoinManagerImplTest {
         whenever(dataSearchContext.isEntity(myEntity1Class)).thenReturn(true)
         whenever(dataSearchContext.getAllPropertyInfos(myEntity1Class)).thenReturn(
             listOf(
-                propertyInfos(myEntity1Class, "id", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(myEntity1Class, "parent", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+                propertyInfos("${myEntity1Class.canonicalName}.id", myEntity1Class, "id", ElementType.STRING, emptyList(), StringPath::class.java),
+                propertyInfos(EntityWithBidirectionalJoins::class.java.canonicalName, myEntity1Class, "parent", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
             )
         )
 
@@ -181,8 +181,8 @@ internal class EntityJoinManagerImplTest {
         whenever(dataSearchContext.isEntity(myEntity2Class)).thenReturn(true)
         whenever(dataSearchContext.getAllPropertyInfos(myEntity2Class)).thenReturn(
             listOf(
-                propertyInfos(myEntity2Class, "id", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(myEntity2Class, "myEntity1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+                propertyInfos("${myEntity2Class.canonicalName}.id", myEntity2Class, "id", ElementType.STRING, emptyList(), StringPath::class.java),
+                propertyInfos(myEntity1Class.canonicalName, myEntity2Class, "myEntity1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
             )
         )
 
@@ -207,15 +207,17 @@ internal class EntityJoinManagerImplTest {
     }
 
     private fun propertyInfos(
-        clazz: Class<*>,
+        qName: String,
+        parentClass: Class<*>,
         fieldName: String,
         elementType: ElementType,
         parameterizedTypes: List<Class<*>>,
         queryType: Class<out SimpleExpression<*>>
     ): PropertyInfos {
-        val field = clazz.getDeclaredField(fieldName)
+        val field = parentClass.getDeclaredField(fieldName)
         return PropertyInfos(
-            clazz,
+            qName,
+            parentClass,
             fieldName,
             elementType,
             field.type,

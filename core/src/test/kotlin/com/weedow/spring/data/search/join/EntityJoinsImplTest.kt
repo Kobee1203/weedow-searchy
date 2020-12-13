@@ -41,32 +41,44 @@ internal class EntityJoinsImplTest {
     }
 
     @Test
-    fun check_already_processed() {
+    fun check_already_processed_when_property_infos_matches_entity_class() {
+        val entityJoins = EntityJoinsImpl(Person::class.java)
+
+        // Root class
+        val propertyInfos: PropertyInfos = mock {
+            on { this.elementType }.thenReturn(ElementType.SET)
+            on { this.parameterizedTypes }.thenReturn(listOf(Person::class.java))
+        }
+        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isTrue()
+    }
+
+    @Test
+    fun check_already_processed_when_entity_join_matches_entity_class() {
         val entityJoins = EntityJoinsImpl(Person::class.java)
 
         val entityJoin = EntityJoin(ADDRESS_ENTITIES_FIELD, ADDRESS_ENTITIES_FIELD, Address::class.java.canonicalName)
         entityJoins.add(entityJoin)
 
-        // Root class
-        val propertyInfos: PropertyInfos = mock {
-            on { this.elementType }.thenReturn(ElementType.SET)
-            on { this.parametrizedTypes }.thenReturn(listOf(Person::class.java))
+        // Join already added
+        val propertyInfos = mock<PropertyInfos> {
+            on { qName }.thenReturn(Address::class.java.canonicalName)
+            on { elementType }.thenReturn(ElementType.SET)
+            on { parameterizedTypes }.thenReturn(listOf<Class<*>>(Address::class.java))
         }
         assertThat(entityJoins.alreadyProcessed(propertyInfos)).isTrue()
-        // Join already added
-        assertThat(entityJoins.alreadyProcessed(mockPropertyInfos(Person::class.java, ADDRESS_ENTITIES_FIELD, ElementType.SET, Address::class.java))).isTrue()
-        // Join not already processed
-        assertThat(entityJoins.alreadyProcessed(mockPropertyInfos(Person::class.java, VEHICLES_FIELD, ElementType.SET, Vehicle::class.java))).isFalse()
     }
 
-    private fun mockPropertyInfos(parentClass: Class<*>, fieldName: String, elementType: ElementType, vararg parameterizedTypes: Class<*>): PropertyInfos {
-        val propertyInfos: PropertyInfos = mock {
-            on { this.parentClass }.thenReturn(parentClass)
-            on { this.fieldName }.thenReturn(fieldName)
-            on { this.elementType }.thenReturn(elementType)
-            on { this.parametrizedTypes }.thenReturn(listOf(*parameterizedTypes))
+    @Test
+    fun check_not_already_processed_when_entity_join_does_not_match_entity_class() {
+        val entityJoins = EntityJoinsImpl(Person::class.java)
+
+        // Join not already processed
+        val propertyInfos = mock<PropertyInfos> {
+            on { qName }.thenReturn(Vehicle::class.java.canonicalName)
+            on { elementType }.thenReturn(ElementType.SET)
+            on { parameterizedTypes }.thenReturn(listOf<Class<*>>(Vehicle::class.java))
         }
-        return propertyInfos
+        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isFalse()
     }
 
     @Test
@@ -195,9 +207,9 @@ internal class EntityJoinsImplTest {
 
         val fieldPath = "$CHARACTERISTICS_FIELD.unknown"
         Assertions.assertThatThrownBy { entityJoins.getPath(fieldPath, root) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-                .hasMessageStartingWith("The attribute name 'unknown' is not authorized for a parent Map Join")
-                .hasNoCause()
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessageStartingWith("The attribute name 'unknown' is not authorized for a parent Map Join")
+            .hasNoCause()
 
         verify(root).joins
         verify(root).fetches
@@ -358,11 +370,13 @@ internal class EntityJoinsImplTest {
         entityJoins.add(entityJoin3)
 
         val joins = entityJoins.getJoins()
-        assertThat(joins).containsExactlyInAnyOrderEntriesOf(mutableMapOf(
+        assertThat(joins).containsExactlyInAnyOrderEntriesOf(
+            mutableMapOf(
                 Address::class.java.canonicalName to entityJoin1,
                 Vehicle::class.java.canonicalName to entityJoin2,
                 Person::class.java.canonicalName + "." + NICK_NAMES_FIELD to entityJoin3
-        ))
+            )
+        )
     }
 
     @Test
@@ -377,17 +391,23 @@ internal class EntityJoinsImplTest {
         val entityJoin3 = EntityJoin(NICK_NAMES_FIELD, NICK_NAMES_FIELD, Person::class.java.canonicalName + "." + NICK_NAMES_FIELD, JoinType.LEFTJOIN, true)
         entityJoins.add(entityJoin3)
 
-        assertThat(entityJoins.getJoins { it.fetched }).containsExactlyInAnyOrderEntriesOf(mutableMapOf(
+        assertThat(entityJoins.getJoins { it.fetched }).containsExactlyInAnyOrderEntriesOf(
+            mutableMapOf(
                 Vehicle::class.java.canonicalName to entityJoin2,
                 Person::class.java.canonicalName + "." + NICK_NAMES_FIELD to entityJoin3
-        ))
+            )
+        )
 
-        assertThat(entityJoins.getJoins { it.joinType == JoinType.INNERJOIN }).containsExactlyInAnyOrderEntriesOf(mutableMapOf(
+        assertThat(entityJoins.getJoins { it.joinType == JoinType.INNERJOIN }).containsExactlyInAnyOrderEntriesOf(
+            mutableMapOf(
                 Address::class.java.canonicalName to entityJoin1
-        ))
+            )
+        )
 
-        assertThat(entityJoins.getJoins { it.joinName.contains("address", true) }).containsExactlyInAnyOrderEntriesOf(mutableMapOf(
+        assertThat(entityJoins.getJoins { it.joinName.contains("address", true) }).containsExactlyInAnyOrderEntriesOf(
+            mutableMapOf(
                 Address::class.java.canonicalName to entityJoin1
-        ))
+            )
+        )
     }
 }

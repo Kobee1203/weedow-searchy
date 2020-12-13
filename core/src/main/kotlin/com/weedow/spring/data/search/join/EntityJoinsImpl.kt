@@ -2,10 +2,7 @@ package com.weedow.spring.data.search.join
 
 import com.querydsl.core.JoinType
 import com.weedow.spring.data.search.querydsl.QueryDslBuilder
-import com.weedow.spring.data.search.querydsl.querytype.ElementType
-import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
-import com.weedow.spring.data.search.querydsl.querytype.QEntityJoin
-import com.weedow.spring.data.search.querydsl.querytype.QPath
+import com.weedow.spring.data.search.querydsl.querytype.*
 import com.weedow.spring.data.search.utils.FIELD_PATH_SEPARATOR
 import com.weedow.spring.data.search.utils.MAP_KEY
 import com.weedow.spring.data.search.utils.MAP_VALUE
@@ -40,9 +37,8 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
             ElementType.SET,
             ElementType.LIST,
             ElementType.COLLECTION,
-            ElementType.ARRAY,
             -> {
-                propertyInfos.parametrizedTypes[0]
+                propertyInfos.parameterizedTypes[0]
             }
             else -> propertyInfos.type
         }
@@ -52,7 +48,7 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
             return true
         }
 
-        val joinName = EntityJoinUtils.getJoinName(propertyInfos.parentClass, propertyInfos.parentClass.getDeclaredField(propertyInfos.fieldName))
+        val joinName = propertyInfos.qName
         return joins.keys.stream().anyMatch { it == joinName }
     }
 
@@ -68,10 +64,13 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         val fieldName = parts[parts.size - 1]
         val parents = parts.subList(0, parts.size - 1)
 
-        var join: QEntityJoin<*> = queryDslBuilder.qEntityRoot
+        var join: QEntity<*> = queryDslBuilder.qEntityRoot
         for (parent in parents) {
             val qPath = join.get(parent)
-            join = queryDslBuilder.join(qPath, JoinType.LEFTJOIN, true)
+            val entityJoin = joins.getOrElse(qPath.propertyInfos.qName) {
+                EntityJoin(qPath.path.toString(), parent, qPath.propertyInfos.qName)
+            }
+            join = queryDslBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
         }
 
         return join.get(fieldName)
