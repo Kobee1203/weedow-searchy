@@ -67,8 +67,9 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         var join: QEntity<*> = queryDslBuilder.qEntityRoot
         for (parent in parents) {
             val qPath = join.get(parent)
-            val entityJoin = joins.getOrElse(qPath.propertyInfos.qName) {
-                EntityJoin(qPath.path.toString(), parent, qPath.propertyInfos.qName)
+            val qName = qPath.propertyInfos.qName
+            val entityJoin = joins.getOrElse(qName) {
+                EntityJoin(qPath.path.toString(), parent, qName)
             }
             join = queryDslBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
         }

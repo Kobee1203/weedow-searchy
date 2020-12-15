@@ -16,13 +16,13 @@ internal object QueryDslSpecificationComposition {
             combiner: (builder: QueryDslBuilder<T>, lhs: Predicate, rhs: Predicate) -> Predicate,
     ): QueryDslSpecification<T> {
         return QueryDslSpecification { builder: QueryDslBuilder<T> ->
-            val otherPredicate = toPredicate(lhs, builder)
-            val thisPredicate = toPredicate(rhs, builder) // ?: return otherPredicate
+            val leftPredicate = toPredicate(lhs, builder)
+            val rightPredicate = toPredicate(rhs, builder) // ?: return otherPredicate
 
             when {
-                thisPredicate == QueryDslSpecification.NO_PREDICATE -> otherPredicate
-                otherPredicate == QueryDslSpecification.NO_PREDICATE -> thisPredicate
-                else -> combiner(builder, thisPredicate, otherPredicate)
+                leftPredicate == QueryDslSpecification.NO_PREDICATE -> rightPredicate
+                rightPredicate == QueryDslSpecification.NO_PREDICATE -> leftPredicate
+                else -> combiner(builder, leftPredicate, rightPredicate)
             }
         }
     }

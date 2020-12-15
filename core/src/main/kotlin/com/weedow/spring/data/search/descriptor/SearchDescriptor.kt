@@ -117,6 +117,6 @@ interface SearchDescriptor<T> {
      * Return list of [EntityJoinHandlers][EntityJoinHandler] to handle the entity joins.
      */
     @JvmDefault
-    val entityJoinHandlers: List<EntityJoinHandler<T>>
+    val entityJoinHandlers: List<EntityJoinHandler>
         get() = listOf()
 }

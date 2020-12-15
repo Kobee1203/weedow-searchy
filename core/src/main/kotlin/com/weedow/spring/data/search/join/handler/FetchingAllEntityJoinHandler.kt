@@ -12,7 +12,7 @@ import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
  * _Example: `A` has a relationship with `B` and `B` has a relationship with `C`.
  * When we search for `A`, we retrieve `A` with data from `B` and `C`._
  */
-class FetchingAllEntityJoinHandler<T> : EntityJoinHandler<T> {
+class FetchingAllEntityJoinHandler : EntityJoinHandler {
 
     override fun supports(propertyInfos: PropertyInfos): Boolean {
         return true

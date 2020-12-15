@@ -13,14 +13,14 @@ internal class FetchingAllEntityJoinHandlerTest {
 
     @Test
     fun supports() {
-        val entityJoinHandler = FetchingAllEntityJoinHandler<Person>()
+        val entityJoinHandler = FetchingAllEntityJoinHandler()
         val supports = entityJoinHandler.supports(mock())
         Assertions.assertThat(supports).isTrue()
     }
 
     @Test
     fun handle_entity_join() {
-        val entityJoinHandler = FetchingAllEntityJoinHandler<Person>()
+        val entityJoinHandler = FetchingAllEntityJoinHandler()
         val joinInfo = entityJoinHandler.handle(mock())
         Assertions.assertThat(joinInfo).isNotNull()
         Assertions.assertThat(joinInfo.joinType).isEqualTo(JoinType.LEFTJOIN)

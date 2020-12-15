@@ -8,7 +8,7 @@ import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
  *
  * Accepts all join types and always returns the default values of [JoinInfo]: join type is [JoinInfo.DEFAULT_JOIN_TYPE] and fetch mode is [JoinInfo.DEFAULT_FETCH_MODE].
  */
-class DefaultEntityJoinHandler<T> : EntityJoinHandler<T> {
+class DefaultEntityJoinHandler : EntityJoinHandler {
 
     override fun supports(propertyInfos: PropertyInfos): Boolean {
         return true

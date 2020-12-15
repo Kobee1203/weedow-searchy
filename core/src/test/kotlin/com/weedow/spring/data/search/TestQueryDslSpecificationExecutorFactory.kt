@@ -24,23 +24,23 @@ class TestQueryDslSpecificationExecutorFactory(
         return mock()
     }
 
-    override fun <T> findPrimaryKeyClass(domainClass: Class<T>, default: () -> Class<*>): Class<*> {
-        val idClassAnnotation = domainClass.getAnnotation(IdClass::class.java)
+    override fun <T> findPrimaryKeyClass(entityClass: Class<T>, default: () -> Class<*>): Class<*> {
+        val idClassAnnotation = entityClass.getAnnotation(IdClass::class.java)
         if (idClassAnnotation != null) {
             return idClassAnnotation.value.java
         }
 
-        val embeddedFields = FieldUtils.getFieldsWithAnnotation(domainClass, EmbeddedId::class.java)
+        val embeddedFields = FieldUtils.getFieldsWithAnnotation(entityClass, EmbeddedId::class.java)
         if (embeddedFields.isNotEmpty()) {
             return embeddedFields[0].type
         }
 
-        val idFields = FieldUtils.getFieldsWithAnnotation(domainClass, Id::class.java)
+        val idFields = FieldUtils.getFieldsWithAnnotation(entityClass, Id::class.java)
         if (idFields.isNotEmpty()) {
             return idFields[0].type
         }
 
-        return super.findPrimaryKeyClass(domainClass, default)
+        return super.findPrimaryKeyClass(entityClass, default)
     }
 
 }

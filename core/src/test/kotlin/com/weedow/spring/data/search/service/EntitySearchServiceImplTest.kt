@@ -7,12 +7,10 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.expression.RootExpression
-import com.weedow.spring.data.search.join.EntityJoinManager
 import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
 import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutor
 import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory
 import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationService
-import com.weedow.spring.data.search.specification.JpaSpecificationService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -22,12 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 
 @ExtendWith(MockitoExtension::class)
 internal class EntitySearchServiceImplTest {
-
-    @Mock
-    lateinit var jpaSpecificationService: JpaSpecificationService
-
-    @Mock
-    lateinit var entityJoinManager: EntityJoinManager
 
     @Mock
     lateinit var queryDslSpecificationService: QueryDslSpecificationService
@@ -59,9 +51,6 @@ internal class EntitySearchServiceImplTest {
         assertThat(result).containsExactly(person)
 
         verifyZeroInteractions(queryDslSpecificationExecutorFactory)
-
-        verifyZeroInteractions(jpaSpecificationService)
-        verifyZeroInteractions(entityJoinManager)
     }
 
     @Test
@@ -87,8 +76,5 @@ internal class EntitySearchServiceImplTest {
         val result = entitySearchService.findAll(rootExpression, searchDescriptor)
 
         assertThat(result).containsExactly(person)
-
-        verifyZeroInteractions(jpaSpecificationService)
-        verifyZeroInteractions(entityJoinManager)
     }
 }

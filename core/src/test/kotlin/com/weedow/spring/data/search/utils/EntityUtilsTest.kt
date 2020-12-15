@@ -1,8 +1,5 @@
 package com.weedow.spring.data.search.utils
 
-import com.weedow.spring.data.search.common.model.JpaPersistable
-import com.weedow.spring.data.search.common.model.Person
-import org.apache.commons.lang3.reflect.FieldUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import javax.persistence.Column
@@ -12,32 +9,41 @@ import javax.persistence.Id
 internal class EntityUtilsTest {
 
     @Test
-    fun getFieldsWithAnnotation() {
-        val idFields = FieldUtils.getFieldsWithAnnotation(Person::class.java, Id::class.java)
-        assertThat(idFields).isNotNull()
-        assertThat(idFields).hasSize(1)
-        assertThat(idFields[0]).isEqualTo(Person::class.java.superclass.getDeclaredField("id"))
+    fun getFieldWithAnnotation() {
+        val idField = EntityUtils.getFieldWithAnnotation(MyObject::class.java, Id::class.java)
+        assertThat(idField).isNotNull()
+        assertThat(idField).isEqualTo(MyObject::class.java.superclass.getDeclaredField("id"))
 
-        val columnFields = FieldUtils.getFieldsWithAnnotation(Person::class.java, Column::class.java)
-        assertThat(columnFields).isNotNull()
-        assertThat(columnFields).hasSize(11)
-        assertThat(columnFields).containsExactlyInAnyOrder(
-                Person::class.java.getDeclaredField("firstName"),
-                Person::class.java.getDeclaredField("lastName"),
-                Person::class.java.getDeclaredField("email"),
-                Person::class.java.getDeclaredField("birthday"),
-                Person::class.java.getDeclaredField("height"),
-                Person::class.java.getDeclaredField("weight"),
-                Person::class.java.getDeclaredField("phoneNumbers"),
-                Person::class.java.getDeclaredField("characteristics"),
-                Person::class.java.getDeclaredField("tasks"),
-                JpaPersistable::class.java.getDeclaredField("createdOn"),
-                JpaPersistable::class.java.getDeclaredField("updatedOn")
-        )
+        val columnField = EntityUtils.getFieldWithAnnotation(MyObject::class.java, Column::class.java)
+        assertThat(columnField).isNotNull()
+        assertThat(columnField).isEqualTo(MyObject::class.java.getDeclaredField("field1"))
 
-        val embeddedIdFields = FieldUtils.getFieldsWithAnnotation(Person::class.java, EmbeddedId::class.java)
-        assertThat(embeddedIdFields).isNotNull()
-        assertThat(embeddedIdFields).isEmpty()
+        val embeddedField = EntityUtils.getFieldWithAnnotation(MyObject::class.java, EmbeddedId::class.java)
+        assertThat(embeddedField).isNull()
     }
+
+    @Test
+    fun getParameterizedTypes() {
+        val field1 = MyObject::class.java.getDeclaredField("field1")
+        val parameterizedTypes1 = EntityUtils.getParameterizedTypes(field1)
+        assertThat(parameterizedTypes1).containsExactly(String::class.java)
+
+        val field2 = MyObject::class.java.getDeclaredField("field2")
+        val parameterizedTypes2 = EntityUtils.getParameterizedTypes(field2)
+        assertThat(parameterizedTypes2).containsExactly(Int::class.javaObjectType, Boolean::class.javaObjectType)
+    }
+
+    open class Parent(
+        @Id
+        val id: Long
+    )
+
+    class MyObject(
+        @Column
+        val field1: Set<String>,
+
+        @Column
+        val field2: Map<Int, Boolean>
+    ) : Parent(0)
 
 }

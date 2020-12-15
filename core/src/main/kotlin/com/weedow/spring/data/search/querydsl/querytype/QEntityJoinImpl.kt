@@ -12,11 +12,10 @@ import java.lang.reflect.AnnotatedElement
 
 class QEntityJoinImpl<T>(
     private val qEntity: QEntity<out T>,
-    private val qPath: QPath<*>
+    private val propertyInfos: PropertyInfos
 ) : QEntityJoin<T> {
 
     override fun get(fieldName: String): QPath<*> {
-        val propertyInfos = qPath.propertyInfos
         return if (propertyInfos.elementType == ElementType.MAP) {
             val alias = qEntity.metadata.element.toString()
             when (fieldName) {

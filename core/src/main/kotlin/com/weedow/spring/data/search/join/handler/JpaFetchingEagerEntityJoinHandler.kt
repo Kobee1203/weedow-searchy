@@ -14,12 +14,12 @@ import javax.persistence.*
  * _Example: `A` has a relationship with `B` using `@OneToMany` annotation and `FetchType.EAGER`, and `A` has a relationship with `C` using `@OneToMany` annotation and `FetchType.LAZY`.
  * When we search for `A`, we retrieve `A` with just data from `B`, but not `C`._
  */
-class FetchingEagerJpaEntityJoinHandler<T>(
+class JpaFetchingEagerEntityJoinHandler(
         private val dataSearchContext: DataSearchContext,
-) : EntityJoinHandler<T> {
+) : EntityJoinHandler {
 
     override fun supports(propertyInfos: PropertyInfos): Boolean {
-        val joinAnnotation = propertyInfos.annotations.firstOrNull { dataSearchContext.joinAnnotations.contains(it.annotationClass.java) }
+        val joinAnnotation = propertyInfos.annotations.firstOrNull { dataSearchContext.isJoinAnnotation(it.annotationClass.java) }
         val fetchType = getFetchType(joinAnnotation)
         return FetchType.EAGER == fetchType
     }

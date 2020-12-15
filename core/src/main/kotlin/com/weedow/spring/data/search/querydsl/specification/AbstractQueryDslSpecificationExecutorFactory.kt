@@ -12,9 +12,9 @@ abstract class AbstractQueryDslSpecificationExecutorFactory(
         private val dataSearchContext: DataSearchContext,
 ) : QueryDslSpecificationExecutorFactory {
 
-    override fun <T> getQueryDslSpecificationExecutor(domainClass: Class<T>): QueryDslSpecificationExecutor<T> {
-        val primaryKeyClass = findPrimaryKeyClass(domainClass)
-        val entityInformation = getEntityInformation(domainClass, primaryKeyClass)
+    override fun <T> getQueryDslSpecificationExecutor(entityClass: Class<T>): QueryDslSpecificationExecutor<T> {
+        val primaryKeyClass = findPrimaryKeyClass(entityClass)
+        val entityInformation = getEntityInformation(entityClass, primaryKeyClass)
 
         val entityPathResolver = getEntityPathResolver()
 
@@ -30,16 +30,16 @@ abstract class AbstractQueryDslSpecificationExecutorFactory(
      *
      * If the primary key field is not found the method returns the result of the `default` lambda.
      *
-     * @param domainClass Entity class for which the primary key class is retrieved
+     * @param entityClass Entity class for which the primary key class is retrieved
      * @param default lambda used if the primary key field is not found
      */
-    protected open fun <T> findPrimaryKeyClass(domainClass: Class<T>, default: () -> Class<*> = { Long::class.java }): Class<*> {
-        val idField = EntityUtils.getFieldWithAnnotation(domainClass, org.springframework.data.annotation.Id::class.java)
+    protected open fun <T> findPrimaryKeyClass(entityClass: Class<T>, default: () -> Class<*> = { Long::class.java }): Class<*> {
+        val idField = EntityUtils.getFieldWithAnnotation(entityClass, org.springframework.data.annotation.Id::class.java)
         if (idField != null) {
             return idField.type
         }
 
-        val field = FieldUtils.getField(domainClass, "id")
+        val field = FieldUtils.getField(entityClass, "id", true)
         if (field != null) {
             return field.type
         }
@@ -47,9 +47,12 @@ abstract class AbstractQueryDslSpecificationExecutorFactory(
         return default()
     }
 
-    protected open fun <T, ID> getEntityInformation(domainClass: Class<T>, @Suppress("UNUSED_PARAMETER") primaryKeyClass: Class<ID>): EntityInformation<T, ID> {
+    protected open fun <T, ID> getEntityInformation(
+        entityClass: Class<T>,
+        @Suppress("UNUSED_PARAMETER") primaryKeyClass: Class<ID>
+    ): EntityInformation<T, ID> {
         val repositoryFactory = getRepositoryFactory()
-        return repositoryFactory.getEntityInformation(domainClass)
+        return repositoryFactory.getEntityInformation(entityClass)
     }
 
     protected open fun getEntityPathResolver(): EntityPathResolver {

@@ -58,7 +58,6 @@ internal data class SimpleExpression(
                 Operator.GREATER_THAN -> greaterThan(builder, qpath.path, value)
                 Operator.GREATER_THAN_OR_EQUALS -> greaterThanOrEquals(builder, qpath.path, value)
                 Operator.IN -> inPredicate(builder, qpath.path, value as List<*>)
-                else -> throw IllegalArgumentException("Operator not handled: $operator")
             }
         }
     }

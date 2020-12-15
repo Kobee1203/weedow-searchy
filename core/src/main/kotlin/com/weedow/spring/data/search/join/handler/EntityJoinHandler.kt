@@ -26,9 +26,9 @@ import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
  * ```
  *
  * @see FetchingAllEntityJoinHandler
- * @see FetchingEagerJpaEntityJoinHandler
+ * @see JpaFetchingEagerEntityJoinHandler
  */
-interface EntityJoinHandler<T> {
+interface EntityJoinHandler {
 
     /**
      * Checks if the given arguments are supported by this EntityJoinHandler.

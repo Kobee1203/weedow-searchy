@@ -40,6 +40,10 @@ abstract class AbstractConfigurableDataSearchContext : ConfigurableDataSearchCon
         return entityAnnotations.any { clazz.getAnnotation(it) != null }
     }
 
+    override fun isJoinAnnotation(annotationClass: Class<out Annotation>): Boolean {
+        return joinAnnotations.contains(annotationClass)
+    }
+
     private fun getPropertyInfos(parentClass: Class<*>, field: Field): PropertyInfos {
         val fieldName = field.name
         val fieldType = field.type.kotlin.javaObjectType

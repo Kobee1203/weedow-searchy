@@ -39,10 +39,10 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
         return entityJoins
     }
 
-    private fun doInitEntityJoins(entityClass: Class<*>, parentPath: String, entityJoins: EntityJoinsImpl, entityJoinHandlers: List<EntityJoinHandler<*>>) {
+    private fun doInitEntityJoins(entityClass: Class<*>, parentPath: String, entityJoins: EntityJoinsImpl, entityJoinHandlers: List<EntityJoinHandler>) {
         dataSearchContext.getAllPropertyInfos(entityClass).forEach { propertyInfos ->
 
-            val hasJoinAnnotation = propertyInfos.annotations.any { dataSearchContext.joinAnnotations.contains(it.annotationClass.java) }
+            val hasJoinAnnotation = propertyInfos.annotations.any { dataSearchContext.isJoinAnnotation(it.annotationClass.java) }
 
             // Ignore joins for a field without a Join Annotation
             if (hasJoinAnnotation) {

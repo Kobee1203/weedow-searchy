@@ -22,8 +22,7 @@ fun interface QueryDslSpecification<T> {
          *
          * @param <T>
          * @param spec can be null.
-         * @return
-         * @since 2.0
+         * @return The negation of the specification
          */
         fun <T> not(spec: QueryDslSpecification<T>?): QueryDslSpecification<T> {
             return if (spec == null) QueryDslSpecification { NO_PREDICATE } else QueryDslSpecification { builder: QueryDslBuilder<T> -> builder.not(spec.toPredicate(builder)) }
@@ -34,8 +33,7 @@ fun interface QueryDslSpecification<T> {
          *
          * @param <T>
          * @param spec can be null.
-         * @return
-         * @since 2.0
+         * @return the given specification or a new [QueryDslSpecification] that contains [NO_PREDICATE]
          */
         fun <T> where(spec: QueryDslSpecification<T>?): QueryDslSpecification<T> {
             return spec ?: QueryDslSpecification { NO_PREDICATE }
@@ -47,7 +45,6 @@ fun interface QueryDslSpecification<T> {
      *
      * @param other can be null.
      * @return The conjunction of the specifications
-     * @since 2.0
      */
     @JvmDefault
     fun and(other: QueryDslSpecification<T>): QueryDslSpecification<T> {
@@ -59,7 +56,6 @@ fun interface QueryDslSpecification<T> {
      *
      * @param other can be null.
      * @return The disjunction of the specifications
-     * @since 2.0
      */
     @JvmDefault
     fun or(other: QueryDslSpecification<T>): QueryDslSpecification<T> {

@@ -1,13 +1,9 @@
 package com.weedow.spring.data.search.join
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import com.querydsl.core.JoinType
 import com.querydsl.core.types.dsl.SimpleExpression
 import com.querydsl.core.types.dsl.StringPath
-import com.weedow.spring.data.search.TestDataSearchContext
 import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
@@ -15,7 +11,6 @@ import com.weedow.spring.data.search.querydsl.querytype.ElementType
 import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
 import com.weedow.spring.data.search.querydsl.querytype.QEntityImpl
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -31,11 +26,6 @@ internal class EntityJoinManagerImplTest {
 
     @InjectMocks
     private lateinit var entityJoinManager: EntityJoinManagerImpl
-
-    @BeforeEach
-    fun setUp() {
-        whenever(dataSearchContext.joinAnnotations).thenReturn(TestDataSearchContext.JOIN_ANNOTATIONS)
-    }
 
     @Test
     fun compute_entity_without_joins() {
@@ -54,11 +44,14 @@ internal class EntityJoinManagerImplTest {
             )
         )
 
+        whenever(dataSearchContext.isJoinAnnotation(Column::class.java)).thenReturn(false)
+
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
         assertThat(entityJoins).isNotNull()
         assertThat(entityJoins.getJoins()).isEmpty()
 
+        verify(dataSearchContext, times(2)).isJoinAnnotation(Column::class.java)
         verifyNoMoreInteractions(dataSearchContext)
     }
 
@@ -87,6 +80,9 @@ internal class EntityJoinManagerImplTest {
             )
         )
 
+        whenever(dataSearchContext.isJoinAnnotation(Column::class.java)).thenReturn(false)
+        whenever(dataSearchContext.isJoinAnnotation(OneToMany::class.java)).thenReturn(true)
+
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
         assertThat(entityJoins).isNotNull()
@@ -101,6 +97,7 @@ internal class EntityJoinManagerImplTest {
                 EntityJoin("myJoin", "myJoin", joinName)
             )
 
+        verify(dataSearchContext, times(2)).isJoinAnnotation(Column::class.java)
         verifyNoMoreInteractions(dataSearchContext)
     }
 
@@ -131,6 +128,10 @@ internal class EntityJoinManagerImplTest {
         )
         whenever(dataSearchContext.isEntity(String::class.java)).thenReturn(false) // myJoin2
 
+        whenever(dataSearchContext.isJoinAnnotation(Column::class.java)).thenReturn(false)
+        whenever(dataSearchContext.isJoinAnnotation(OneToMany::class.java)).thenReturn(true)
+        whenever(dataSearchContext.isJoinAnnotation(ElementCollection::class.java)).thenReturn(true)
+
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
         assertThat(entityJoins).isNotNull()
@@ -148,6 +149,7 @@ internal class EntityJoinManagerImplTest {
                 EntityJoin("myJoin1.myJoin2", "myJoin2", joinName2, JoinType.LEFTJOIN, true)
             )
 
+        verify(dataSearchContext, times(2)).isJoinAnnotation(Column::class.java)
         verifyNoMoreInteractions(dataSearchContext)
     }
 
@@ -186,6 +188,11 @@ internal class EntityJoinManagerImplTest {
             )
         )
 
+        whenever(dataSearchContext.isJoinAnnotation(Column::class.java)).thenReturn(false)
+        whenever(dataSearchContext.isJoinAnnotation(OneToMany::class.java)).thenReturn(true)
+        whenever(dataSearchContext.isJoinAnnotation(ManyToOne::class.java)).thenReturn(true)
+        whenever(dataSearchContext.isJoinAnnotation(OneToOne::class.java)).thenReturn(true)
+
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
         assertThat(entityJoins).isNotNull()
@@ -203,6 +210,8 @@ internal class EntityJoinManagerImplTest {
                 EntityJoin("myJoin2", "myJoin2", joinName2)
             )
 
+        verify(dataSearchContext, times(3)).isJoinAnnotation(Column::class.java)
+        verify(dataSearchContext, times(2)).isJoinAnnotation(OneToMany::class.java)
         verifyNoMoreInteractions(dataSearchContext)
     }
 
@@ -263,7 +272,7 @@ internal class EntityJoinManagerImplTest {
             val myJoin2: Set<String>,
         )
 
-        inner class MyEntityJoinHandler : EntityJoinHandler<EntityWithMultipleJoins> {
+        inner class MyEntityJoinHandler : EntityJoinHandler {
             override fun supports(propertyInfos: PropertyInfos): Boolean {
                 return propertyInfos.fieldName == "myJoin2"
             }

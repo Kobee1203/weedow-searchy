@@ -35,7 +35,7 @@ object EntityUtils {
         return when {
             type.isArray -> listOf(type.componentType)
             genericType is ParameterizedType -> genericType.actualTypeArguments.map { it as Class<*> }
-            else -> listOf()
+            else -> emptyList()
         }
     }
 

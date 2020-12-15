@@ -94,10 +94,10 @@ open class SearchConfigurationSupport {
     @Bean
     @ConditionalOnMissingBean
     open fun dataSearchService(
-            searchDescriptorService: SearchDescriptorService,
-            expressionMapper: ExpressionMapper,
-            dataSearchValidationService: DataSearchValidationService,
-            entitySearchService: EntitySearchService,
+        searchDescriptorService: SearchDescriptorService,
+        expressionMapper: ExpressionMapper,
+        dataSearchValidationService: DataSearchValidationService,
+        entitySearchService: EntitySearchService,
     ): DataSearchService {
         return DataSearchServiceImpl(searchDescriptorService, expressionMapper, dataSearchValidationService, entitySearchService)
     }
@@ -118,8 +118,8 @@ open class SearchConfigurationSupport {
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = ["spring.data.search.entity-search-service"], havingValue = "default", matchIfMissing = true)
     open fun entitySearchService(
-            queryDslSpecificationService: QueryDslSpecificationService,
-            queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory,
+        queryDslSpecificationService: QueryDslSpecificationService,
+        queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory,
     ): EntitySearchService {
         return EntitySearchServiceImpl(queryDslSpecificationService, queryDslSpecificationExecutorFactory)
     }

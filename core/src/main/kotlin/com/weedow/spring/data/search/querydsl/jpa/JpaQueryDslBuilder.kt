@@ -26,10 +26,11 @@ class JpaQueryDslBuilder<T>(
     }
 
     override fun join(qPath: QPath<*>, joinType: JoinType, fetched: Boolean): QEntityJoin<*> {
-        val elementType = qPath.propertyInfos.elementType
+        val propertyInfos = qPath.propertyInfos
+        val elementType = propertyInfos.elementType
 
         if (elementType == ElementType.MAP_KEY || elementType == ElementType.MAP_VALUE) {
-            return QEntityJoinImpl(QEntityImpl(dataSearchContext, qPath.propertyInfos.type, qPath.path.metadata)/*dataSearchContext.get(qPath.propertyInfos.type)*/, qPath)
+            return QEntityJoinImpl(QEntityImpl(dataSearchContext, propertyInfos.type, qPath.path.metadata), propertyInfos)
         }
 
         val joinExpression = query.metadata.joins
@@ -45,7 +46,7 @@ class JpaQueryDslBuilder<T>(
                 joinExpression.flags.add(JPAQueryMixin.FETCH)
             }
             val alias = (joinExpression.target as Operation).getArg(1) as QEntity<*>
-            return QEntityJoinImpl(alias, qPath)
+            return QEntityJoinImpl(alias, propertyInfos)
         }
 
 
@@ -54,10 +55,10 @@ class JpaQueryDslBuilder<T>(
             ElementType.LIST,
             ElementType.COLLECTION,
             -> {
-                qPath.propertyInfos.parameterizedTypes[0]
+                propertyInfos.parameterizedTypes[0]
             }
-            ElementType.MAP -> qPath.propertyInfos.parameterizedTypes[1]
-            ElementType.ENTITY -> qPath.propertyInfos.type
+            ElementType.MAP -> propertyInfos.parameterizedTypes[1]
+            ElementType.ENTITY -> propertyInfos.type
             else -> throw IllegalArgumentException("Could not identify the alias type for the QPath of type '$elementType': $qPath")
         }
 
@@ -77,7 +78,7 @@ class JpaQueryDslBuilder<T>(
             query.fetchJoin()
         }
 
-        return QEntityJoinImpl(join, qPath)
+        return QEntityJoinImpl(join, propertyInfos)
     }
 
     private fun <E> createAlias(aliasType: Class<E>, qPath: QPath<*>): QEntity<E> {

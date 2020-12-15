@@ -81,5 +81,4 @@ class JpaDataSearchAutoConfiguration {
         return JpaDataSearchContext()
     }
 
-
 }

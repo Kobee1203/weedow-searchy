@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.exception.UnsupportedOperatorException
 import com.weedow.spring.data.search.expression.*
+import com.weedow.spring.data.search.utils.Keyword
 import com.weedow.spring.data.search.utils.NullValue
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.assertj.core.api.Assertions.assertThat
@@ -92,9 +93,9 @@ internal class ExpressionParserVisitorImplTest {
         val result = expressionParserVisitor.visitNegativeExpression(ctx)
 
         assertThat(result)
-                .isInstanceOf(NotExpression::class.java)
-                .extracting("expression")
-                .isEqualTo(expression)
+            .isInstanceOf(NotExpression::class.java)
+            .extracting("expression")
+            .isEqualTo(expression)
 
         verifyNoMoreInteractions(ctx)
         verifyZeroInteractions(expressionResolver)
@@ -121,9 +122,9 @@ internal class ExpressionParserVisitorImplTest {
         assertThat(result).isInstanceOf(LogicalExpression::class.java)
         assertThat(result).extracting("logicalOperator").isEqualTo(LogicalOperator.AND)
         assertThat(result)
-                .extracting("expressions")
-                .asList()
-                .containsExactly(expression1, expression2)
+            .extracting("expressions")
+            .asList()
+            .containsExactly(expression1, expression2)
 
         verifyNoMoreInteractions(ctx)
         verifyZeroInteractions(expressionResolver)
@@ -150,9 +151,9 @@ internal class ExpressionParserVisitorImplTest {
         assertThat(result).isInstanceOf(LogicalExpression::class.java)
         assertThat(result).extracting("logicalOperator").isEqualTo(LogicalOperator.OR)
         assertThat(result)
-                .extracting("expressions")
-                .asList()
-                .containsExactly(expression1, expression2)
+            .extracting("expressions")
+            .asList()
+            .containsExactly(expression1, expression2)
 
         verifyNoMoreInteractions(ctx)
         verifyZeroInteractions(expressionResolver)
@@ -195,6 +196,33 @@ internal class ExpressionParserVisitorImplTest {
             on { this.text }.thenReturn(value)
         }
         whenever(ctx.number_value()).thenReturn(numberValueContext)
+        whenever(ctx.string_value()).thenReturn(null)
+
+        val operatorRuleContext = mock<QueryParser.Comparison_operatorContext> {
+            on { this.text }.thenReturn(operatorString)
+        }
+        whenever(ctx.comparison_operator()).thenReturn(operatorRuleContext)
+
+        val result = expressionParserVisitor.visitComparison_expression(ctx)
+
+        assertThat(result).isEqualTo(expression)
+
+        verifyNoMoreInteractions(ctx)
+    }
+
+    @ParameterizedTest
+    @MethodSource("comparison_expression_parameters")
+    fun visitComparison_expression_with_date_value(operatorString: String, operator: Operator) {
+        val fieldPath = "birthday"
+        val value = Keyword.CURRENT_DATE_TIME
+
+        val (ctx, expression) = mock(fieldPath, value, operator, false)
+
+        val dateValueContext = mock<QueryParser.Date_valueContext> {
+            on { this.text }.thenReturn(value)
+        }
+        whenever(ctx.date_value()).thenReturn(dateValueContext)
+        whenever(ctx.number_value()).thenReturn(null)
         whenever(ctx.string_value()).thenReturn(null)
 
         val operatorRuleContext = mock<QueryParser.Comparison_operatorContext> {
@@ -254,7 +282,7 @@ internal class ExpressionParserVisitorImplTest {
         }
         val expression = mock<Expression>()
         whenever(expressionResolver.resolveExpression(rootClass, fieldPath, listOf(value), operator, true))
-                .thenReturn(expression)
+            .thenReturn(expression)
 
         val stringValueContext = mock<QueryParser.String_valueContext> {
             on { this.text }.thenReturn(value)
@@ -287,8 +315,8 @@ internal class ExpressionParserVisitorImplTest {
         whenever(ctx.comparison_operator()).thenReturn(operatorRuleContext)
 
         assertThatThrownBy { expressionParserVisitor.visitComparison_expression(ctx) }
-                .isInstanceOf(UnsupportedOperatorException::class.java)
-                .hasMessage("Operator $operatorString is not supported")
+            .isInstanceOf(UnsupportedOperatorException::class.java)
+            .hasMessage("Operator $operatorString is not supported")
 
         verifyNoMoreInteractions(ctx)
         verifyZeroInteractions(expressionResolver)
@@ -309,8 +337,8 @@ internal class ExpressionParserVisitorImplTest {
         whenever(ctx.comparison_operator()).thenReturn(null)
 
         assertThatThrownBy { expressionParserVisitor.visitComparison_expression(ctx) }
-                .isInstanceOf(UnsupportedOperatorException::class.java)
-                .hasMessage("Operator $operatorString is not supported")
+            .isInstanceOf(UnsupportedOperatorException::class.java)
+            .hasMessage("Operator $operatorString is not supported")
 
         verifyNoMoreInteractions(ctx)
         verifyZeroInteractions(expressionResolver)
@@ -356,7 +384,7 @@ internal class ExpressionParserVisitorImplTest {
 
         val expression = mock<Expression>()
         whenever(expressionResolver.resolveExpression(rootClass, fieldPath, listOf(NullValue.NULL_VALUE), Operator.EQUALS, negated))
-                .thenReturn(expression)
+            .thenReturn(expression)
 
         val result = expressionParserVisitor.visitNull_comparison_expression(ctx)
 
@@ -371,7 +399,8 @@ internal class ExpressionParserVisitorImplTest {
         val fieldPath = "fieldPath"
         val value1 = "John"
         val value2 = "174.3"
-        val value3 = "true"
+        val value3 = Keyword.CURRENT_DATE
+        val value4 = "true"
 
         // Test the different values (string, number, boolean)
         val valueContext1 = mock<QueryParser.String_valueContext> {
@@ -380,22 +409,31 @@ internal class ExpressionParserVisitorImplTest {
         val valueContext2 = mock<QueryParser.Number_valueContext> {
             on { this.text }.thenReturn(value2)
         }
-        val valueContext3 = mock<QueryParser.Boolean_valueContext> {
+        val valueContext3 = mock<QueryParser.Date_valueContext> {
             on { this.text }.thenReturn(value3)
         }
+        val valueContext4 = mock<QueryParser.Boolean_valueContext> {
+            on { this.text }.thenReturn(value4)
+        }
         val values = listOf<QueryParser.ValueContext>(
-                mock {
-                    on { this.string_value() }.thenReturn(valueContext1)
-                },
-                mock {
-                    on { this.string_value() }.thenReturn(null)
-                    on { this.number_value() }.thenReturn(valueContext2)
-                },
-                mock {
-                    on { this.string_value() }.thenReturn(null)
-                    on { this.number_value() }.thenReturn(null)
-                    on { this.boolean_value() }.thenReturn(valueContext3)
-                }
+            mock {
+                on { this.string_value() }.thenReturn(valueContext1)
+            },
+            mock {
+                on { this.string_value() }.thenReturn(null)
+                on { this.number_value() }.thenReturn(valueContext2)
+            },
+            mock {
+                on { this.string_value() }.thenReturn(null)
+                on { this.number_value() }.thenReturn(null)
+                on { this.date_value() }.thenReturn(valueContext3)
+            },
+            mock {
+                on { this.string_value() }.thenReturn(null)
+                on { this.number_value() }.thenReturn(null)
+                on { this.date_value() }.thenReturn(null)
+                on { this.boolean_value() }.thenReturn(valueContext4)
+            }
         )
 
         val fieldPathContext = mock<QueryParser.Field_pathContext> {
@@ -409,8 +447,8 @@ internal class ExpressionParserVisitorImplTest {
         }
 
         val expression = mock<Expression>()
-        whenever(expressionResolver.resolveExpression(rootClass, fieldPath, listOf(value1, value2, value3), Operator.IN, negated))
-                .thenReturn(expression)
+        whenever(expressionResolver.resolveExpression(rootClass, fieldPath, listOf(value1, value2, value3, value4), Operator.IN, negated))
+            .thenReturn(expression)
 
         val result = expressionParserVisitor.visitIn_expression(ctx)
 
@@ -439,7 +477,7 @@ internal class ExpressionParserVisitorImplTest {
 
         val expression = mock<Expression>()
         whenever(expressionResolver.resolveExpression(rootClass, fieldPath, listOf(value), Operator.MATCHES, false))
-                .thenReturn(expression)
+            .thenReturn(expression)
 
         val result = expressionParserVisitor.visitMatches_expression(ctx)
 
@@ -468,7 +506,7 @@ internal class ExpressionParserVisitorImplTest {
 
         val expression = mock<Expression>()
         whenever(expressionResolver.resolveExpression(rootClass, fieldPath, listOf(value), Operator.IMATCHES, false))
-                .thenReturn(expression)
+            .thenReturn(expression)
 
         val result = expressionParserVisitor.visitImatches_expression(ctx)
 
@@ -488,7 +526,7 @@ internal class ExpressionParserVisitorImplTest {
 
         val expression = mock<Expression>()
         whenever(expressionResolver.resolveExpression(rootClass, fieldPath, listOf(value), operator, negated))
-                .thenReturn(expression)
+            .thenReturn(expression)
 
         return Pair(ctx, expression)
     }
@@ -498,11 +536,11 @@ internal class ExpressionParserVisitorImplTest {
         @Suppress("unused")
         private fun comparison_expression_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("=", Operator.EQUALS),
-                    Arguments.of("<", Operator.LESS_THAN),
-                    Arguments.of("<=", Operator.LESS_THAN_OR_EQUALS),
-                    Arguments.of(">", Operator.GREATER_THAN),
-                    Arguments.of(">=", Operator.GREATER_THAN_OR_EQUALS)
+                Arguments.of("=", Operator.EQUALS),
+                Arguments.of("<", Operator.LESS_THAN),
+                Arguments.of("<=", Operator.LESS_THAN_OR_EQUALS),
+                Arguments.of(">", Operator.GREATER_THAN),
+                Arguments.of(">=", Operator.GREATER_THAN_OR_EQUALS)
             )
         }
 
@@ -510,8 +548,8 @@ internal class ExpressionParserVisitorImplTest {
         @Suppress("unused")
         private fun comparison_expression_with_quotes_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("'my value with \\'single quote\\''", "my value with 'single quote'"),
-                    Arguments.of("\"my value with \\\"single quote\\\"\"", "my value with \"single quote\"")
+                Arguments.of("'my value with \\'single quote\\''", "my value with 'single quote'"),
+                Arguments.of("\"my value with \\\"single quote\\\"\"", "my value with \"single quote\"")
             )
         }
 
@@ -519,8 +557,8 @@ internal class ExpressionParserVisitorImplTest {
         @Suppress("unused")
         private fun not_operator_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of(null, false),
-                    Arguments.of(mock<TerminalNode>(), true)
+                Arguments.of(null, false),
+                Arguments.of(mock<TerminalNode>(), true)
             )
         }
     }

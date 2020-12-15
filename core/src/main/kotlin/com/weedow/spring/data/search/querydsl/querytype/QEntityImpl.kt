@@ -53,9 +53,17 @@ open class QEntityImpl<T>(
             ElementType.LIST -> createList(propertyInfos.fieldName, propertyInfos.parameterizedTypes[0], propertyInfos.queryType, PathInits.DIRECT2)
             ElementType.SET -> createSet(propertyInfos.fieldName, propertyInfos.parameterizedTypes[0], propertyInfos.queryType, PathInits.DIRECT2)
             ElementType.COLLECTION -> createCollection(propertyInfos.fieldName, propertyInfos.parameterizedTypes[0], propertyInfos.queryType, PathInits.DIRECT2)
-            ElementType.MAP -> createMap(propertyInfos.fieldName, propertyInfos.parameterizedTypes[0], propertyInfos.parameterizedTypes[1], propertyInfos.queryType)
+            ElementType.MAP -> createMap(
+                propertyInfos.fieldName,
+                propertyInfos.parameterizedTypes[0],
+                propertyInfos.parameterizedTypes[1],
+                propertyInfos.queryType
+            )
+            ElementType.ENTITY ->
+                if (inits.isInitialized(propertyInfos.fieldName))
+                    QEntityImpl(dataSearchContext, propertyInfos.type, forProperty(propertyInfos.fieldName), inits.get(propertyInfos.fieldName))
+                else null
             ElementType.COMPARABLE -> createComparable(propertyInfos.fieldName, propertyInfos.type)
-            ElementType.ENTITY -> if (inits.isInitialized(propertyInfos.fieldName)) QEntityImpl(dataSearchContext, propertyInfos.type, forProperty(propertyInfos.fieldName), inits.get(propertyInfos.fieldName)) else null
             else -> createSimple(propertyInfos.fieldName, propertyInfos.type)
         }
         if (path != null) {

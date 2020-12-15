@@ -18,4 +18,6 @@ interface DataSearchContext {
 
     fun isEntity(clazz: Class<*>): Boolean
 
+    fun isJoinAnnotation(annotationClass: Class<out Annotation>): Boolean
+
 }
