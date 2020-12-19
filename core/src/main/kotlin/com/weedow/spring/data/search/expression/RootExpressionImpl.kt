@@ -15,7 +15,7 @@ import javax.persistence.criteria.Root
  * @param expressions [Expression]s
  */
 class RootExpressionImpl<T>(
-        vararg val expressions: Expression,
+    vararg val expressions: Expression
 ) : RootExpression<T> {
 
     companion object {
@@ -50,7 +50,7 @@ class RootExpressionImpl<T>(
 
             val fetchJoins = entityJoins.getJoins(FILTER_FETCH_JOINS)
             fetchJoins.values.forEach {
-                entityJoins.getQPath(it.fieldPath, builder)
+                entityJoins.getQPath(it.fieldPath, builder.qEntityRoot, builder)
             }
 
             QueryDslSpecification.NO_PREDICATE

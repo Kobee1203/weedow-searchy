@@ -11,9 +11,9 @@ import org.springframework.web.server.ResponseStatusException
  * @param reason the associated reason. Default is the formatting of [SyntaxError]s
  */
 class ExpressionParserException(
-        val errors: Collection<SyntaxError>,
-        status: HttpStatus = HttpStatus.BAD_REQUEST,
-        reason: String = format(errors)
+    val errors: Collection<SyntaxError>,
+    status: HttpStatus = HttpStatus.BAD_REQUEST,
+    reason: String = format(errors)
 ) : ResponseStatusException(status, reason) {
 
     companion object {

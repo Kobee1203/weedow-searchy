@@ -9,9 +9,11 @@ import com.weedow.spring.data.search.utils.klogger
  * Default [QueryDslSpecificationService] implementation.
  *
  * Converts the [RootExpression], containing the [Expressions][com.weedow.spring.data.search.expression.Expression], to a [QueryDslSpecification] object.
+ *
+ * @param entityJoinManager [EntityJoinManager]
  */
 class QueryDslSpecificationServiceImpl(
-        private val entityJoinManager: EntityJoinManager,
+    private val entityJoinManager: EntityJoinManager
 ) : QueryDslSpecificationService {
 
     companion object {
@@ -19,7 +21,7 @@ class QueryDslSpecificationServiceImpl(
     }
 
     init {
-        if (log.isDebugEnabled) log.debug("Initialized JpaSpecificationService: {}", this)
+        if (log.isDebugEnabled) log.debug("Initialized JpaSpecificationService: {}", this::class.qualifiedName)
     }
 
     override fun <T> createSpecification(rootExpression: RootExpression<T>, searchDescriptor: SearchDescriptor<T>): QueryDslSpecification<T> {

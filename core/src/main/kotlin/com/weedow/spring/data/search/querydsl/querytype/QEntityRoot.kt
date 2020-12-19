@@ -1,4 +1,6 @@
 package com.weedow.spring.data.search.querydsl.querytype
 
-interface QEntityRoot<T> : QEntity<T> {
-}
+/**
+ * Query type representing the root [QEntity].
+ */
+interface QEntityRoot<T> : QEntity<T>

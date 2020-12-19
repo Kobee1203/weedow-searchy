@@ -13,10 +13,14 @@ import javax.persistence.Id
 import javax.persistence.IdClass
 
 class TestQueryDslSpecificationExecutorFactory(
-        dataSearchContext: DataSearchContext,
+    dataSearchContext: DataSearchContext
 ) : AbstractQueryDslSpecificationExecutorFactory(dataSearchContext) {
 
-    override fun <T, ID> newQueryDslSpecificationExecutor(dataSearchContext: DataSearchContext, entityInformation: EntityInformation<T, ID>, entityPathResolver: EntityPathResolver): QueryDslSpecificationExecutor<T> {
+    override fun <T, ID> newQueryDslSpecificationExecutor(
+        dataSearchContext: DataSearchContext,
+        entityInformation: EntityInformation<T, ID>,
+        entityPathResolver: EntityPathResolver
+    ): QueryDslSpecificationExecutor<T> {
         return mock()
     }
 

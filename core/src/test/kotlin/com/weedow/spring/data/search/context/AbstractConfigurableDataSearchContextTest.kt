@@ -51,7 +51,7 @@ internal class AbstractConfigurableDataSearchContextTest {
 
     @Test
     fun get_all_property_infos() {
-        val dataSearchContext: ConfigurableDataSearchContext = spy<AbstractConfigurableDataSearchContext>() {
+        val dataSearchContext: ConfigurableDataSearchContext = spy<AbstractConfigurableDataSearchContext> {
             on { this.entityAnnotations }.thenReturn(listOf(Entity::class.java))
         }
 
@@ -67,35 +67,48 @@ internal class AbstractConfigurableDataSearchContextTest {
                 tuple("birthday", ElementType.DATETIME, LocalDateTime::class.java, emptyList(), DateTimePath::class.java),
                 tuple("height", ElementType.NUMBER, Double::class.javaObjectType, emptyList(), NumberPath::class.java),
                 tuple("nickNames", ElementType.SET, Set::class.java, listOf(String::class.java), StringPath::class.java),
-                tuple("characteristics", ElementType.MAP, Map::class.java, listOf(String::class.java, Boolean::class.javaObjectType), BooleanPath::class.java),
-                tuple("addresses", ElementType.SET, Set::class.java, listOf(Address::class.java), QEntityImpl::class.java, Address::class.java.canonicalName),
+                tuple(
+                    "characteristics",
+                    ElementType.MAP,
+                    Map::class.java,
+                    listOf(String::class.java, Boolean::class.javaObjectType),
+                    BooleanPath::class.java
+                ),
+                tuple(
+                    "addresses",
+                    ElementType.SET,
+                    Set::class.java,
+                    listOf(Address::class.java),
+                    QEntityImpl::class.java,
+                    Address::class.java.canonicalName
+                ),
                 tuple("job", ElementType.ENTITY, Job::class.java, emptyList(), QEntityImpl::class.java, Job::class.java.canonicalName)
             )
     }
 
     @Test
     fun is_entity() {
-        val dataSearchContext: ConfigurableDataSearchContext = spy<AbstractConfigurableDataSearchContext>() {
+        val dataSearchContext: ConfigurableDataSearchContext = spy<AbstractConfigurableDataSearchContext> {
             on { this.entityAnnotations }.thenReturn(listOf(Entity::class.java))
         }
 
-        assertThat(dataSearchContext.isEntity(Person::class.java)).isTrue()
-        assertThat(dataSearchContext.isEntity(Address::class.java)).isTrue()
-        assertThat(dataSearchContext.isEntity(Job::class.java)).isTrue()
-        assertThat(dataSearchContext.isEntity(NotEntity::class.java)).isFalse()
+        assertThat(dataSearchContext.isEntity(Person::class.java)).isTrue
+        assertThat(dataSearchContext.isEntity(Address::class.java)).isTrue
+        assertThat(dataSearchContext.isEntity(Job::class.java)).isTrue
+        assertThat(dataSearchContext.isEntity(NotEntity::class.java)).isFalse
     }
 
     @Test
     fun is_join_annotations() {
-        val dataSearchContext: ConfigurableDataSearchContext = spy<AbstractConfigurableDataSearchContext>() {
+        val dataSearchContext: ConfigurableDataSearchContext = spy<AbstractConfigurableDataSearchContext> {
             on { this.joinAnnotations }.thenReturn(listOf(Entity::class.java, Column::class.java))
         }
 
-        assertThat(dataSearchContext.isJoinAnnotation(Entity::class.java)).isTrue()
-        assertThat(dataSearchContext.isJoinAnnotation(Column::class.java)).isTrue()
-        assertThat(dataSearchContext.isJoinAnnotation(ElementCollection::class.java)).isFalse()
-        assertThat(dataSearchContext.isJoinAnnotation(OneToMany::class.java)).isFalse()
-        assertThat(dataSearchContext.isJoinAnnotation(OneToOne::class.java)).isFalse()
+        assertThat(dataSearchContext.isJoinAnnotation(Entity::class.java)).isTrue
+        assertThat(dataSearchContext.isJoinAnnotation(Column::class.java)).isTrue
+        assertThat(dataSearchContext.isJoinAnnotation(ElementCollection::class.java)).isFalse
+        assertThat(dataSearchContext.isJoinAnnotation(OneToMany::class.java)).isFalse
+        assertThat(dataSearchContext.isJoinAnnotation(OneToOne::class.java)).isFalse
     }
 
     private fun tuple(
@@ -176,6 +189,6 @@ internal class AbstractConfigurableDataSearchContextTest {
         val company: String
     )
 
-    class NotEntity()
+    class NotEntity
 
 }

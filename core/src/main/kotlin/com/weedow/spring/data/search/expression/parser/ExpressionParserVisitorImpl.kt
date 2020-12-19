@@ -16,8 +16,8 @@ import org.antlr.v4.runtime.ParserRuleContext
  * @param rootClass Root Entity Class
  */
 class ExpressionParserVisitorImpl(
-        private val expressionResolver: ExpressionResolver,
-        private val rootClass: Class<*>
+    private val expressionResolver: ExpressionResolver,
+    private val rootClass: Class<*>
 ) : ExpressionParserVisitor, QueryBaseVisitor<Expression>() {
 
     companion object {
@@ -139,10 +139,10 @@ class ExpressionParserVisitorImpl(
 
     private fun cleanValue(valueRuleContext: ParserRuleContext): String {
         return valueRuleContext.text
-                .removeSurrounding(SINGLE_QUOTE)
-                .removeSurrounding(DOUBLE_QUOTE)
-                .replace(ESCAPED_SINGLE_QUOTE, SINGLE_QUOTE)
-                .replace(ESCAPED_DOUBLE_QUOTE, DOUBLE_QUOTE)
+            .removeSurrounding(SINGLE_QUOTE)
+            .removeSurrounding(DOUBLE_QUOTE)
+            .replace(ESCAPED_SINGLE_QUOTE, SINGLE_QUOTE)
+            .replace(ESCAPED_DOUBLE_QUOTE, DOUBLE_QUOTE)
     }
 
     internal data class OperatorInfo(val operator: Operator, val negated: Boolean = false)

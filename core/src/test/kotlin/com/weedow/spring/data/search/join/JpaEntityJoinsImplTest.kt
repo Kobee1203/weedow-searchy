@@ -9,8 +9,6 @@ import com.weedow.spring.data.search.common.model.Address
 import com.weedow.spring.data.search.common.model.Feature
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.common.model.Vehicle
-import com.weedow.spring.data.search.querydsl.querytype.ElementType
-import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
 import com.weedow.spring.data.search.utils.MAP_KEY
 import com.weedow.spring.data.search.utils.MAP_VALUE
 import org.assertj.core.api.Assertions
@@ -324,7 +322,8 @@ internal class JpaEntityJoinsImplTest {
         entityJoins.add(entityJoin1)
         val entityJoin2 = EntityJoin(VEHICLES_FIELD, VEHICLES_FIELD, Vehicle::class.java.canonicalName, JoinType.LEFTJOIN, true)
         entityJoins.add(entityJoin2)
-        val entityJoin3 = EntityJoin(NICK_NAMES_FIELD, NICK_NAMES_FIELD, Person::class.java.canonicalName + "." + NICK_NAMES_FIELD, JoinType.LEFTJOIN, true)
+        val entityJoin3 =
+            EntityJoin(NICK_NAMES_FIELD, NICK_NAMES_FIELD, Person::class.java.canonicalName + "." + NICK_NAMES_FIELD, JoinType.LEFTJOIN, true)
         entityJoins.add(entityJoin3)
 
         val joins = entityJoins.getJoins()
@@ -346,7 +345,8 @@ internal class JpaEntityJoinsImplTest {
         entityJoins.add(entityJoin1)
         val entityJoin2 = EntityJoin(VEHICLES_FIELD, VEHICLES_FIELD, Vehicle::class.java.canonicalName, JoinType.LEFTJOIN, true)
         entityJoins.add(entityJoin2)
-        val entityJoin3 = EntityJoin(NICK_NAMES_FIELD, NICK_NAMES_FIELD, Person::class.java.canonicalName + "." + NICK_NAMES_FIELD, JoinType.LEFTJOIN, true)
+        val entityJoin3 =
+            EntityJoin(NICK_NAMES_FIELD, NICK_NAMES_FIELD, Person::class.java.canonicalName + "." + NICK_NAMES_FIELD, JoinType.LEFTJOIN, true)
         entityJoins.add(entityJoin3)
 
         assertThat(entityJoins.getJoins { it.fetched }).containsExactlyInAnyOrderEntriesOf(

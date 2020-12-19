@@ -6,6 +6,8 @@ import org.springframework.data.jpa.domain.Specification
 
 /**
  * Expression to negate the given [expression].
+ *
+ * @param expression Expression to be negated
  */
 internal data class NotExpression(private val expression: Expression) : Expression {
 
@@ -18,7 +20,7 @@ internal data class NotExpression(private val expression: Expression) : Expressi
     }
 
     override fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T> {
-        return QueryDslSpecification.not(expression.toQueryDslSpecification<T>(entityJoins))
+        return QueryDslSpecification.not(expression.toQueryDslSpecification(entityJoins))
     }
 
 }

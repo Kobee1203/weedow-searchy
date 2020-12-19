@@ -10,6 +10,11 @@ import org.apache.commons.lang3.reflect.FieldUtils
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
+/**
+ * Convenient superclass for [DataSearchContext] implementations.
+ *
+ * It contains the main processing logic. The subclasses just provide the specific configurations.
+ */
 abstract class AbstractConfigurableDataSearchContext : ConfigurableDataSearchContext {
 
     companion object {
@@ -82,7 +87,13 @@ abstract class AbstractConfigurableDataSearchContext : ConfigurableDataSearchCon
             else -> elementType.pathClass
         } as Class<out SimpleExpression<*>>
 
-    private fun getQName(entityClass: Class<*>, fieldType: Class<*>, parameterizedTypes: List<Class<*>>, elementType: ElementType, fieldName: String): String {
+    private fun getQName(
+        entityClass: Class<*>,
+        fieldType: Class<*>,
+        parameterizedTypes: List<Class<*>>,
+        elementType: ElementType,
+        fieldName: String
+    ): String {
         val fieldClass = when (elementType) {
             ElementType.SET,
             ElementType.LIST,

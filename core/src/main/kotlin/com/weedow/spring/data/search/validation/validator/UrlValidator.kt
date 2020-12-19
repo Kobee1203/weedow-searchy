@@ -7,10 +7,13 @@ import java.net.MalformedURLException
 import java.net.URL
 
 /**
- * [DataSearchValidator][com.weedow.spring.data.search.validation.DataSearchValidator] implementation to check if the field expression value matches a valid [URL][java.net.URL].
+ * [DataSearchValidator][com.weedow.spring.data.search.validation.DataSearchValidator] implementation to check if the field expression value matches
+ * a valid [URL][java.net.URL].
+ *
+ * @param fieldPaths Field paths to validate
  */
 class UrlValidator(
-        vararg fieldPaths: String
+    vararg fieldPaths: String
 ) : AbstractFieldPathValidator(*fieldPaths) {
 
     override fun validateSingle(value: Any, fieldExpression: FieldExpression, errors: DataSearchErrors) {

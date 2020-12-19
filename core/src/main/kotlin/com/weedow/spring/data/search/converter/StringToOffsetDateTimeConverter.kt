@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
  */
 @ReadingConverter
 class StringToOffsetDateTimeConverter(
-        private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+    private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 ) : Converter<String, OffsetDateTime> {
 
     /**

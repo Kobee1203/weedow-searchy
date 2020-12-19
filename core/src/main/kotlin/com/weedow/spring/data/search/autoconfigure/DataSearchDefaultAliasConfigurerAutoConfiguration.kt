@@ -17,7 +17,7 @@ import java.lang.reflect.Field
 @ConditionalOnClass(SearchConfigurer::class)
 @EnableConfigurationProperties(SearchProperties::class)
 class DataSearchDefaultAliasConfigurerAutoConfiguration(
-        private val searchProperties: SearchProperties
+    private val searchProperties: SearchProperties
 ) : SearchConfigurer {
 
     override fun addAliasResolvers(registry: AliasResolverRegistry) {
@@ -32,7 +32,7 @@ class DataSearchDefaultAliasConfigurerAutoConfiguration(
      * @param fieldSuffixes List of field suffixes to be removed in order to create a field's alias
      */
     class DefaultAliasResolver(
-            private val fieldSuffixes: List<String>
+        private val fieldSuffixes: List<String>
     ) : AliasResolver {
 
         override fun supports(entityClass: Class<*>, field: Field): Boolean {

@@ -8,10 +8,13 @@ import com.weedow.spring.data.search.utils.klogger
 
 /**
  * Default [EntitySearchService] implementation.
+ *
+ * @param queryDslSpecificationService [QueryDslSpecificationService]
+ * @param queryDslSpecificationExecutorFactory [QueryDslSpecificationExecutorFactory]
  */
 class EntitySearchServiceImpl(
-        private val queryDslSpecificationService: QueryDslSpecificationService,
-        private val queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory,
+    private val queryDslSpecificationService: QueryDslSpecificationService,
+    private val queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory
 ) : EntitySearchService {
 
     companion object {
@@ -19,14 +22,14 @@ class EntitySearchServiceImpl(
     }
 
     init {
-        if (log.isDebugEnabled) log.debug("Initialized EntitySearchService: {}", this)
+        if (log.isDebugEnabled) log.debug("Initialized EntitySearchService: {}", this::class.qualifiedName)
     }
 
     override fun <T> findAll(rootExpression: RootExpression<T>, searchDescriptor: SearchDescriptor<T>): List<T> {
         val specification = queryDslSpecificationService.createSpecification(rootExpression, searchDescriptor)
 
         val queryDslSpecificationExecutor = searchDescriptor.queryDslSpecificationExecutor
-                ?: queryDslSpecificationExecutorFactory.getQueryDslSpecificationExecutor(searchDescriptor.entityClass)
+            ?: queryDslSpecificationExecutorFactory.getQueryDslSpecificationExecutor(searchDescriptor.entityClass)
 
         return queryDslSpecificationExecutor.findAll(specification)
     }

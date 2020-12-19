@@ -71,10 +71,12 @@ internal class DefaultDtoMapperTest {
         val result = dtoMapper.map(source)
 
         assertThat(result).isSameAs(source)
-        assertThat(result.characteristics).containsExactlyInAnyOrderEntriesOf(mapOf(
+        assertThat(result.characteristics).containsExactlyInAnyOrderEntriesOf(
+            mapOf(
                 characteristic1[0] to characteristic1[1],
                 characteristic2[0] to characteristic2[1]
-        ))
+            )
+        )
     }
 
     @Test
@@ -110,9 +112,9 @@ internal class DefaultDtoMapperTest {
     }
 
     private fun simulateLazyInitialization(
-            persistentCollection: PersistentCollection,
-            source: Any, session: SharedSessionContractImplementor,
-            vararg elements: Any
+        persistentCollection: PersistentCollection,
+        source: Any, session: SharedSessionContractImplementor,
+        vararg elements: Any
     ) {
         val isPersistentSet = persistentCollection is PersistentSet
         val isPersistentMap = persistentCollection is PersistentMap
@@ -173,12 +175,12 @@ internal class DefaultDtoMapperTest {
     }
 
     data class MyEntityWithSkippedProperty(
-            private val primitive: Int = 0,
-            private val enumeration: MyEnum = MyEnum.ONE,
-            private val array: Array<String> = arrayOf("one", "two"),
-            private val anonymousClass: MyInterface = object : MyInterface {
-                override fun compute() = 5
-            }
+        private val primitive: Int = 0,
+        private val enumeration: MyEnum = MyEnum.ONE,
+        private val array: Array<String> = arrayOf("one", "two"),
+        private val anonymousClass: MyInterface = object : MyInterface {
+            override fun compute() = 5
+        }
     ) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

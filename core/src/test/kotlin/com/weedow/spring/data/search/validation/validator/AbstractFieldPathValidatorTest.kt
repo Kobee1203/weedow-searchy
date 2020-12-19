@@ -11,15 +11,15 @@ internal class AbstractFieldPathValidatorTest : BaseValidatorTest() {
     fun supports() {
         val fieldExpression = mockFieldExpression("myfield", "myfield", Operator.EQUALS, "my value")
 
-        Assertions.assertThat(MyValidator("myfield").supports(fieldExpression)).isTrue()
+        Assertions.assertThat(MyValidator("myfield").supports(fieldExpression)).isTrue
     }
 
     @Test
     fun don_t_supports() {
         val fieldExpression = mockFieldExpression("myfield", "myfield", Operator.EQUALS, "my value")
 
-        Assertions.assertThat(MyValidator().supports(fieldExpression)).isFalse()
-        Assertions.assertThat(MyValidator("otherField").supports(fieldExpression)).isFalse()
+        Assertions.assertThat(MyValidator().supports(fieldExpression)).isFalse
+        Assertions.assertThat(MyValidator("otherField").supports(fieldExpression)).isFalse
     }
 
     @Test

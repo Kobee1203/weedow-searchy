@@ -70,7 +70,10 @@ class JpaDataSearchAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnClass(EntityManager::class)
-    fun jpaQueryDslSpecificationExecutorFactory(entityManager: EntityManager, dataSearchContext: DataSearchContext): QueryDslSpecificationExecutorFactory {
+    fun jpaQueryDslSpecificationExecutorFactory(
+        entityManager: EntityManager,
+        dataSearchContext: DataSearchContext
+    ): QueryDslSpecificationExecutorFactory {
         return QueryDslSpecificationExecutorFactoryCachingDecorator(JpaQueryDslSpecificationExecutorFactory(entityManager, dataSearchContext))
     }
 

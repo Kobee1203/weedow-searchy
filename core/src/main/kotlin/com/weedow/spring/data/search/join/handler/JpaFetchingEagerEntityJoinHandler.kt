@@ -11,11 +11,13 @@ import javax.persistence.*
  *
  * Technically, it creates a `LEFT JOIN FETCH` in JPQL for Join Annotation with [FetchType.EAGER].
  *
- * _Example: `A` has a relationship with `B` using `@OneToMany` annotation and `FetchType.EAGER`, and `A` has a relationship with `C` using `@OneToMany` annotation and `FetchType.LAZY`.
- * When we search for `A`, we retrieve `A` with just data from `B`, but not `C`._
+ * _Example: `A` has a relationship with `B` using `@OneToMany` annotation and `FetchType.EAGER`, and `A` has a relationship with `C`
+ * using `@OneToMany` annotation and `FetchType.LAZY`. When we search for `A`, we retrieve `A` with just data from `B`, but not `C`._
+ *
+ * @param dataSearchContext [DataSearchContext]
  */
 class JpaFetchingEagerEntityJoinHandler(
-        private val dataSearchContext: DataSearchContext,
+    private val dataSearchContext: DataSearchContext
 ) : EntityJoinHandler {
 
     override fun supports(propertyInfos: PropertyInfos): Boolean {

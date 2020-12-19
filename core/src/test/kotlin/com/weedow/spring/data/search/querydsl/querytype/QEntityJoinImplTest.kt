@@ -5,10 +5,8 @@ import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import com.querydsl.core.types.*
 import com.querydsl.core.types.dsl.SimplePath
-import com.querydsl.core.util.Annotations
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.utils.MAP_KEY
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

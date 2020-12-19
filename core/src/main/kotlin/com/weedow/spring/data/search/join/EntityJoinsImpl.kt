@@ -59,7 +59,7 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         joins[entityJoin.joinName] = entityJoin
     }
 
-    override fun getQPath(fieldPath: String, queryDslBuilder: QueryDslBuilder<*>): QPath<*> {
+    override fun <T> getQPath(fieldPath: String, qEntityRoot: QEntityRoot<T>, queryDslBuilder: QueryDslBuilder<T>): QPath<*> {
         val parts = fieldPath.split(FIELD_PATH_SEPARATOR)
         val fieldName = parts[parts.size - 1]
         val parents = parts.subList(0, parts.size - 1)
@@ -93,9 +93,9 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
             parentPath = EntityJoinUtils.getFieldPath(parentPath, parent)
         }
 
-        if (MapJoin::class.java.isAssignableFrom(join.javaClass)) {
+        return if (MapJoin::class.java.isAssignableFrom(join.javaClass)) {
             val mapJoin = join as MapJoin<*, *, *>
-            return getMapJoinPath(mapJoin, fieldName)
+            getMapJoinPath(mapJoin, fieldName)
         } else {
             val joinName = EntityJoinUtils.getJoinName(join.javaType, join.javaType.getDeclaredField(fieldName))
             val entityJoin = joins[joinName]
@@ -103,7 +103,7 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
                 getOrCreateJoin(join as From<*, *>, parentPath, fieldName)
             }
 
-            return join.get<Any>(fieldName)
+            join.get<Any>(fieldName)
         }
     }
 

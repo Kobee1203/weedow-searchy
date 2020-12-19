@@ -23,7 +23,7 @@ internal class DataSearchDefaultAliasConfigurerAutoConfigurationTest {
 
         val entityClass = Person::class.java
 
-        assertThat(aliasResolver.supports(entityClass, getField(entityClass, "firstName"))).isTrue()
+        assertThat(aliasResolver.supports(entityClass, getField(entityClass, "firstName"))).isTrue
 
         var aliases = aliasResolver.resolve(entityClass, getField(entityClass, "firstName"))
         assertThat(aliases).isEmpty()
@@ -42,7 +42,8 @@ internal class DataSearchDefaultAliasConfigurerAutoConfigurationTest {
     fun add_default_alias_resolver_with_custom_field_suffixes() {
         val registry = TestAliasResolverRegistry()
 
-        val defaultAliasConfigurer = DataSearchDefaultAliasConfigurerAutoConfiguration(SearchProperties(defaultAliasResolver = DefaultAliasResolver(listOf("Name", "Names"))))
+        val defaultAliasConfigurer =
+            DataSearchDefaultAliasConfigurerAutoConfiguration(SearchProperties(defaultAliasResolver = DefaultAliasResolver(listOf("Name", "Names"))))
         defaultAliasConfigurer.addAliasResolvers(registry)
 
         assertThat(registry.aliasResolvers).hasSize(1)
@@ -51,7 +52,7 @@ internal class DataSearchDefaultAliasConfigurerAutoConfigurationTest {
 
         val entityClass = Person::class.java
 
-        assertThat(aliasResolver.supports(entityClass, getField(entityClass, "firstName"))).isTrue()
+        assertThat(aliasResolver.supports(entityClass, getField(entityClass, "firstName"))).isTrue
 
         var aliases = aliasResolver.resolve(entityClass, getField(entityClass, "firstName"))
         assertThat(aliases).containsExactly("first")

@@ -12,10 +12,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
  *
  * The new endpoint is mapped to `/search/{searchDescriptorId}` where `searchDescriptorId` is the [id] specified in the `SearchDescriptor`.
  *
- * The easiest way to create a Search Descriptor is to use the [SearchDescriptorBuilder] which provides every options available to configure a `SearchDescriptor`.
+ * The easiest way to create a Search Descriptor is to use the [SearchDescriptorBuilder] which provides every options available to configure
+ * a `SearchDescriptor`.
  *
  * To expose the new Entity search endpoint, `SearchDescriptor` must be registered to the Spring Data Search Configuration:
- * * Implement the [SearchConfigurer][com.weedow.spring.data.search.config.SearchConfigurer] interface and override the [addSearchDescriptors][com.weedow.spring.data.search.config.SearchConfigurer.addSearchDescriptors] method:
+ * * Implement the [SearchConfigurer][com.weedow.spring.data.search.config.SearchConfigurer] interface and override the
+ * [addSearchDescriptors][com.weedow.spring.data.search.config.SearchConfigurer.addSearchDescriptors] method:
  * ```java
  * @Configuration
  * public class SearchDescriptorConfiguration implements SearchConfigurer {
@@ -28,7 +30,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
  * }
  * ```
  *
- * * Another solution is to add a new [@Bean][org.springframework.context.annotation.Bean]. This solution is useful when you want to create a `SearchDescriptor` which depends on other Beans:
+ * * Another solution is to add a new [@Bean][org.springframework.context.annotation.Bean]. This solution is useful when you want to create
+ * a `SearchDescriptor` which depends on other Beans:
  * ```java
  * @Configuration
  * public class SearchDescriptorConfiguration {
@@ -105,7 +108,8 @@ interface SearchDescriptor<T> {
     /**
      * Returns the [QueryDslSpecificationExecutor] to search the entities.
      *
-     * If it's not defined, it will be identified automatically by the instance of [QueryDslSpecificationExecutorFactory][com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory].
+     * If it's not defined, it will be identified automatically by the instance of
+     * [QueryDslSpecificationExecutorFactory][com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory].
      *
      * @return QueryDslSpecificationExecutor
      * @see QueryDslSpecificationExecutor

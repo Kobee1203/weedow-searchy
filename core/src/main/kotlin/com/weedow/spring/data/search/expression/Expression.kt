@@ -20,11 +20,21 @@ interface Expression {
     /**
      * Converts this Expression to a [Specification].
      *
-     * @param entityJoins
+     * @param entityJoins [EntityJoins] instance
      * @return [Specification] instance
      */
+    @Deprecated(
+        message = "Legacy method for old JPA implementation to be removed",
+        replaceWith = ReplaceWith("this.toQueryDslSpecification(entityJoins)")
+    )
     fun <T> toSpecification(entityJoins: EntityJoins): Specification<T>
 
+    /**
+     * Converts this Expression to a [QueryDslSpecification].
+     *
+     * @param entityJoins [EntityJoins] instance
+     * @return [QueryDslSpecification] instance
+     */
     fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T>
 
 }

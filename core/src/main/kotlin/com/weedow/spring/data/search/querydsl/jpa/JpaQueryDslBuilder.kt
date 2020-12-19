@@ -14,11 +14,17 @@ import com.weedow.spring.data.search.querydsl.QueryDslBuilder
 import com.weedow.spring.data.search.querydsl.querytype.*
 import com.weedow.spring.data.search.utils.Keyword
 
-
+/**
+ * JPA [QueryDslBuilder] implementation.
+ *
+ * @param dataSearchContext [DataSearchContext]
+ * @param query [AbstractJPAQuery]
+ * @param qEntityRoot [QEntityRoot]
+ */
 class JpaQueryDslBuilder<T>(
     private val dataSearchContext: DataSearchContext,
     private val query: AbstractJPAQuery<T, *>,
-    override val qEntityRoot: QEntityRoot<T>,
+    override val qEntityRoot: QEntityRoot<T>
 ) : QueryDslBuilder<T> {
 
     override fun distinct() {
@@ -50,7 +56,7 @@ class JpaQueryDslBuilder<T>(
         }
 
 
-        var aliasType = when (elementType) {
+        val aliasType = when (elementType) {
             ElementType.SET,
             ElementType.LIST,
             ElementType.COLLECTION,
@@ -184,70 +190,70 @@ class JpaQueryDslBuilder<T>(
         return Expressions.predicate(Ops.NOT, restriction)
     }
 
-    override fun equal(path: Path<*>, value: Any): Predicate {
-        val type = path.type
+    override fun equal(x: Expression<*>, value: Any): Predicate {
+        val type = x.type
         val expressionValue = convertValueToExpression(value)
         return when {
             Collection::class.java.isAssignableFrom(type) -> {
-                Expressions.predicate(JPQLOps.MEMBER_OF, expressionValue, path)
+                Expressions.predicate(JPQLOps.MEMBER_OF, expressionValue, x)
             }
             else -> {
-                Expressions.predicate(Ops.EQ, path, expressionValue)
+                Expressions.predicate(Ops.EQ, x, expressionValue)
             }
         }
     }
 
-    override fun isNull(path: Path<*>): Predicate {
-        val type = path.type
+    override fun isNull(x: Expression<*>): Predicate {
+        val type = x.type
         return when {
             Map::class.java.isAssignableFrom(type) -> {
-                Expressions.predicate(Ops.MAP_IS_EMPTY, path)
+                Expressions.predicate(Ops.MAP_IS_EMPTY, x)
             }
             Collection::class.java.isAssignableFrom(type) -> {
-                Expressions.predicate(Ops.COL_IS_EMPTY, path)
+                Expressions.predicate(Ops.COL_IS_EMPTY, x)
             }
             else -> {
-                Expressions.predicate(Ops.IS_NULL, path)
+                Expressions.predicate(Ops.IS_NULL, x)
             }
         }
     }
 
-    override fun like(path: Path<String>, value: String): Predicate {
+    override fun like(x: Expression<String>, value: String): Predicate {
         val expressionValue = Expressions.constant(value.replace("*", "%"))
-        return Expressions.predicate(Ops.LIKE, path, expressionValue)
+        return Expressions.predicate(Ops.LIKE, x, expressionValue)
     }
 
-    override fun ilike(path: Path<String>, value: String): Predicate {
+    override fun ilike(x: Expression<String>, value: String): Predicate {
         val expressionValue = Expressions.constant(value.replace("*", "%").toLowerCase())
-        return Expressions.predicate(Ops.LIKE_IC, path, expressionValue)
+        return Expressions.predicate(Ops.LIKE_IC, x, expressionValue)
     }
 
-    override fun lessThan(path: Path<*>, value: Any): Predicate {
+    override fun lessThan(x: Expression<*>, value: Any): Predicate {
         val expressionValue = convertValueToExpression(value)
-        return Expressions.predicate(Ops.LT, path, expressionValue)
+        return Expressions.predicate(Ops.LT, x, expressionValue)
     }
 
-    override fun lessThanOrEquals(path: Path<*>, value: Any): Predicate {
+    override fun lessThanOrEquals(x: Expression<*>, value: Any): Predicate {
         val expressionValue = convertValueToExpression(value)
-        return Expressions.predicate(Ops.LOE, path, expressionValue)
+        return Expressions.predicate(Ops.LOE, x, expressionValue)
     }
 
-    override fun greaterThan(path: Path<*>, value: Any): Predicate {
+    override fun greaterThan(x: Expression<*>, value: Any): Predicate {
         val expressionValue = convertValueToExpression(value)
-        return Expressions.predicate(Ops.GT, path, expressionValue)
+        return Expressions.predicate(Ops.GT, x, expressionValue)
     }
 
-    override fun greaterThanOrEquals(path: Path<*>, value: Any): Predicate {
+    override fun greaterThanOrEquals(x: Expression<*>, value: Any): Predicate {
         val expressionValue = convertValueToExpression(value)
-        return Expressions.predicate(Ops.GOE, path, expressionValue)
+        return Expressions.predicate(Ops.GOE, x, expressionValue)
     }
 
-    override fun `in`(path: Path<*>, values: Collection<*>): Predicate {
+    override fun `in`(x: Expression<*>, values: Collection<*>): Predicate {
         return if (values.size == 1) {
-            equal(path, values.iterator().next()!!)
+            equal(x, values.iterator().next()!!)
         } else {
             val expressionValue = Expressions.constant(values)
-            Expressions.predicate(Ops.IN, path, expressionValue)
+            Expressions.predicate(Ops.IN, x, expressionValue)
         }
     }
 

@@ -31,16 +31,20 @@ internal class RangeValidatorTest : BaseValidatorTest() {
         validator.validate(listOf(fieldExpression1, fieldExpression2), dataSearchErrors)
 
         argumentCaptor<Any> {
-            verify(dataSearchErrors, times(2)).reject(eq("range"), eq("Invalid number value for expression ''{0}''. Must between ''{1}'' and ''{2}''."), capture())
+            verify(dataSearchErrors, times(2)).reject(
+                eq("range"),
+                eq("Invalid number value for expression ''{0}''. Must between ''{1}'' and ''{2}''."),
+                capture()
+            )
 
             Assertions.assertThat(allValues).containsExactly(
-                    "myfield1 EQUALS 9.7",
-                    minValue,
-                    maxValue,
+                "myfield1 EQUALS 9.7",
+                minValue,
+                maxValue,
 
-                    "myfield2 EQUALS 7.1",
-                    minValue,
-                    maxValue
+                "myfield2 EQUALS 7.1",
+                minValue,
+                maxValue
             )
         }
     }

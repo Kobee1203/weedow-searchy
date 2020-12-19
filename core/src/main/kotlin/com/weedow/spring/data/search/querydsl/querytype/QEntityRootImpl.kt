@@ -5,6 +5,12 @@ import com.querydsl.core.types.PathMetadata
 import com.querydsl.core.types.Visitor
 import java.lang.reflect.AnnotatedElement
 
+/**
+ * Default [QEntityRoot] implementation.
+ *
+ * @param qEntity [QEntity]
+ * @param T Entity Class
+ */
 class QEntityRootImpl<T>(
     private val qEntity: QEntity<out T>
 ) : QEntityRoot<T> {

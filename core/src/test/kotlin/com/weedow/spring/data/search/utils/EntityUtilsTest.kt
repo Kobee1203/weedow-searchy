@@ -11,11 +11,11 @@ internal class EntityUtilsTest {
     @Test
     fun getFieldWithAnnotation() {
         val idField = EntityUtils.getFieldWithAnnotation(MyObject::class.java, Id::class.java)
-        assertThat(idField).isNotNull()
+        assertThat(idField).isNotNull
         assertThat(idField).isEqualTo(MyObject::class.java.superclass.getDeclaredField("id"))
 
         val columnField = EntityUtils.getFieldWithAnnotation(MyObject::class.java, Column::class.java)
-        assertThat(columnField).isNotNull()
+        assertThat(columnField).isNotNull
         assertThat(columnField).isEqualTo(MyObject::class.java.getDeclaredField("field1"))
 
         val embeddedField = EntityUtils.getFieldWithAnnotation(MyObject::class.java, EmbeddedId::class.java)

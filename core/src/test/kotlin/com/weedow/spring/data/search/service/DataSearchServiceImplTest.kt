@@ -45,7 +45,7 @@ internal class DataSearchServiceImplTest {
     fun findAll() {
         val searchDescriptorId = "person"
         val params = mutableMapOf(
-                "firstName" to listOf("John")
+            "firstName" to listOf("John")
         )
 
         val rootClass = Person::class.java
@@ -76,7 +76,7 @@ internal class DataSearchServiceImplTest {
     fun findAll_with_custom_dto() {
         val searchDescriptorId = "person"
         val params = mutableMapOf(
-                "firstName" to listOf("John")
+            "firstName" to listOf("John")
         )
 
         val rootClass = Person::class.java
@@ -111,8 +111,8 @@ internal class DataSearchServiceImplTest {
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(null)
 
         Assertions.assertThatThrownBy { dataSearchService.search(searchDescriptorId, params) }
-                .isInstanceOf(SearchDescriptorNotFound::class.java)
-                .hasMessage("Could not found the Search Descriptor with Id $searchDescriptorId")
+            .isInstanceOf(SearchDescriptorNotFound::class.java)
+            .hasMessage("Could not found the Search Descriptor with Id $searchDescriptorId")
 
         verifyZeroInteractions(expressionMapper)
         verifyZeroInteractions(dataSearchValidationService)
@@ -144,9 +144,9 @@ internal class DataSearchServiceImplTest {
 
         val status = HttpStatus.BAD_REQUEST
         Assertions.assertThatThrownBy { dataSearchService.search(searchDescriptorId, params) }
-                .isInstanceOf(ValidationException::class.java)
-                .hasMessage("${status.value()} ${status.name} \"Validation Errors: [$errorCode: $errorMessage]\"")
-                .extracting("status", "reason").contains(status, "Validation Errors: [$errorCode: $errorMessage]")
+            .isInstanceOf(ValidationException::class.java)
+            .hasMessage("${status.value()} ${status.name} \"Validation Errors: [$errorCode: $errorMessage]\"")
+            .extracting("status", "reason").contains(status, "Validation Errors: [$errorCode: $errorMessage]")
 
         verifyZeroInteractions(entitySearchService)
         verifyNoMoreInteractions(searchDescriptor) // searchDescriptor.dtoMapper not called

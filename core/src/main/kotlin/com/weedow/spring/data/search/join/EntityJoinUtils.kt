@@ -18,6 +18,7 @@ internal object EntityJoinUtils {
      * @param field field of the Entity
      * @return String representing the join name
      */
+    @Deprecated(message = "Legacy method for old JPA implementation to be removed")
     fun getJoinName(entityClass: Class<*>, field: Field): String {
         var fieldClass = field.type
         if (Collection::class.java.isAssignableFrom(fieldClass)) {

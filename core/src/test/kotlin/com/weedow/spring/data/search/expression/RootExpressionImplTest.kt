@@ -6,6 +6,7 @@ import com.querydsl.core.types.Predicate
 import com.weedow.spring.data.search.join.EntityJoin
 import com.weedow.spring.data.search.join.EntityJoins
 import com.weedow.spring.data.search.querydsl.QueryDslBuilder
+import com.weedow.spring.data.search.querydsl.querytype.QEntityRoot
 import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -29,7 +30,7 @@ internal class RootExpressionImplTest {
 
         assertThat(predicate).isEqualTo(QueryDslSpecification.NO_PREDICATE)
 
-        verify(entityJoins, never()).getQPath(any(), eq(queryDslBuilder))
+        verify(entityJoins, never()).getQPath(any(), any(), eq(queryDslBuilder))
         verify(queryDslBuilder).distinct()
         verifyNoMoreInteractions(queryDslBuilder)
     }
@@ -62,7 +63,7 @@ internal class RootExpressionImplTest {
 
         assertThat(result).isEqualTo(predicate)
 
-        verify(entityJoins, never()).getQPath(any(), eq(queryDslBuilder))
+        verify(entityJoins, never()).getQPath(any(), any(), eq(queryDslBuilder))
         verify(queryDslBuilder).distinct()
         verifyNoMoreInteractions(queryDslBuilder)
     }
@@ -78,7 +79,10 @@ internal class RootExpressionImplTest {
         )
         whenever(entityJoins.getJoins(RootExpressionImpl.FILTER_FETCH_JOINS)).thenReturn(fetchJoins)
 
-        val queryDslBuilder = mock<QueryDslBuilder<Any>>()
+        val qEntityRoot = mock<QEntityRoot<Any>>()
+        val queryDslBuilder = mock<QueryDslBuilder<Any>> {
+            on { this.qEntityRoot }.thenReturn(qEntityRoot)
+        }
 
         val rootExpression = RootExpressionImpl<Any>()
         val specification = rootExpression.toQueryDslSpecification<Any>(entityJoins)
@@ -87,8 +91,8 @@ internal class RootExpressionImplTest {
 
         assertThat(predicate).isEqualTo(QueryDslSpecification.NO_PREDICATE)
 
-        verify(entityJoins).getQPath(fieldPath1, queryDslBuilder)
-        verify(entityJoins).getQPath(fieldPath2, queryDslBuilder)
+        verify(entityJoins).getQPath(fieldPath1, qEntityRoot, queryDslBuilder)
+        verify(entityJoins).getQPath(fieldPath2, qEntityRoot, queryDslBuilder)
         verify(queryDslBuilder).distinct()
         verifyNoMoreInteractions(queryDslBuilder)
     }

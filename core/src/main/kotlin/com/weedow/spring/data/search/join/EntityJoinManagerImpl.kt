@@ -12,6 +12,8 @@ import java.util.*
  * Default [EntityJoinManager] implementation.
  *
  * This implementation computes the Entity joins for a given [SearchDescriptor], and cache the result.
+ *
+ * @param dataSearchContext [DataSearchContext]
  */
 class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : EntityJoinManager {
 
@@ -22,7 +24,7 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
     }
 
     init {
-        if (log.isDebugEnabled) log.debug("Initialized EntityJoinManager: {}", this)
+        if (log.isDebugEnabled) log.debug("Initialized EntityJoinManager: {}", this::class.qualifiedName)
     }
 
     override fun <T> computeEntityJoins(searchDescriptor: SearchDescriptor<T>): EntityJoins {
@@ -39,7 +41,12 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
         return entityJoins
     }
 
-    private fun doInitEntityJoins(entityClass: Class<*>, parentPath: String, entityJoins: EntityJoinsImpl, entityJoinHandlers: List<EntityJoinHandler>) {
+    private fun doInitEntityJoins(
+        entityClass: Class<*>,
+        parentPath: String,
+        entityJoins: EntityJoinsImpl,
+        entityJoinHandlers: List<EntityJoinHandler>
+    ) {
         dataSearchContext.getAllPropertyInfos(entityClass).forEach { propertyInfos ->
 
             val hasJoinAnnotation = propertyInfos.annotations.any { dataSearchContext.isJoinAnnotation(it.annotationClass.java) }

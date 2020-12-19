@@ -10,6 +10,12 @@ import com.weedow.spring.data.search.utils.MAP_KEY
 import com.weedow.spring.data.search.utils.MAP_VALUE
 import java.lang.reflect.AnnotatedElement
 
+/**
+ * [QEntityJoin] implementation.
+ *
+ * @param qEntity [QEntity]
+ * @param propertyInfos [PropertyInfos]
+ */
 class QEntityJoinImpl<T>(
     private val qEntity: QEntity<out T>,
     private val propertyInfos: PropertyInfos
@@ -50,7 +56,12 @@ class QEntityJoinImpl<T>(
 
     override fun getAnnotatedElement(): AnnotatedElement = qEntity.annotatedElement
 
-    private fun createQPath(elementType: ElementType, parameterizedType: Class<*>, pathMetadata: PathMetadata, propertyInfos: PropertyInfos): QPathImpl<*> {
+    private fun createQPath(
+        elementType: ElementType,
+        parameterizedType: Class<*>,
+        pathMetadata: PathMetadata,
+        propertyInfos: PropertyInfos
+    ): QPathImpl<*> {
         return QPathImpl(
             Expressions.path(parameterizedType, pathMetadata),
             getParameterizedPropertyInfos(parameterizedType, elementType, propertyInfos)

@@ -10,22 +10,22 @@ internal class DefaultDataSearchErrorsTest {
     fun reject() {
         val errors = DefaultDataSearchErrors()
 
-        assertThat(errors.hasErrors()).isFalse()
+        assertThat(errors.hasErrors()).isFalse
         assertThat(errors.getAllErrors()).isEmpty()
 
         errors.reject("1001", "Invalid Value")
-        assertThat(errors.hasErrors()).isTrue()
+        assertThat(errors.hasErrors()).isTrue
         assertThat(errors.getAllErrors())
-                .extracting("errorCode", "errorMessage")
-                .containsExactly(Tuple.tuple("1001", "Invalid Value"))
+            .extracting("errorCode", "errorMessage")
+            .containsExactly(Tuple.tuple("1001", "Invalid Value"))
 
         errors.reject("1002", "Illegal Value")
-        assertThat(errors.hasErrors()).isTrue()
+        assertThat(errors.hasErrors()).isTrue
         assertThat(errors.getAllErrors())
-                .extracting("errorCode", "errorMessage")
-                .containsExactly(
-                        Tuple.tuple("1001", "Invalid Value"),
-                        Tuple.tuple("1002", "Illegal Value")
-                )
+            .extracting("errorCode", "errorMessage")
+            .containsExactly(
+                Tuple.tuple("1001", "Invalid Value"),
+                Tuple.tuple("1002", "Illegal Value")
+            )
     }
 }

@@ -123,8 +123,8 @@ object ExpressionUtils {
      * @return String representing the [FieldExpression]
      */
     fun format(fieldExpression: FieldExpression): String = StringBuilder()
-            .append(if (fieldExpression.negated) "NOT (" else "")
-            .append(fieldExpression.fieldInfo.fieldPath).append(" ").append(fieldExpression.operator).append(" ").append(fieldExpression.value)
-            .append(if (fieldExpression.negated) ")" else "")
-            .toString()
+        .append(if (fieldExpression.negated) "NOT (" else "")
+        .append(fieldExpression.fieldInfo.fieldPath).append(" ").append(fieldExpression.operator).append(" ").append(fieldExpression.value)
+        .append(if (fieldExpression.negated) ")" else "")
+        .toString()
 }

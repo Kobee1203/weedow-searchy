@@ -12,13 +12,22 @@ import java.util.stream.Collectors
 
 /**
  * Default [ExpressionResolver] implementation.
+ *
+ * @param fieldPathResolver [FieldPathResolver]
+ * @param conversionService [ConversionService]
  */
 class ExpressionResolverImpl(
-        private val fieldPathResolver: FieldPathResolver,
-        private val conversionService: ConversionService,
+    private val fieldPathResolver: FieldPathResolver,
+    private val conversionService: ConversionService
 ) : ExpressionResolver {
 
-    override fun resolveExpression(rootClass: Class<*>, fieldPath: String, fieldValues: List<String>, operator: Operator, negated: Boolean): Expression {
+    override fun resolveExpression(
+        rootClass: Class<*>,
+        fieldPath: String,
+        fieldValues: List<String>,
+        operator: Operator,
+        negated: Boolean
+    ): Expression {
         val fieldPathInfo = toFieldKey(rootClass, fieldPath)
         val values = toFieldValues(fieldPathInfo, fieldValues)
 
@@ -43,8 +52,8 @@ class ExpressionResolverImpl(
 
     private fun toFieldValues(fieldPathInfo: FieldPathInfo, fieldValues: List<String>): List<Any> {
         return fieldValues.stream()
-                .map { fieldValue -> convert(fieldValue, fieldPathInfo.fieldClass) }
-                .collect(Collectors.toList())
+            .map { fieldValue -> convert(fieldValue, fieldPathInfo.fieldClass) }
+            .collect(Collectors.toList())
     }
 
     private fun convert(value: String, clazz: Class<*>): Any {

@@ -515,7 +515,12 @@ internal class ExpressionParserVisitorImplTest {
         verifyNoMoreInteractions(ctx)
     }
 
-    private fun mock(fieldPath: String, value: String, operator: Operator, negated: Boolean): Pair<QueryParser.Comparison_expressionContext, Expression> {
+    private fun mock(
+        fieldPath: String,
+        value: String,
+        operator: Operator,
+        negated: Boolean
+    ): Pair<QueryParser.Comparison_expressionContext, Expression> {
         val fieldPathContext = mock<QueryParser.Field_pathContext> {
             on { this.text }.thenReturn(fieldPath)
         }

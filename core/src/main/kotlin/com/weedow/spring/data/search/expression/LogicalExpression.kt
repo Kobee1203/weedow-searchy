@@ -6,10 +6,13 @@ import org.springframework.data.jpa.domain.Specification
 
 /**
  * Logical Expression represented by the logical operators [AND][LogicalOperator.AND] and [OR][LogicalOperator.OR] that specify the relationship between [expressions].
+ *
+ * @param logicalOperator Logical operator
+ * @param expressions List of [Expression]
  */
 internal data class LogicalExpression(
     private val logicalOperator: LogicalOperator,
-    private val expressions: List<Expression>,
+    private val expressions: List<Expression>
 ) : Expression {
 
     override fun toFieldExpressions(negated: Boolean): Collection<FieldExpression> {
@@ -20,7 +23,8 @@ internal data class LogicalExpression(
         var lastSpecification = Specification.where<T>(null)!!
         expressions.forEach { expression ->
             val specification = expression.toSpecification<T>(entityJoins)
-            lastSpecification = if (logicalOperator == LogicalOperator.OR) lastSpecification.or(specification)!! else lastSpecification.and(specification)!!
+            lastSpecification =
+                if (logicalOperator == LogicalOperator.OR) lastSpecification.or(specification)!! else lastSpecification.and(specification)!!
         }
         return Specification.where(lastSpecification)!!
     }
@@ -29,7 +33,8 @@ internal data class LogicalExpression(
         var lastSpecification = QueryDslSpecification.where<T>(null)
         expressions.forEach { expression ->
             val specification = expression.toQueryDslSpecification<T>(entityJoins)
-            lastSpecification = if (logicalOperator == LogicalOperator.OR) lastSpecification.or(specification) else lastSpecification.and(specification)
+            lastSpecification =
+                if (logicalOperator == LogicalOperator.OR) lastSpecification.or(specification) else lastSpecification.and(specification)
         }
         return QueryDslSpecification.where(lastSpecification)
     }

@@ -59,7 +59,7 @@ internal class JpaFetchingEagerEntityJoinHandlerTest {
 
         val supports = entityJoinHandler.supports(mockPropertyInfos(joinAnnotation))
 
-        assertThat(supports).isTrue()
+        assertThat(supports).isTrue
     }
 
     @ParameterizedTest
@@ -75,7 +75,7 @@ internal class JpaFetchingEagerEntityJoinHandlerTest {
 
         val supports = entityJoinHandler.supports(mockPropertyInfos(joinAnnotation))
 
-        assertThat(supports).isFalse()
+        assertThat(supports).isFalse
     }
 
     @Test
@@ -86,7 +86,7 @@ internal class JpaFetchingEagerEntityJoinHandlerTest {
 
         val supports = entityJoinHandler.supports(mockPropertyInfos(null))
 
-        assertThat(supports).isFalse()
+        assertThat(supports).isFalse
         verifyZeroInteractions(dataSearchContext)
     }
 

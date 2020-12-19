@@ -8,9 +8,11 @@ import java.math.BigInteger
 
 /**
  * Base class to group common methods for comparing [Number].
+ *
+ * @param fieldPaths Field paths to validate
  */
 abstract class AbstractNumberValidator(
-        vararg fieldPaths: String
+    vararg fieldPaths: String
 ) : AbstractFieldPathValidator(*fieldPaths) {
 
     /**
@@ -24,13 +26,25 @@ abstract class AbstractNumberValidator(
 
     final override fun validateSingle(value: Any, fieldExpression: FieldExpression, errors: DataSearchErrors) {
         if (value !is Number) {
-            errors.reject("not-a-number", "Invalid value for expression ''{0}''. ''{1}'' is not a Number instance.", ExpressionUtils.format(fieldExpression), value)
+            errors.reject(
+                "not-a-number",
+                "Invalid value for expression ''{0}''. ''{1}'' is not a Number instance.",
+                ExpressionUtils.format(fieldExpression),
+                value
+            )
             return
         }
 
         doValidate(value, fieldExpression, errors)
     }
 
+    /**
+     * Compares two numbers.
+     *
+     * @param x first Number
+     * @param y second Number
+     * @return Zero if the numbers are equals, a negative number if [x] is less than [y], or a positive number if [x] is greater than [y].
+     */
     internal fun compare(x: Number, y: Number): Int {
         return if (isSpecial(x) || isSpecial(y)) x.toDouble().compareTo(y.toDouble()) else toBigDecimal(x).compareTo(toBigDecimal(y))
     }
@@ -51,7 +65,10 @@ abstract class AbstractNumberValidator(
                 try {
                     BigDecimal(number.toString())
                 } catch (e: NumberFormatException) {
-                    throw RuntimeException("The given number (\"" + number + "\" of class " + number.javaClass.name + ") does not have a parsable string representation", e)
+                    throw RuntimeException(
+                        "The given number (\"" + number + "\" of class " + number.javaClass.name + ") does not have a parsable string representation",
+                        e
+                    )
                 }
             }
         }

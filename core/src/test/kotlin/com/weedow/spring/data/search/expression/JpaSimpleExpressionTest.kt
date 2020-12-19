@@ -453,7 +453,7 @@ internal class JpaSimpleExpressionTest {
         val fieldExpressions = expression.toFieldExpressions(negated)
 
         assertThat(fieldExpressions)
-                .extracting("fieldInfo", "value", "operator", "negated")
-                .containsExactly(Tuple.tuple(fieldInfo, fieldValue, operator, negated))
+            .extracting("fieldInfo", "value", "operator", "negated")
+            .containsExactly(Tuple.tuple(fieldInfo, fieldValue, operator, negated))
     }
 }

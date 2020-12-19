@@ -2,18 +2,36 @@ package com.weedow.spring.data.search.querydsl
 
 import com.querydsl.core.JoinType
 import com.querydsl.core.types.Expression
-import com.querydsl.core.types.Path
 import com.querydsl.core.types.Predicate
 import com.weedow.spring.data.search.querydsl.querytype.QEntityJoin
 import com.weedow.spring.data.search.querydsl.querytype.QEntityRoot
 import com.weedow.spring.data.search.querydsl.querytype.QPath
 
+/**
+ * Interface to construct criteria queries, compound selections, expressions, predicates, orderings, joins.
+ *
+ * @param T The root type in the from clause
+ */
 interface QueryDslBuilder<T> {
 
+    /**
+     * Query Entity related to the root type in the from clause.
+     */
     val qEntityRoot: QEntityRoot<T>
 
+    /**
+     * Specify whether duplicate query results will be eliminated.
+     */
     fun distinct()
 
+    /**
+     * Create a join or a fetch join to the specified [QPath] using the given [join type][JoinType].
+     *
+     * @param qPath target of the join
+     * @param joinType join type
+     * @param fetched whether the join is fetched
+     * @return [QEntityJoin] instance
+     */
     fun join(qPath: QPath<*>, joinType: JoinType, fetched: Boolean): QEntityJoin<*>
 
     /**
@@ -62,22 +80,84 @@ interface QueryDslBuilder<T> {
      */
     fun not(restriction: Expression<Boolean>): Predicate
 
-    fun equal(path: Path<*>, value: Any): Predicate
+    /**
+     * Create a predicate for testing the arguments for equality.
+     *
+     * @param x Expression to check
+     * @param value Any
+     * @return equality predicate
+     */
+    fun equal(x: Expression<*>, value: Any): Predicate
 
-    fun isNull(path: Path<*>): Predicate
+    /**
+     * Create a predicate to test whether the expression is null.
+     *
+     * @param x Expression to check
+     * @return is-null predicate
+     */
+    fun isNull(x: Expression<*>): Predicate
 
-    fun like(path: Path<String>, value: String): Predicate
+    /**
+     * Create a predicate for testing whether the expression satisfies the given pattern.
+     *
+     * @param x Expression to check
+     * @param value pattern - string
+     * @return like predicate
+     */
+    fun like(x: Expression<String>, value: String): Predicate
 
-    fun ilike(path: Path<String>, value: String): Predicate
+    /**
+     * Create a predicate for testing whether the expression satisfies the given pattern, ignoring case.
+     *
+     * @param x Expression to check
+     * @param value pattern - string
+     * @return ilike predicate
+     */
+    fun ilike(x: Expression<String>, value: String): Predicate
 
-    fun lessThan(path: Path<*>, value: Any): Predicate
+    /**
+     * Create a predicate for testing whether the first argument is less than the second.
+     *
+     * @param x Expression to check
+     * @param value Any
+     * @return less-than predicate
+     */
+    fun lessThan(x: Expression<*>, value: Any): Predicate
 
-    fun lessThanOrEquals(path: Path<*>, value: Any): Predicate
+    /**
+     * Create a predicate for testing whether the first argument is less than or equal to the second.
+     *
+     * @param x Expression to check
+     * @param value Any
+     * @return less-than-or-equal predicate
+     */
+    fun lessThanOrEquals(x: Expression<*>, value: Any): Predicate
 
-    fun greaterThan(path: Path<*>, value: Any): Predicate
+    /**
+     * Create a predicate for testing whether the first argument is greater than the second.
+     *
+     * @param x Expression to check
+     * @param value Any
+     * @return greater-than predicate
+     */
+    fun greaterThan(x: Expression<*>, value: Any): Predicate
 
-    fun greaterThanOrEquals(path: Path<*>, value: Any): Predicate
+    /**
+     * Create a predicate for testing whether the first argument is greater than or equal to the second.
+     *
+     * @param x Expression to check
+     * @param value Any
+     * @return greater-than-or-equal predicate
+     */
+    fun greaterThanOrEquals(x: Expression<*>, value: Any): Predicate
 
-    fun `in`(path: Path<*>, values: Collection<*>): Predicate
+    /**
+     * Create a predicate for testing the arguments for equality.
+     *
+     * @param x Expression to check
+     * @param values Collection of values
+     * @return in predicate
+     */
+    fun `in`(x: Expression<*>, values: Collection<*>): Predicate
 
 }

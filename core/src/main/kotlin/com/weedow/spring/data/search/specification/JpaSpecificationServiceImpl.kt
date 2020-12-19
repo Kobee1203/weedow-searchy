@@ -17,7 +17,7 @@ class JpaSpecificationServiceImpl : JpaSpecificationService {
     }
 
     init {
-        if (log.isDebugEnabled) log.debug("Initialized JpaSpecificationService: {}", this)
+        if (log.isDebugEnabled) log.debug("Initialized JpaSpecificationService: {}", this::class.qualifiedName)
     }
 
     override fun <T> createSpecification(rootExpression: RootExpression<T>, entityJoins: EntityJoins): Specification<T> {

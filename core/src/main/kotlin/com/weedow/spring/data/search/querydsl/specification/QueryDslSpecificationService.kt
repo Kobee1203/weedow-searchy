@@ -4,7 +4,6 @@ import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.expression.RootExpression
 import com.weedow.spring.data.search.join.EntityJoins
 
-
 /**
  * Service interface to create a [QueryDslSpecification] to be used by the [EntitySearchService][com.weedow.spring.data.search.service.EntitySearchService].
  */

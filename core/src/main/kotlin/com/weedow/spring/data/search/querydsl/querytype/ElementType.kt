@@ -7,9 +7,15 @@ import java.time.*
 import java.util.*
 import kotlin.reflect.KClass
 
+/**
+ * Enum of element types
+ *
+ * @param pathClass [Path] Class related to the ElementType
+ * @param supportFunction Function to check if a given class is supported by the current ElementType
+ */
 enum class ElementType(
     val pathClass: Class<out Path<*>>,
-    private val supportFunction: (Class<*>, dataSearchContext: DataSearchContext) -> Boolean,
+    private val supportFunction: (Class<*>, dataSearchContext: DataSearchContext) -> Boolean
 ) {
     BOOLEAN(BooleanPath::class.java, { clazz, _ -> isAssignableFrom(Boolean::class, clazz) }),
     STRING(StringPath::class.java, { clazz, _ -> isAssignableFrom(String::class, clazz) }),

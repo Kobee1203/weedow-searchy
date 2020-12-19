@@ -2,6 +2,9 @@ package com.weedow.spring.data.search.utils
 
 import java.io.Serializable
 
+/**
+ * Keyword Object
+ */
 object Keyword : Serializable {
 
     /** Constant representing the 'CURRENT_DATE' value. */

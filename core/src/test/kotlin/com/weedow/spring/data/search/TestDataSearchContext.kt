@@ -10,18 +10,18 @@ class TestDataSearchContext : AbstractConfigurableDataSearchContext() {
          * Entity Annotations supported
          */
         val ENTITY_ANNOTATIONS = listOf(
-                Entity::class.java
+            Entity::class.java
         )
 
         /**
          * Join Annotations supported.
          */
         val JOIN_ANNOTATIONS = listOf(
-                OneToOne::class.java,
-                OneToMany::class.java,
-                ManyToMany::class.java,
-                ElementCollection::class.java,
-                ManyToOne::class.java
+            OneToOne::class.java,
+            OneToMany::class.java,
+            ManyToMany::class.java,
+            ElementCollection::class.java,
+            ManyToOne::class.java
         )
     }
 

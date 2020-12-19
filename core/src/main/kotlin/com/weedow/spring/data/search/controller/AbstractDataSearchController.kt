@@ -20,11 +20,15 @@ import java.lang.reflect.Method
  * The [base path](SearchProperties.basePath) from [SearchProperties] is completed with a Search Descriptor ID:
  * * If the Search Descriptor ID is found, the related [SearchDescriptor] is retrieved and used to perform the search.
  * * If the Search Descriptor ID is not found, An exception of type [SearchDescriptorNotFound] is thrown.
+ *
+ * @param dataSearchService [DataSearchService]
+ * @param searchProperties [SearchProperties]
+ * @param mappingRegistrationFunction Function to register the Request Mapping for the current Controller
  */
 abstract class AbstractDataSearchController<M>(
-        private val dataSearchService: DataSearchService,
-        private val searchProperties: SearchProperties,
-        private val mappingRegistrationFunction: (mapping: M, AbstractDataSearchController<M>, method: Method) -> Unit
+    private val dataSearchService: DataSearchService,
+    private val searchProperties: SearchProperties,
+    private val mappingRegistrationFunction: (mapping: M, AbstractDataSearchController<M>, method: Method) -> Unit
 ) {
 
     companion object {

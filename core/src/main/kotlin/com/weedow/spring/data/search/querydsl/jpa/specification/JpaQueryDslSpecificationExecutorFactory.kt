@@ -14,13 +14,29 @@ import javax.persistence.EntityManager
 import javax.persistence.Id
 import javax.persistence.IdClass
 
+/**
+ * JPA [QueryDslSpecificationExecutorFactory][com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory] implementation.
+ *
+ * @param entityManager [EntityManager]
+ * @param dataSearchContext [DataSearchContext]
+ */
 class JpaQueryDslSpecificationExecutorFactory(
-        private val entityManager: EntityManager,
-        private val dataSearchContext: DataSearchContext,
+    private val entityManager: EntityManager,
+    dataSearchContext: DataSearchContext
 ) : AbstractQueryDslSpecificationExecutorFactory(dataSearchContext) {
 
-    override fun <T, ID> newQueryDslSpecificationExecutor(dataSearchContext: DataSearchContext, entityInformation: EntityInformation<T, ID>, entityPathResolver: EntityPathResolver): QueryDslSpecificationExecutor<T> {
-        return JpaQueryDslSpecificationExecutor(dataSearchContext, entityInformation as JpaEntityInformation<T, *>, entityManager, entityPathResolver, null)
+    override fun <T, ID> newQueryDslSpecificationExecutor(
+        dataSearchContext: DataSearchContext,
+        entityInformation: EntityInformation<T, ID>,
+        entityPathResolver: EntityPathResolver
+    ): QueryDslSpecificationExecutor<T> {
+        return JpaQueryDslSpecificationExecutor(
+            dataSearchContext,
+            entityInformation as JpaEntityInformation<T, *>,
+            entityManager,
+            entityPathResolver,
+            null
+        )
     }
 
     override fun getRepositoryFactory(): RepositoryFactorySupport {

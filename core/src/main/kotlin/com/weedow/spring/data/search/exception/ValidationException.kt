@@ -15,18 +15,18 @@ import java.util.*
  * @param reason the associated reason. Default is the formatting of [DataSearchError]s
  */
 class ValidationException(
-        val errors: Collection<DataSearchError>,
-        status: HttpStatus = HttpStatus.BAD_REQUEST,
-        reason: String = format(errors)
+    val errors: Collection<DataSearchError>,
+    status: HttpStatus = HttpStatus.BAD_REQUEST,
+    reason: String = format(errors)
 ) : ResponseStatusException(status, reason) {
 
     companion object {
         private fun format(errors: Collection<DataSearchError>): String {
             val locale = LocaleContextHolder.getLocale()
             return errors.joinToString(
-                    separator = ", ",
-                    prefix = "Validation Errors: [",
-                    postfix = "]"
+                separator = ", ",
+                prefix = "Validation Errors: [",
+                postfix = "]"
             ) { error -> format(error, locale) }
         }
 

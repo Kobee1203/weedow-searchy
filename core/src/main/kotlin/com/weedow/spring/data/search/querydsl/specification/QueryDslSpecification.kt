@@ -5,10 +5,16 @@ import com.querydsl.core.types.Visitor
 import com.weedow.spring.data.search.querydsl.QueryDslBuilder
 import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationComposition.composed
 
+/**
+ * Specification in the sense of Domain Driven Design.
+ */
 fun interface QueryDslSpecification<T> {
 
     companion object {
 
+        /**
+         * [Predicate] which does nothing. It's useful when a [QueryDslSpecification] is `null` or when the [QueryDslSpecification]'s processing doesn't return a [Predicate].
+         */
         val NO_PREDICATE: Predicate = object : Predicate {
             override fun <R : Any?, C : Any?> accept(v: Visitor<R, C>?, context: C?): R? = null
 
@@ -25,7 +31,13 @@ fun interface QueryDslSpecification<T> {
          * @return The negation of the specification
          */
         fun <T> not(spec: QueryDslSpecification<T>?): QueryDslSpecification<T> {
-            return if (spec == null) QueryDslSpecification { NO_PREDICATE } else QueryDslSpecification { builder: QueryDslBuilder<T> -> builder.not(spec.toPredicate(builder)) }
+            return if (spec == null) QueryDslSpecification { NO_PREDICATE } else QueryDslSpecification { builder: QueryDslBuilder<T> ->
+                builder.not(
+                    spec.toPredicate(
+                        builder
+                    )
+                )
+            }
         }
 
         /**
@@ -62,6 +74,12 @@ fun interface QueryDslSpecification<T> {
         return composed(this, other) { builder: QueryDslBuilder<T>, left: Predicate, rhs: Predicate -> builder.or(left, rhs) }
     }
 
+    /**
+     * Creates a WHERE clause for a query of the referenced entity in form of a [Predicate] for the given [QueryDslBuilder].
+     *
+     * @param queryDslBuilder [QueryDslBuilder] instance
+     * @return a [Predicate]
+     */
     fun toPredicate(queryDslBuilder: QueryDslBuilder<T>): Predicate
 
 }

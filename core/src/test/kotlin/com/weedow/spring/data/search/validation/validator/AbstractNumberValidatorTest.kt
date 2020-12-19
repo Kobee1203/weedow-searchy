@@ -46,9 +46,9 @@ internal class AbstractNumberValidatorTest : BaseValidatorTest() {
         val dataSearchErrors = mockDataSearchErrors()
 
         assertThatThrownBy { MyNumberValidator("myfield").validate(listOf(fieldExpression), dataSearchErrors) }
-                .isInstanceOf(RuntimeException::class.java)
-                .hasMessage("The given number (\"15/2\" of class com.weedow.spring.data.search.validation.validator.Fraction) does not have a parsable string representation")
-                .hasCauseInstanceOf(NumberFormatException::class.java)
+            .isInstanceOf(RuntimeException::class.java)
+            .hasMessage("The given number (\"15/2\" of class com.weedow.spring.data.search.validation.validator.Fraction) does not have a parsable string representation")
+            .hasCauseInstanceOf(NumberFormatException::class.java)
 
         verifyZeroInteractions(dataSearchErrors)
     }
@@ -63,11 +63,15 @@ internal class AbstractNumberValidatorTest : BaseValidatorTest() {
         validator.validate(listOf(fieldExpression), dataSearchErrors)
 
         argumentCaptor<String> {
-            verify(dataSearchErrors).reject(eq("not-a-number"), eq("Invalid value for expression ''{0}''. ''{1}'' is not a Number instance."), capture())
+            verify(dataSearchErrors).reject(
+                eq("not-a-number"),
+                eq("Invalid value for expression ''{0}''. ''{1}'' is not a Number instance."),
+                capture()
+            )
 
             Assertions.assertThat(allValues).containsExactly(
-                    "myfield EQUALS 10.1",
-                    "10.1"
+                "myfield EQUALS 10.1",
+                "10.1"
             )
         }
     }
@@ -77,7 +81,7 @@ internal class AbstractNumberValidatorTest : BaseValidatorTest() {
     }
 
     class MyNumberValidator(
-            vararg fieldPaths: String
+        vararg fieldPaths: String
     ) : AbstractNumberValidator(*fieldPaths) {
         override fun doValidate(value: Number, fieldExpression: FieldExpression, errors: DataSearchErrors) {
             if (compare(value, 10.1) > 1) {

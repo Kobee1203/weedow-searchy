@@ -16,16 +16,16 @@ internal class EntityJoinUtilsTest {
         @Suppress("unused")
         private fun get_join_name(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of(Person::class.java, "jobEntity", Job::class.java.canonicalName),
-                    Arguments.of(Person::class.java, "addressEntities", Address::class.java.canonicalName),
-                    Arguments.of(Person::class.java, "vehicles", Vehicle::class.java.canonicalName),
-                    Arguments.of(Person::class.java, "nickNames", Person::class.java.canonicalName + "." + "nickNames"), // ElementCollection
+                Arguments.of(Person::class.java, "jobEntity", Job::class.java.canonicalName),
+                Arguments.of(Person::class.java, "addressEntities", Address::class.java.canonicalName),
+                Arguments.of(Person::class.java, "vehicles", Vehicle::class.java.canonicalName),
+                Arguments.of(Person::class.java, "nickNames", Person::class.java.canonicalName + "." + "nickNames"), // ElementCollection
 
-                    // Test fields without join annotation, no check in the method
-                    Arguments.of(Person::class.java, "firstName", String::class.java.canonicalName),
-                    Arguments.of(Person::class.java, "birthday", LocalDateTime::class.java.canonicalName),
-                    Arguments.of(Person::class.java, "height", "java.lang.Double"), // Double::class.java returns "double"
-                    Arguments.of(Vehicle::class.java, "vehicleType", VehicleType::class.java.canonicalName)
+                // Test fields without join annotation, no check in the method
+                Arguments.of(Person::class.java, "firstName", String::class.java.canonicalName),
+                Arguments.of(Person::class.java, "birthday", LocalDateTime::class.java.canonicalName),
+                Arguments.of(Person::class.java, "height", "java.lang.Double"), // Double::class.java returns "double"
+                Arguments.of(Vehicle::class.java, "vehicleType", VehicleType::class.java.canonicalName)
             )
         }
     }

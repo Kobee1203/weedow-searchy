@@ -15,7 +15,7 @@ import org.hibernate.internal.util.collections.IdentitySet
  * @param entityInitializer [Initializer] used to load the given the Entity. Default is [EntityInitializer].
  */
 class DefaultDtoMapper<T>(
-        val entityInitializer: Initializer<Any> = EntityInitializer()
+    private val entityInitializer: Initializer<Any> = EntityInitializer()
 ) : DtoMapper<T, T> {
 
     /**
@@ -95,7 +95,11 @@ class EntityInitializer() : Initializer<Any> {
     /**
      * Secondary constructor to override one or more inner Initializers.
      */
-    constructor(propertyInitializer: PropertyInitializer, mapInitializer: Initializer<Map<*, *>>, collectionInitializer: Initializer<Collection<*>>) : this() {
+    constructor(
+        propertyInitializer: PropertyInitializer,
+        mapInitializer: Initializer<Map<*, *>>,
+        collectionInitializer: Initializer<Collection<*>>
+    ) : this() {
         this.propertyInitializer = propertyInitializer
         this.mapInitializer = mapInitializer
         this.collectionInitializer = collectionInitializer
@@ -124,19 +128,19 @@ class EntityInitializer() : Initializer<Any> {
     }
 
     private fun isSkippedProperty(property: Any?, propertyType: Class<*>) =
-            property == null
-                    || propertyType.isPrimitive
-                    || propertyType.isEnum
-                    || propertyType.isArray
-                    || propertyType.isAnonymousClass
-                    || propertyType.kotlin.javaPrimitiveType != null
+        property == null
+                || propertyType.isPrimitive
+                || propertyType.isEnum
+                || propertyType.isArray
+                || propertyType.isAnonymousClass
+                || propertyType.kotlin.javaPrimitiveType != null
 }
 
 /**
  * Property Initializer
  */
 class PropertyInitializer(
-        private val entityInitializer: EntityInitializer
+    private val entityInitializer: EntityInitializer
 ) : Initializer<Any> {
 
     override fun doInitialize(obj: Any, initializedObjects: IdentitySet) {
@@ -148,7 +152,7 @@ class PropertyInitializer(
  * Map Initializer
  */
 class MapInitializer(
-        private val entityInitializer: EntityInitializer
+    private val entityInitializer: EntityInitializer
 ) : Initializer<Map<*, *>> {
 
     override fun doInitialize(obj: Map<*, *>, initializedObjects: IdentitySet) {
@@ -166,7 +170,7 @@ class MapInitializer(
  * Collection Initializer
  */
 class CollectionInitializer(
-        private val entityInitializer: EntityInitializer
+    private val entityInitializer: EntityInitializer
 ) : Initializer<Collection<*>> {
 
     override fun doInitialize(obj: Collection<*>, initializedObjects: IdentitySet) {

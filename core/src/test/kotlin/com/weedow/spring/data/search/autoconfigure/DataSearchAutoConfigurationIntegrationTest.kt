@@ -44,9 +44,9 @@ internal class DataSearchAutoConfigurationIntegrationTest {
         assertThat(searchDescriptorService).isInstanceOf(DefaultSearchDescriptorService::class.java)
 
         val searchDescriptor = searchDescriptorService.getSearchDescriptor("my_descriptor_id")
-        assertThat(searchDescriptor).isNotNull()
-                .extracting("id", "entityClass")
-                .contains("my_descriptor_id", Person::class.java)
+        assertThat(searchDescriptor).isNotNull
+            .extracting("id", "entityClass")
+            .contains("my_descriptor_id", Person::class.java)
     }
 
     @Test
@@ -64,21 +64,21 @@ internal class DataSearchAutoConfigurationIntegrationTest {
         var vehicleType: VehicleType?
 
         vehicleType = searchConversionService.convert("car", VehicleType::class.java)
-        assertThat(vehicleType).isNotNull().isEqualTo(VehicleType.CAR)
+        assertThat(vehicleType).isNotNull.isEqualTo(VehicleType.CAR)
         vehicleType = searchConversionService.convert("motorbike", VehicleType::class.java)
-        assertThat(vehicleType).isNotNull().isEqualTo(VehicleType.MOTORBIKE)
+        assertThat(vehicleType).isNotNull.isEqualTo(VehicleType.MOTORBIKE)
         vehicleType = searchConversionService.convert("scooter", VehicleType::class.java)
-        assertThat(vehicleType).isNotNull().isEqualTo(VehicleType.SCOOTER)
+        assertThat(vehicleType).isNotNull.isEqualTo(VehicleType.SCOOTER)
         vehicleType = searchConversionService.convert("van", VehicleType::class.java)
-        assertThat(vehicleType).isNotNull().isEqualTo(VehicleType.VAN)
+        assertThat(vehicleType).isNotNull.isEqualTo(VehicleType.VAN)
         vehicleType = searchConversionService.convert("truck", VehicleType::class.java)
-        assertThat(vehicleType).isNotNull().isEqualTo(VehicleType.TRUCK)
+        assertThat(vehicleType).isNotNull.isEqualTo(VehicleType.TRUCK)
 
         assertThatThrownBy { searchConversionService.convert("unknown", VehicleType::class.java) }
-                .isInstanceOf(ConversionException::class.java)
-                .hasMessageContaining("java.lang.IllegalArgumentException: Vehicle type not found: unknown")
-                .hasCauseExactlyInstanceOf(IllegalArgumentException::class.java)
-                .getCause().hasMessage("Vehicle type not found: unknown")
+            .isInstanceOf(ConversionException::class.java)
+            .hasMessageContaining("java.lang.IllegalArgumentException: Vehicle type not found: unknown")
+            .hasCauseExactlyInstanceOf(IllegalArgumentException::class.java)
+            .cause.hasMessage("Vehicle type not found: unknown")
     }
 
 }

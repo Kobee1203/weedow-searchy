@@ -7,11 +7,20 @@ import com.querydsl.core.types.dsl.ArrayPath
 import com.querydsl.core.types.dsl.EntityPathBase
 import com.querydsl.core.types.dsl.PathInits
 import com.weedow.spring.data.search.context.DataSearchContext
+import com.weedow.spring.data.search.querydsl.querytype.QEntityImpl.Companion.INITS
 
+/**
+ * [QEntity] implementation.
+ *
+ * @param dataSearchContext [DataSearchContext]
+ * @param entityClass Entity Class
+ * @param pathMetadata [PathMetadata]
+ * @param inits [PathInits] that defines path initializations that can be attached to properties. Default is [INITS].
+ */
 open class QEntityImpl<T>(
     private val dataSearchContext: DataSearchContext,
-    private val entityClass: Class<T>,
-    private val pathMetadata: PathMetadata,
+    entityClass: Class<T>,
+    pathMetadata: PathMetadata,
     private val inits: PathInits = INITS
 ) : EntityPathBase<T>(entityClass, pathMetadata, inits), QEntity<T> {
 
@@ -23,6 +32,7 @@ open class QEntityImpl<T>(
     ) : this(dataSearchContext, entityClass, PathMetadataFactory.forVariable(variable), inits)
 
     companion object {
+        /** Default value of [PathInits]. Prevents infinite loop initialization. */
         private val INITS = PathInits.DIRECT2
     }
 
@@ -52,7 +62,12 @@ open class QEntityImpl<T>(
             ElementType.ARRAY -> createArray(propertyInfos.fieldName, propertyInfos.type, propertyInfos.parameterizedTypes[0])
             ElementType.LIST -> createList(propertyInfos.fieldName, propertyInfos.parameterizedTypes[0], propertyInfos.queryType, PathInits.DIRECT2)
             ElementType.SET -> createSet(propertyInfos.fieldName, propertyInfos.parameterizedTypes[0], propertyInfos.queryType, PathInits.DIRECT2)
-            ElementType.COLLECTION -> createCollection(propertyInfos.fieldName, propertyInfos.parameterizedTypes[0], propertyInfos.queryType, PathInits.DIRECT2)
+            ElementType.COLLECTION -> createCollection(
+                propertyInfos.fieldName,
+                propertyInfos.parameterizedTypes[0],
+                propertyInfos.queryType,
+                PathInits.DIRECT2
+            )
             ElementType.MAP -> createMap(
                 propertyInfos.fieldName,
                 propertyInfos.parameterizedTypes[0],

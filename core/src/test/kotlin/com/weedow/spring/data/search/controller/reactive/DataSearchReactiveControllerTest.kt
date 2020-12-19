@@ -41,10 +41,14 @@ internal class DataSearchReactiveControllerTest {
         whenever(searchProperties.basePath).thenReturn(SearchProperties.DEFAULT_BASE_PATH)
 
         val mapping = RequestMappingInfo
-                .paths("/search/{searchDescriptorId}")
-                .methods(RequestMethod.GET)
-                .build()
-        verify(requestMappingHandlerMapping).registerMapping(mapping, dataSearchController, DataSearchReactiveController::class.java.getMethod("search", String::class.java, MultiValueMap::class.java))
+            .paths("/search/{searchDescriptorId}")
+            .methods(RequestMethod.GET)
+            .build()
+        verify(requestMappingHandlerMapping).registerMapping(
+            mapping,
+            dataSearchController,
+            DataSearchReactiveController::class.java.getMethod("search", String::class.java, MultiValueMap::class.java)
+        )
     }
 
     @Test
@@ -64,10 +68,10 @@ internal class DataSearchReactiveControllerTest {
 
         assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(responseEntity.body)
-                .isInstanceOf(List::class.java)
-                .hasOnlyElementsOfType(PersonDto::class.java)
-                .extracting("firstName", "lastName")
-                .containsExactly(Tuple.tuple(firstName, lastName))
+            .isInstanceOf(List::class.java)
+            .hasOnlyElementsOfType(PersonDto::class.java)
+            .extracting("firstName", "lastName")
+            .containsExactly(Tuple.tuple(firstName, lastName))
     }
 
 }

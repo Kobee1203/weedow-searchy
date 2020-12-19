@@ -1,16 +1,25 @@
 package com.weedow.spring.data.search.join
 
 import com.weedow.spring.data.search.querydsl.QueryDslBuilder
+import com.weedow.spring.data.search.querydsl.querytype.QEntityRoot
 import com.weedow.spring.data.search.querydsl.querytype.QPath
 import javax.persistence.criteria.Path
 import javax.persistence.criteria.Root
 
 /**
- * Interface to get the joins or the [Path] relative to an Entity.
+ * Interface to get the computed joins or the [QPath] relative to an Entity.
  */
 interface EntityJoins {
 
-    fun getQPath(fieldPath: String, queryDslBuilder: QueryDslBuilder<*>): QPath<*>
+    /**
+     * Returns the [QPath] corresponding to the given [field path][fieldPath] relative to the specified [QEntityRoot].
+     *
+     * @param fieldPath path of a field. The nested field path contains dots to separate the parents fields (eg. vehicle.brand)
+     * @param qEntityRoot [QEntityRoot] object
+     * @param queryDslBuilder [QueryDslBuilder] instance to find or create joins
+     * @return [QPath] representing the field found from the [field path][fieldPath]
+     */
+    fun <T> getQPath(fieldPath: String, qEntityRoot: QEntityRoot<T>, queryDslBuilder: QueryDslBuilder<T>): QPath<*>
 
     /**
      * Returns the [Path] corresponding to given [field path][fieldPath] relative to the specified [Root].
@@ -19,6 +28,10 @@ interface EntityJoins {
      * @param root [Root] object
      * @return [Path] representing the field found in the [field path][fieldPath]
      */
+    @Deprecated(
+        "Legacy method for old JPA implementation to be removed",
+        replaceWith = ReplaceWith("this.getQPath(fieldPath, qEntityRoot, queryDslBuilder)")
+    )
     fun <T> getPath(fieldPath: String, root: Root<T>): Path<*>
 
     /**

@@ -6,20 +6,20 @@ import javax.persistence.*
 
 @Entity
 class Address(
-        @Column(nullable = false)
-        val street: String,
+    @Column(nullable = false)
+    val street: String,
 
-        @Column(nullable = false)
-        val city: String,
+    @Column(nullable = false)
+    val city: String,
 
-        @Column(nullable = false)
-        val zipCode: String,
+    @Column(nullable = false)
+    val zipCode: String,
 
-        @Enumerated(EnumType.STRING)
-        val country: CountryCode,
+    @Enumerated(EnumType.STRING)
+    val country: CountryCode,
 
-        @ManyToMany(mappedBy = "addressEntities")
-        @JsonIgnoreProperties("addressEntities")
-        val persons: Set<Person>
+    @ManyToMany(mappedBy = "addressEntities")
+    @JsonIgnoreProperties("addressEntities")
+    val persons: Set<Person>
 
 ) : JpaPersistable<Long>()

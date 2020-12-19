@@ -19,12 +19,21 @@ import org.springframework.data.jpa.repository.support.Querydsl
 import org.springframework.data.querydsl.EntityPathResolver
 import javax.persistence.EntityManager
 
-class JpaQueryDslSpecificationExecutor<T>(
-        private val dataSearchContext: DataSearchContext,
-        private val entityInformation: JpaEntityInformation<T, *>,
-        private val entityManager: EntityManager,
-        private val resolver: EntityPathResolver,
-        private val metadata: CrudMethodMetadata?,
+/**
+ * JPA [QueryDslSpecificationExecutor] implementation.
+ *
+ * @param dataSearchContext [DataSearchContext]
+ * @param entityInformation [JpaEntityInformation]
+ * @param entityManager [EntityManager]
+ * @param resolver [EntityPathResolver]
+ * @param metadata [CrudMethodMetadata]
+ */
+open class JpaQueryDslSpecificationExecutor<T>(
+    private val dataSearchContext: DataSearchContext,
+    entityInformation: JpaEntityInformation<T, *>,
+    private val entityManager: EntityManager,
+    resolver: EntityPathResolver,
+    private val metadata: CrudMethodMetadata?
 ) : QueryDslSpecificationExecutor<T> {
 
     companion object {
@@ -65,39 +74,9 @@ class JpaQueryDslSpecificationExecutor<T>(
         var query: AbstractJPAQuery<T, *> = querydsl.createQuery(path) as AbstractJPAQuery<T, *>
 
         if (specification != null) {
-            val predicate = specification.toPredicate(createQueryDslBuilder(query)) /*QueryDslSpecification.NO_PREDICATE*/
+            val predicate = specification.toPredicate(createQueryDslBuilder(query))
             if (predicate != QueryDslSpecification.NO_PREDICATE) {
                 query = query.where(predicate) as AbstractJPAQuery<T, *>
-            } else {
-                /*
-                val addressPath = Expressions.path(Address::class.java, builder, "addressEntities")
-                val cityPath = Expressions.path(String::class.java, addressPath, "city")
-                val pred = Expressions.predicate(Ops.EQ, cityPath, Expressions.constant("Plaisir"))
-                query = query
-                        .leftJoin(addressPath).fetchJoin()
-                        .where(pred) as AbstractJPAQuery<T, *>
-                */
-
-                /*
-                val qEntity1 = dataSearchContext.get(Person::class.java)
-                val addressEntities = qEntity1.get("addressEntities") as CollectionExpression<*, *>
-                val addressQEntity: QEntity<*> = dataSearchContext.get(addressEntities.getParameter(0))
-                val query1 = query
-                        .leftJoin(addressEntities as CollectionExpression<*, Address>, addressQEntity as QEntity<Address>).fetchJoin()
-                        .where(
-                                Expressions.predicate(Ops.EQ, qEntity1.get("firstName").path, Expressions.constant("John"))
-                        ) as AbstractJPAQuery<T, *>
-                query1.select(path).fetch()
-                */
-
-                /*
-                val address = QAddress.address
-                val query2 = query
-                        .leftJoin(QPerson.person.addressEntities, address).fetchJoin()
-                        .where(address.city.eq("Plaisr")) as AbstractJPAQuery<T, *>
-                */
-
-                // query = query.where(QPerson.person.addressEntities.any().city.eq("Plaisr")) as AbstractJPAQuery<T, *>
             }
         }
 
@@ -105,7 +84,7 @@ class JpaQueryDslSpecificationExecutor<T>(
     }
 
     private fun createQueryDslBuilder(query: AbstractJPAQuery<T, *>) =
-            JpaQueryDslBuilder(dataSearchContext, query, QEntityRootImpl(dataSearchContext.get(path.type)))
+        JpaQueryDslBuilder(dataSearchContext, query, QEntityRootImpl(dataSearchContext.get(path.type)))
 
     private fun getRepositoryMethodMetadata() = metadata
 

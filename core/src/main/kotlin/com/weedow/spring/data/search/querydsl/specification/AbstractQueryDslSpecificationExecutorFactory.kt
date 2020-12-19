@@ -1,15 +1,20 @@
 package com.weedow.spring.data.search.querydsl.specification
 
-import com.weedow.spring.data.search.querydsl.SafeEntityPathResolver
 import com.weedow.spring.data.search.context.DataSearchContext
+import com.weedow.spring.data.search.querydsl.SafeEntityPathResolver
 import com.weedow.spring.data.search.utils.EntityUtils
 import org.apache.commons.lang3.reflect.FieldUtils
 import org.springframework.data.querydsl.EntityPathResolver
 import org.springframework.data.repository.core.EntityInformation
 import org.springframework.data.repository.core.support.RepositoryFactorySupport
 
+/**
+ * Base class for [QueryDslSpecificationExecutorFactory] implementations.
+ *
+ * @param dataSearchContext [DataSearchContext]
+ */
 abstract class AbstractQueryDslSpecificationExecutorFactory(
-        private val dataSearchContext: DataSearchContext,
+    private val dataSearchContext: DataSearchContext
 ) : QueryDslSpecificationExecutorFactory {
 
     override fun <T> getQueryDslSpecificationExecutor(entityClass: Class<T>): QueryDslSpecificationExecutor<T> {
@@ -21,7 +26,11 @@ abstract class AbstractQueryDslSpecificationExecutorFactory(
         return newQueryDslSpecificationExecutor(dataSearchContext, entityInformation, entityPathResolver)
     }
 
-    protected abstract fun <T, ID> newQueryDslSpecificationExecutor(dataSearchContext: DataSearchContext, entityInformation: EntityInformation<T, ID>, entityPathResolver: EntityPathResolver): QueryDslSpecificationExecutor<T>
+    protected abstract fun <T, ID> newQueryDslSpecificationExecutor(
+        dataSearchContext: DataSearchContext,
+        entityInformation: EntityInformation<T, ID>,
+        entityPathResolver: EntityPathResolver
+    ): QueryDslSpecificationExecutor<T>
 
     protected abstract fun getRepositoryFactory(): RepositoryFactorySupport
 

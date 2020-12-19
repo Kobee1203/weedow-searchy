@@ -32,14 +32,18 @@ internal class ExpressionParserExceptionTest {
 
         assertThat(exception.errors).containsExactly(syntaxError1, syntaxError2)
         assertThat(exception.status).isEqualTo(HttpStatus.BAD_REQUEST)
-        assertThat(exception.reason).isEqualTo("Syntax Errors: [\n" +
-                "line $line1:$charPositionInLine1 $msg1 - $offendingSymbol1,\n" +
-                "line $line2:$charPositionInLine2 $msg2 - $offendingSymbol2" +
-                "\n]")
-        assertThat(exception.message).isEqualTo("${HttpStatus.BAD_REQUEST} \"Syntax Errors: [\n" +
-                "line $line1:$charPositionInLine1 $msg1 - $offendingSymbol1,\n" +
-                "line $line2:$charPositionInLine2 $msg2 - $offendingSymbol2" +
-                "\n]\"")
+        assertThat(exception.reason).isEqualTo(
+            "Syntax Errors: [\n" +
+                    "line $line1:$charPositionInLine1 $msg1 - $offendingSymbol1,\n" +
+                    "line $line2:$charPositionInLine2 $msg2 - $offendingSymbol2" +
+                    "\n]"
+        )
+        assertThat(exception.message).isEqualTo(
+            "${HttpStatus.BAD_REQUEST} \"Syntax Errors: [\n" +
+                    "line $line1:$charPositionInLine1 $msg1 - $offendingSymbol1,\n" +
+                    "line $line2:$charPositionInLine2 $msg2 - $offendingSymbol2" +
+                    "\n]\""
+        )
     }
 
     @Test

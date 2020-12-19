@@ -41,9 +41,9 @@ class DataSearchAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         fun servletDataSearchController(
-                dataSearchService: DataSearchService,
-                searchProperties: SearchProperties,
-                requestMappingHandlerMapping: org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping,
+            dataSearchService: DataSearchService,
+            searchProperties: SearchProperties,
+            requestMappingHandlerMapping: org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping,
         ): DataSearchController {
             return DataSearchController(dataSearchService, searchProperties, requestMappingHandlerMapping)
         }
@@ -65,9 +65,9 @@ class DataSearchAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         fun reactiveDataSearchController(
-                dataSearchService: DataSearchService,
-                searchProperties: SearchProperties,
-                requestMappingHandlerMapping: org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping,
+            dataSearchService: DataSearchService,
+            searchProperties: SearchProperties,
+            requestMappingHandlerMapping: org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping,
         ): DataSearchReactiveController {
             return DataSearchReactiveController(dataSearchService, searchProperties, requestMappingHandlerMapping)
         }

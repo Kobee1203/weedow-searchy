@@ -39,8 +39,22 @@ internal class EntityJoinManagerImplTest {
 
         whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
             listOf(
-                propertyInfos("${entityClass.canonicalName}.firstName", entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos("${entityClass.canonicalName}.lastName", entityClass, "lastName", ElementType.STRING, emptyList(), StringPath::class.java)
+                propertyInfos(
+                    "${entityClass.canonicalName}.firstName",
+                    entityClass,
+                    "firstName",
+                    ElementType.STRING,
+                    emptyList(),
+                    StringPath::class.java
+                ),
+                propertyInfos(
+                    "${entityClass.canonicalName}.lastName",
+                    entityClass,
+                    "lastName",
+                    ElementType.STRING,
+                    emptyList(),
+                    StringPath::class.java
+                )
             )
         )
 
@@ -48,7 +62,7 @@ internal class EntityJoinManagerImplTest {
 
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
-        assertThat(entityJoins).isNotNull()
+        assertThat(entityJoins).isNotNull
         assertThat(entityJoins.getJoins()).isEmpty()
 
         verify(dataSearchContext, times(2)).isJoinAnnotation(Column::class.java)
@@ -67,8 +81,22 @@ internal class EntityJoinManagerImplTest {
 
         whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
             listOf(
-                propertyInfos("${entityClass.canonicalName}.firstName", entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(EntityWithJoins.OtherEntity::class.java.canonicalName, entityClass, "myJoin", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+                propertyInfos(
+                    "${entityClass.canonicalName}.firstName",
+                    entityClass,
+                    "firstName",
+                    ElementType.STRING,
+                    emptyList(),
+                    StringPath::class.java
+                ),
+                propertyInfos(
+                    EntityWithJoins.OtherEntity::class.java.canonicalName,
+                    entityClass,
+                    "myJoin",
+                    ElementType.ENTITY,
+                    emptyList(),
+                    QEntityImpl::class.java
+                )
             )
         )
 
@@ -85,7 +113,7 @@ internal class EntityJoinManagerImplTest {
 
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
-        assertThat(entityJoins).isNotNull()
+        assertThat(entityJoins).isNotNull
         assertThat(entityJoins.getJoins()).hasSize(1)
 
         val joinName = otherEntityClass.canonicalName
@@ -113,8 +141,22 @@ internal class EntityJoinManagerImplTest {
 
         whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
             listOf(
-                propertyInfos("${entityClass.canonicalName}.firstName", entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(EntityWithMultipleJoins.OtherEntity::class.java.canonicalName, entityClass, "myJoin1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+                propertyInfos(
+                    "${entityClass.canonicalName}.firstName",
+                    entityClass,
+                    "firstName",
+                    ElementType.STRING,
+                    emptyList(),
+                    StringPath::class.java
+                ),
+                propertyInfos(
+                    EntityWithMultipleJoins.OtherEntity::class.java.canonicalName,
+                    entityClass,
+                    "myJoin1",
+                    ElementType.ENTITY,
+                    emptyList(),
+                    QEntityImpl::class.java
+                )
             )
         )
 
@@ -123,7 +165,14 @@ internal class EntityJoinManagerImplTest {
         whenever(dataSearchContext.getAllPropertyInfos(otherEntityClass)).thenReturn(
             listOf(
                 propertyInfos("${entityClass.canonicalName}.id", otherEntityClass, "id", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos("${otherEntityClass.canonicalName}.myJoin2", otherEntityClass, "myJoin2", ElementType.SET, listOf(String::class.java), StringPath::class.java)
+                propertyInfos(
+                    "${otherEntityClass.canonicalName}.myJoin2",
+                    otherEntityClass,
+                    "myJoin2",
+                    ElementType.SET,
+                    listOf(String::class.java),
+                    StringPath::class.java
+                )
             )
         )
         whenever(dataSearchContext.isEntity(String::class.java)).thenReturn(false) // myJoin2
@@ -134,7 +183,7 @@ internal class EntityJoinManagerImplTest {
 
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
-        assertThat(entityJoins).isNotNull()
+        assertThat(entityJoins).isNotNull
         assertThat(entityJoins.getJoins()).hasSize(2)
 
         val joinName1 = otherEntityClass.canonicalName
@@ -164,9 +213,30 @@ internal class EntityJoinManagerImplTest {
 
         whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(
             listOf(
-                propertyInfos("${entityClass.canonicalName}.firstName", entityClass, "firstName", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(EntityWithBidirectionalJoins.MyEntity1::class.java.canonicalName, entityClass, "myJoin1", ElementType.ENTITY, emptyList(), QEntityImpl::class.java),
-                propertyInfos(EntityWithBidirectionalJoins.MyEntity2::class.java.canonicalName, entityClass, "myJoin2", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+                propertyInfos(
+                    "${entityClass.canonicalName}.firstName",
+                    entityClass,
+                    "firstName",
+                    ElementType.STRING,
+                    emptyList(),
+                    StringPath::class.java
+                ),
+                propertyInfos(
+                    EntityWithBidirectionalJoins.MyEntity1::class.java.canonicalName,
+                    entityClass,
+                    "myJoin1",
+                    ElementType.ENTITY,
+                    emptyList(),
+                    QEntityImpl::class.java
+                ),
+                propertyInfos(
+                    EntityWithBidirectionalJoins.MyEntity2::class.java.canonicalName,
+                    entityClass,
+                    "myJoin2",
+                    ElementType.ENTITY,
+                    emptyList(),
+                    QEntityImpl::class.java
+                )
             )
         )
 
@@ -175,7 +245,14 @@ internal class EntityJoinManagerImplTest {
         whenever(dataSearchContext.getAllPropertyInfos(myEntity1Class)).thenReturn(
             listOf(
                 propertyInfos("${myEntity1Class.canonicalName}.id", myEntity1Class, "id", ElementType.STRING, emptyList(), StringPath::class.java),
-                propertyInfos(EntityWithBidirectionalJoins::class.java.canonicalName, myEntity1Class, "parent", ElementType.ENTITY, emptyList(), QEntityImpl::class.java)
+                propertyInfos(
+                    EntityWithBidirectionalJoins::class.java.canonicalName,
+                    myEntity1Class,
+                    "parent",
+                    ElementType.ENTITY,
+                    emptyList(),
+                    QEntityImpl::class.java
+                )
             )
         )
 
@@ -195,7 +272,7 @@ internal class EntityJoinManagerImplTest {
 
         val entityJoins = entityJoinManager.computeEntityJoins(searchDescriptor)
 
-        assertThat(entityJoins).isNotNull()
+        assertThat(entityJoins).isNotNull
         assertThat(entityJoins.getJoins()).hasSize(2)
 
         val joinName1 = EntityWithBidirectionalJoins.MyEntity1::class.java.canonicalName

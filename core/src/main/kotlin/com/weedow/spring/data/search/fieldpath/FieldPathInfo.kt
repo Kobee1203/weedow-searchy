@@ -9,8 +9,8 @@ package com.weedow.spring.data.search.fieldpath
  * @param parentClass Class where to find the field
  */
 data class FieldPathInfo(
-        val fieldPath: String,
-        val fieldName: String,
-        val fieldClass: Class<*>,
-        val parentClass: Class<*>
+    val fieldPath: String,
+    val fieldName: String,
+    val fieldClass: Class<*>,
+    val parentClass: Class<*>
 )

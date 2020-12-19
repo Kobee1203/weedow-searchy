@@ -12,10 +12,10 @@ import com.querydsl.core.JoinType
  * @param fetched Whether the fetch mode is enabled. Default is [JoinInfo.DEFAULT_FETCH_MODE]
  */
 data class EntityJoin(
-        val fieldPath: String,
-        @Deprecated("This property will be removed when the old JPA implementation will be removed")
-        val fieldName: String,
-        val joinName: String,
-        val joinType: JoinType = JoinInfo.DEFAULT_JOIN_TYPE,
-        val fetched: Boolean = JoinInfo.DEFAULT_FETCH_MODE,
+    val fieldPath: String,
+    @Deprecated("Legacy property for old JPA implementation to be removed")
+    val fieldName: String,
+    val joinName: String,
+    val joinType: JoinType = JoinInfo.DEFAULT_JOIN_TYPE,
+    val fetched: Boolean = JoinInfo.DEFAULT_FETCH_MODE
 )

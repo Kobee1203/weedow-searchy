@@ -10,10 +10,20 @@ import com.weedow.spring.data.search.querydsl.QueryDslBuilder
  */
 internal object QueryDslSpecificationComposition {
 
+    /**
+     * Composes a new [QueryDslSpecification] from the given [QueryDslSpecification]s ([lhs], [rhs]) in parameter.
+     *
+     * If one of the given [QueryDslSpecification]s returns [QueryDslSpecification.NO_PREDICATE], the returned [QueryDslSpecification] is the other given [QueryDslSpecification].
+     *
+     * @param lhs left-hand side
+     * @param rhs right-hand side
+     * @param combiner combines the resulted [Predicate]s of the given [QueryDslSpecification]
+     * @return a new [QueryDslSpecification]
+     */
     fun <T> composed(
-            lhs: QueryDslSpecification<T>,
-            rhs: QueryDslSpecification<T>,
-            combiner: (builder: QueryDslBuilder<T>, lhs: Predicate, rhs: Predicate) -> Predicate,
+        lhs: QueryDslSpecification<T>,
+        rhs: QueryDslSpecification<T>,
+        combiner: (builder: QueryDslBuilder<T>, lhs: Predicate, rhs: Predicate) -> Predicate,
     ): QueryDslSpecification<T> {
         return QueryDslSpecification { builder: QueryDslBuilder<T> ->
             val leftPredicate = toPredicate(lhs, builder)

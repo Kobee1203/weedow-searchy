@@ -8,9 +8,9 @@ package com.weedow.spring.data.search.validation
  * @param arguments Error arguments for argument binding via MessageFormat. Can be `null`.
  */
 data class DataSearchError(
-        val errorCode: String,
-        val errorMessage: String,
-        val arguments: Array<out Any>
+    val errorCode: String,
+    val errorMessage: String,
+    val arguments: Array<out Any>
 ) {
 
     /**

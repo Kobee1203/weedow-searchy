@@ -3,6 +3,9 @@ package com.weedow.spring.data.search.querydsl.jpa.context
 import com.weedow.spring.data.search.context.AbstractConfigurableDataSearchContext
 import javax.persistence.*
 
+/**
+ * JPA [com.weedow.spring.data.search.context.DataSearchContext] implementation.
+ */
 class JpaDataSearchContext : AbstractConfigurableDataSearchContext() {
 
     companion object {
@@ -10,18 +13,18 @@ class JpaDataSearchContext : AbstractConfigurableDataSearchContext() {
          * Entity Annotations supported
          */
         private val ENTITY_ANNOTATIONS = listOf(
-                Entity::class.java
+            Entity::class.java
         )
 
         /**
          * Join Annotations supported.
          */
         private val JOIN_ANNOTATIONS = listOf(
-                OneToOne::class.java,
-                OneToMany::class.java,
-                ManyToMany::class.java,
-                ElementCollection::class.java,
-                ManyToOne::class.java
+            OneToOne::class.java,
+            OneToMany::class.java,
+            ManyToMany::class.java,
+            ElementCollection::class.java,
+            ManyToOne::class.java
         )
     }
 

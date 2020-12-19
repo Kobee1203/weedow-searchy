@@ -8,23 +8,23 @@ import javax.persistence.OneToOne
 
 @Entity
 class Job(
-        @Column(nullable = false)
-        val active: Boolean,
+    @Column(nullable = false)
+    val active: Boolean,
 
-        @Column(nullable = false)
-        val title: String,
+    @Column(nullable = false)
+    val title: String,
 
-        @Column(nullable = false)
-        val company: String,
+    @Column(nullable = false)
+    val company: String,
 
-        @Column(nullable = false)
-        val salary: Int,
+    @Column(nullable = false)
+    val salary: Int,
 
-        @Column(nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
-        val hireDate: OffsetDateTime,
+    @Column(nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    val hireDate: OffsetDateTime,
 
-        @OneToOne(optional = false)
-        @JsonIgnoreProperties("jobEntity")
-        val person: Person
+    @OneToOne(optional = false)
+    @JsonIgnoreProperties("jobEntity")
+    val person: Person
 
 ) : JpaPersistable<Long>()

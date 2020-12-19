@@ -26,7 +26,7 @@ internal class EntityJoinsImplTest {
             on { this.elementType }.thenReturn(ElementType.SET)
             on { this.parameterizedTypes }.thenReturn(listOf(Person::class.java))
         }
-        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isTrue()
+        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isTrue
     }
 
     @Test
@@ -42,7 +42,7 @@ internal class EntityJoinsImplTest {
             on { elementType }.thenReturn(ElementType.SET)
             on { parameterizedTypes }.thenReturn(listOf<Class<*>>(Address::class.java))
         }
-        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isTrue()
+        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isTrue
     }
 
     @Test
@@ -55,7 +55,7 @@ internal class EntityJoinsImplTest {
             on { elementType }.thenReturn(ElementType.SET)
             on { parameterizedTypes }.thenReturn(listOf<Class<*>>(Vehicle::class.java))
         }
-        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isFalse()
+        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isFalse
     }
 
     @Test
@@ -68,11 +68,11 @@ internal class EntityJoinsImplTest {
             on { this.get("firstName") }.thenReturn(qPath)
         }
 
-        val queryDslBuilder = mock<QueryDslBuilder<*>> {
+        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
-        val result = entityJoins.getQPath("firstName", queryDslBuilder)
+        val result = entityJoins.getQPath("firstName", qEntityRoot, queryDslBuilder)
 
         assertThat(result).isSameAs(qPath)
         verifyNoMoreInteractions(queryDslBuilder)
@@ -95,10 +95,10 @@ internal class EntityJoinsImplTest {
             on { this.propertyInfos }.thenReturn(propertyInfos)
         }
 
-        val queryDslBuilder = mock<QueryDslBuilder<*>> {
-            val qEntityRoot = mock<QEntityRoot<Person>> {
-                on { get("addressEntities") }.thenReturn(qPathParent)
-            }
+        val qEntityRoot = mock<QEntityRoot<Person>> {
+            on { get("addressEntities") }.thenReturn(qPathParent)
+        }
+        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
             val join = mock<QEntityJoin<*>> {
                 on { get("city") }.thenReturn(qPath)
             }
@@ -106,7 +106,7 @@ internal class EntityJoinsImplTest {
             on { this.join(qPathParent, JoinType.LEFTJOIN, false) }.thenReturn(join)
         }
 
-        val result = entityJoins.getQPath("addressEntities.city", queryDslBuilder)
+        val result = entityJoins.getQPath("addressEntities.city", qEntityRoot, queryDslBuilder)
 
         assertThat(result).isSameAs(qPath)
         verifyNoMoreInteractions(queryDslBuilder)
@@ -132,10 +132,10 @@ internal class EntityJoinsImplTest {
             on { this.propertyInfos }.thenReturn(propertyInfos)
         }
 
-        val queryDslBuilder = mock<QueryDslBuilder<*>> {
-            val qEntityRoot = mock<QEntityRoot<Person>> {
-                on { get("addressEntities") }.thenReturn(qPathParent)
-            }
+        val qEntityRoot = mock<QEntityRoot<Person>> {
+            on { get("addressEntities") }.thenReturn(qPathParent)
+        }
+        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
             val join = mock<QEntityJoin<*>> {
                 on { get("city") }.thenReturn(qPath)
             }
@@ -143,7 +143,7 @@ internal class EntityJoinsImplTest {
             on { this.join(qPathParent, joinType, fetched) }.thenReturn(join)
         }
 
-        val result = entityJoins.getQPath("addressEntities.city", queryDslBuilder)
+        val result = entityJoins.getQPath("addressEntities.city", qEntityRoot, queryDslBuilder)
 
         assertThat(result).isSameAs(qPath)
         verifyNoMoreInteractions(queryDslBuilder)

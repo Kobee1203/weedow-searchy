@@ -26,8 +26,7 @@ internal class DefaultSearchDescriptorServiceTest {
             override val id = searchDescriptorId2
             override val entityClass = Person::class.java
             override val jpaSpecificationExecutor = mock<JpaSpecificationExecutor<Person>>()
-            override val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<Person>?
-                get() = TODO("Not yet implemented")
+            override val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<Person>? = null
         }
 
         val searchDescriptorService = DefaultSearchDescriptorService()

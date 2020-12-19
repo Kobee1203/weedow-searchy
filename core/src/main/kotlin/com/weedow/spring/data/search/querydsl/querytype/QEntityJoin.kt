@@ -1,4 +1,8 @@
 package com.weedow.spring.data.search.querydsl.querytype
 
-interface QEntityJoin<T> : QEntity<T> {
-}
+/**
+ * Interface representing a join.
+ *
+ * @param T Entity Class
+ */
+interface QEntityJoin<T> : QEntity<T>

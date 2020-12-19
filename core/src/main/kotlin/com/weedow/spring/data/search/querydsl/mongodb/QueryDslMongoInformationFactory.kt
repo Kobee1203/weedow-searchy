@@ -12,7 +12,7 @@ import org.springframework.data.repository.core.support.RepositoryFactorySupport
 
 class MongoQueryDslSpecificationExecutorFactory(
         private val mongoOperations: MongoOperations,
-        private val dataSearchContext: DataSearchContext,
+        private val dataSearchContext: DataSearchContext
 ) : AbstractQueryDslSpecificationExecutorFactory(dataSearchContext) {
 
     override fun <T, ID> newQueryDslSpecificationExecutor(dataSearchContext: DataSearchContext, entityInformation: EntityInformation<T, ID>, entityPathResolver: EntityPathResolver): QueryDslSpecificationExecutor<T> {

@@ -10,7 +10,7 @@ import java.lang.reflect.Method
 /*
 class JPQLTemplatesExtension(
         escape: Char = JPQLTemplates.DEFAULT_ESCAPE,
-        queryHandler: QueryHandler = DefaultQueryHandler.DEFAULT,
+        queryHandler: QueryHandler = DefaultQueryHandler.DEFAULT
 ) : JPQLTemplates(escape, queryHandler) {
 
     init {

@@ -11,8 +11,8 @@ import com.weedow.spring.data.search.join.JoinInfo.Companion.DEFAULT_JOIN_TYPE
  * @param fetched [Boolean] object. Default is [DEFAULT_FETCH_MODE]
  */
 data class JoinInfo(
-        val joinType: JoinType = DEFAULT_JOIN_TYPE,
-        val fetched: Boolean = DEFAULT_FETCH_MODE,
+    val joinType: JoinType = DEFAULT_JOIN_TYPE,
+    val fetched: Boolean = DEFAULT_FETCH_MODE
 ) {
 
     companion object {

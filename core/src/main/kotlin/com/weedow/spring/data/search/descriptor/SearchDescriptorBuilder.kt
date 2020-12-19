@@ -12,9 +12,11 @@ import java.lang.reflect.ParameterizedType
 
 /**
  * Class to construct a new [SearchDescriptor] using the Builder pattern.
+ *
+ * @param entityClass Entity Class to be used for the [SearchDescriptor]s created
  */
 class SearchDescriptorBuilder<T>(
-        private val entityClass: Class<T>,
+    private val entityClass: Class<T>
 ) {
 
     private var id: String = this.entityClass.simpleName.decapitalize()
@@ -63,18 +65,21 @@ class SearchDescriptorBuilder<T>(
      * Set a specific [JpaSpecificationExecutor] to be used to search for entities.
      * If this method is not called, a default implementation of [JpaSpecificationExecutor] is retrieved from [JpaSpecificationExecutorFactory].
      */
-    fun jpaSpecificationExecutor(jpaSpecificationExecutor: JpaSpecificationExecutor<T>) = apply { this.specificationExecutor = jpaSpecificationExecutor }
+    fun jpaSpecificationExecutor(jpaSpecificationExecutor: JpaSpecificationExecutor<T>) =
+        apply { this.specificationExecutor = jpaSpecificationExecutor }
 
     /**
      * Set a specific [QueryDslSpecificationExecutor] to be used to search for entities.
-     * If this method is not called, a default implementation of [QueryDslSpecificationExecutor] is retrieved from instance of [QueryDslSpecificationExecutorFactory][com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory].
+     * If this method is not called, a default implementation of [QueryDslSpecificationExecutor] is retrieved from instance of
+     * [QueryDslSpecificationExecutorFactory][com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory].
      *
      * @see com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory
      */
-    fun queryDslSpecificationExecutor(queryDslSpecificationExecutor: QueryDslSpecificationExecutor<T>) = apply { this.queryDslSpecificationExecutor = queryDslSpecificationExecutor }
+    fun queryDslSpecificationExecutor(queryDslSpecificationExecutor: QueryDslSpecificationExecutor<T>) =
+        apply { this.queryDslSpecificationExecutor = queryDslSpecificationExecutor }
 
     /**
-     * Set the [Entity Join Handlers][EntityJoinHandler] to specify join types for any fields having [Join Annotation][com.weedow.spring.data.search.utils.EntityUtils.JOIN_ANNOTATIONS]_
+     * Set the [Entity Join Handlers][EntityJoinHandler] to specify join types for any fields
      */
     fun entityJoinHandlers(vararg entityJoinHandlers: EntityJoinHandler) = apply { this.entityJoinHandlers.addAll(entityJoinHandlers) }
 
@@ -86,19 +91,27 @@ class SearchDescriptorBuilder<T>(
             "JPA SpecificationExecutor is required. JpaSpecificationExecutorFactory is not initialized with an EntityManager. Use 'jpaSpecificationExecutor' method."
         }
 
-        return DefaultSearchDescriptor(id, entityClass, validators, dtoMapper, specificationExecutor, queryDslSpecificationExecutor, entityJoinHandlers)
+        return DefaultSearchDescriptor(
+            id,
+            entityClass,
+            validators,
+            dtoMapper,
+            specificationExecutor,
+            queryDslSpecificationExecutor,
+            entityJoinHandlers
+        )
     }
 
     /**
      * Default [SearchDescriptor] implementation used by [SearchDescriptorBuilder].
      */
     private data class DefaultSearchDescriptor<T>(
-            override val id: String,
-            override val entityClass: Class<T>,
-            override val validators: List<DataSearchValidator>,
-            override val dtoMapper: DtoMapper<T, *>,
-            override val jpaSpecificationExecutor: JpaSpecificationExecutor<T>,
-            override val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<T>?,
-            override val entityJoinHandlers: List<EntityJoinHandler>,
+        override val id: String,
+        override val entityClass: Class<T>,
+        override val validators: List<DataSearchValidator>,
+        override val dtoMapper: DtoMapper<T, *>,
+        override val jpaSpecificationExecutor: JpaSpecificationExecutor<T>,
+        override val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<T>?,
+        override val entityJoinHandlers: List<EntityJoinHandler>,
     ) : SearchDescriptor<T>
 }

@@ -7,11 +7,14 @@ import com.weedow.spring.data.search.specification.JpaSpecificationService
 import com.weedow.spring.data.search.utils.klogger
 
 /**
- * Default [EntitySearchService] implementation.
+ * JPA [EntitySearchService] implementation.
+ *
+ * @param jpaSpecificationService [JpaSpecificationService]
+ * @param entityJoinManager [EntityJoinManager]
  */
 class JpaEntitySearchServiceImpl(
     private val jpaSpecificationService: JpaSpecificationService,
-    private val entityJoinManager: EntityJoinManager,
+    private val entityJoinManager: EntityJoinManager
 ) : EntitySearchService {
 
     companion object {
@@ -19,7 +22,7 @@ class JpaEntitySearchServiceImpl(
     }
 
     init {
-        if (log.isDebugEnabled) log.debug("Initialized EntitySearchService: {}", this)
+        if (log.isDebugEnabled) log.debug("Initialized EntitySearchService: {}", this::class.qualifiedName)
     }
 
     override fun <T> findAll(rootExpression: RootExpression<T>, searchDescriptor: SearchDescriptor<T>): List<T> {
