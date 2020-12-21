@@ -8,7 +8,7 @@ import com.querydsl.core.types.Path
 interface QPath<T> {
 
     /** Path represents a path expression. Paths refer to variables, properties and collection members access. */
-    val path: Path<*>
+    val path: Path<T>
 
     /** Property information */
     val propertyInfos: PropertyInfos

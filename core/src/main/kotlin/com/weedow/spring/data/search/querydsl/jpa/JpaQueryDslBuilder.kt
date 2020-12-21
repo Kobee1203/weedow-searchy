@@ -55,7 +55,6 @@ class JpaQueryDslBuilder<T>(
             return QEntityJoinImpl(alias, propertyInfos)
         }
 
-
         val aliasType = when (elementType) {
             ElementType.SET,
             ElementType.LIST,

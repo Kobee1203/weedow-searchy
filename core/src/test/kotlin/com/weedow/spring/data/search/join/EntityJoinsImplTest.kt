@@ -68,9 +68,7 @@ internal class EntityJoinsImplTest {
             on { this.get("firstName") }.thenReturn(qPath)
         }
 
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
-            on { this.qEntityRoot }.thenReturn(qEntityRoot)
-        }
+        val queryDslBuilder = mock<QueryDslBuilder<Person>>()
 
         val result = entityJoins.getQPath("firstName", qEntityRoot, queryDslBuilder)
 
@@ -102,7 +100,6 @@ internal class EntityJoinsImplTest {
             val join = mock<QEntityJoin<*>> {
                 on { get("city") }.thenReturn(qPath)
             }
-            on { this.qEntityRoot }.thenReturn(qEntityRoot)
             on { this.join(qPathParent, JoinType.LEFTJOIN, false) }.thenReturn(join)
         }
 
@@ -139,7 +136,6 @@ internal class EntityJoinsImplTest {
             val join = mock<QEntityJoin<*>> {
                 on { get("city") }.thenReturn(qPath)
             }
-            on { this.qEntityRoot }.thenReturn(qEntityRoot)
             on { this.join(qPathParent, joinType, fetched) }.thenReturn(join)
         }
 
