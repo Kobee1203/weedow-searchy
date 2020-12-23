@@ -74,7 +74,13 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
             join = queryDslBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
         }
 
-        return join.get(fieldName)
+        val qPath = join.get(fieldName)
+        val qName = qPath.propertyInfos.qName
+        val entityJoin = joins[qName]
+        if (entityJoin != null) {
+            queryDslBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
+        }
+        return qPath
     }
 
     override fun <T> getPath(fieldPath: String, root: Root<T>): Path<*> {
@@ -115,7 +121,7 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         return when (attributeName) {
             MAP_KEY -> mapJoin.key()
             MAP_VALUE -> mapJoin.value()
-            else -> throw IllegalArgumentException("The attribute name '$attributeName' is not authorized for a parent Map Join") /* mapJoin.get<Any>(attributeName) */
+            else -> mapJoin.get<Any>(attributeName)
         }
     }
 

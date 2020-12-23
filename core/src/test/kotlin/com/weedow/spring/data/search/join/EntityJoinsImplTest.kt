@@ -1,6 +1,7 @@
 package com.weedow.spring.data.search.join
 
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.querydsl.core.JoinType
 import com.querydsl.core.types.Path
@@ -62,7 +63,12 @@ internal class EntityJoinsImplTest {
     fun get_qpath_when_fieldpath_is_simple_field() {
         val entityJoins = EntityJoinsImpl(Person::class.java)
 
-        val qPath = mock<QPath<*>>()
+        val qPath = mock<QPath<*>> {
+            val propertyInfos = mock<PropertyInfos> {
+                on { this.qName }.thenReturn("firstName")
+            }
+            on { this.propertyInfos }.thenReturn(propertyInfos)
+        }
 
         val qEntityRoot = mock<QEntityRoot<Person>> {
             on { this.get("firstName") }.thenReturn(qPath)
@@ -80,7 +86,12 @@ internal class EntityJoinsImplTest {
     fun get_qpath_when_fieldpath_is_composed_with_parent_and_field() {
         val entityJoins = EntityJoinsImpl(Person::class.java)
 
-        val qPath = mock<QPath<*>>()
+        val qPath = mock<QPath<*>> {
+            val propertyInfos = mock<PropertyInfos> {
+                on { this.qName }.thenReturn("addressEntities.city")
+            }
+            on { this.propertyInfos }.thenReturn(propertyInfos)
+        }
 
         val qPathParent = mock<QPath<*>> {
             val path = mock<Path<*>> {
@@ -113,20 +124,30 @@ internal class EntityJoinsImplTest {
     fun get_qpath_when_fieldpath_is_composed_with_parent_and_field_and_entity_join_already_present() {
         val entityJoins = EntityJoinsImpl(Person::class.java)
 
-        val qName = Address::class.java.canonicalName
-        val joinType = JoinType.INNERJOIN
-        val fetched = true
+        val qName1 = Address::class.java.canonicalName
+        val joinType1 = JoinType.INNERJOIN
+        val fetched1 = true
+        val qName2 = Address::class.java.canonicalName
+        val joinType2 = JoinType.INNERJOIN
+        val fetched2 = true
 
-        val entityJoin = EntityJoin("addressEntities", "addressEntities", qName, joinType, fetched)
-        entityJoins.add(entityJoin)
+        val entityJoin1 = EntityJoin("addressEntities", "addressEntities", qName1, joinType1, fetched1)
+        entityJoins.add(entityJoin1)
+        val entityJoin2 = EntityJoin("addressEntities.city", "city", qName2, joinType2, fetched2)
+        entityJoins.add(entityJoin2)
 
-        val qPath = mock<QPath<*>>()
-
-        val qPathParent = mock<QPath<*>> {
+        val qPath = mock<QPath<*>> {
             val propertyInfos = mock<PropertyInfos> {
-                on { this.qName }.thenReturn(qName)
+                on { this.qName }.thenReturn(qName2)
             }
             on { this.propertyInfos }.thenReturn(propertyInfos)
+        }
+
+        val qPathParent = mock<QPath<*>> {
+            val parentPropertyInfos = mock<PropertyInfos> {
+                on { this.qName }.thenReturn(qName1)
+            }
+            on { this.propertyInfos }.thenReturn(parentPropertyInfos)
         }
 
         val qEntityRoot = mock<QEntityRoot<Person>> {
@@ -136,12 +157,13 @@ internal class EntityJoinsImplTest {
             val join = mock<QEntityJoin<*>> {
                 on { get("city") }.thenReturn(qPath)
             }
-            on { this.join(qPathParent, joinType, fetched) }.thenReturn(join)
+            on { this.join(qPathParent, joinType1, fetched1) }.thenReturn(join)
         }
 
         val result = entityJoins.getQPath("addressEntities.city", qEntityRoot, queryDslBuilder)
 
         assertThat(result).isSameAs(qPath)
+        verify(queryDslBuilder).join(qPath, joinType2, fetched2)
         verifyNoMoreInteractions(queryDslBuilder)
         verifyNoMoreInteractions(qPathParent)
     }
