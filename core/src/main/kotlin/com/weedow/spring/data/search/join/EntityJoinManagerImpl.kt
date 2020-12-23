@@ -47,8 +47,8 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
         entityJoins: EntityJoinsImpl,
         entityJoinHandlers: List<EntityJoinHandler>
     ) {
-        dataSearchContext.getAllPropertyInfos(entityClass).forEach { propertyInfos ->
-
+        val allPropertyInfos = dataSearchContext.getAllPropertyInfos(entityClass)
+        for (propertyInfos in allPropertyInfos) {
             val hasJoinAnnotation = propertyInfos.annotations.any { dataSearchContext.isJoinAnnotation(it.annotationClass.java) }
 
             // Ignore joins for a field without a Join Annotation
@@ -57,7 +57,7 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
 
                 // Ignore joins for a field having the same class as the root class or an entity already processed
                 if (entityJoins.alreadyProcessed(propertyInfos)) {
-                    return
+                    continue
                 }
 
                 for (entityJoinHandler in entityJoinHandlers) {
@@ -75,6 +75,7 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
                             -> {
                                 propertyInfos.parameterizedTypes[0]
                             }
+                            ElementType.MAP -> propertyInfos.parameterizedTypes[1]
                             else -> propertyInfos.type
                         }
                         if (dataSearchContext.isEntity(fieldClass)) {
