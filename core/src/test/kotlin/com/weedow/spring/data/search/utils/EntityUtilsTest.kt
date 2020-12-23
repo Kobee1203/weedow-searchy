@@ -31,6 +31,14 @@ internal class EntityUtilsTest {
         val field2 = MyObject::class.java.getDeclaredField("field2")
         val parameterizedTypes2 = EntityUtils.getParameterizedTypes(field2)
         assertThat(parameterizedTypes2).containsExactly(Int::class.javaObjectType, Boolean::class.javaObjectType)
+
+        val field3 = MyObject::class.java.getDeclaredField("field3")
+        val parameterizedTypes3 = EntityUtils.getParameterizedTypes(field3)
+        assertThat(parameterizedTypes3).containsExactly(Double::class.javaObjectType)
+
+        val field4 = MyObject::class.java.getDeclaredField("field4")
+        val parameterizedTypes4 = EntityUtils.getParameterizedTypes(field4)
+        assertThat(parameterizedTypes4).isEmpty()
     }
 
     open class Parent(
@@ -43,7 +51,13 @@ internal class EntityUtilsTest {
         val field1: Set<String>,
 
         @Column
-        val field2: Map<Int, Boolean>
+        val field2: Map<Int, Boolean>,
+
+        @Column
+        val field3: Array<Double>,
+
+        @Column
+        val field4: String
     ) : Parent(0)
 
 }

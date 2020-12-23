@@ -7,15 +7,20 @@ import com.querydsl.core.types.*
 import com.querydsl.core.types.dsl.SimplePath
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.utils.MAP_KEY
+import com.weedow.spring.data.search.utils.MAP_VALUE
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import java.lang.reflect.AnnotatedElement
+import java.util.stream.Stream
 
 @ExtendWith(MockitoExtension::class)
 internal class QEntityJoinImplTest {
@@ -42,19 +47,16 @@ internal class QEntityJoinImplTest {
         assertThat(qEntityJoin.get(fieldName)).isSameAs(qPath)
     }
 
-    @Test
-    fun get_map_key() {
-        val fieldName = MAP_KEY
+    @ParameterizedTest
+    @MethodSource("get_map_entry")
+    fun get_map_entry(fieldName: String, alias: String, variableName: String, elementType: ElementType, type: Class<String>) {
         val parentClass = Person::class.java
-        val keyType = String::class.java
-        val valueType = Int::class.javaObjectType
 
         whenever(propertyInfos.elementType).thenReturn(ElementType.MAP)
-        whenever(propertyInfos.parameterizedTypes).thenReturn(listOf(keyType, valueType))
+        whenever(propertyInfos.parameterizedTypes).thenReturn(listOf(KEY_TYPE, VALUE_TYPE))
         whenever(propertyInfos.parentClass).thenReturn(parentClass)
         whenever(propertyInfos.fieldName).thenReturn(fieldName)
 
-        val alias = "myalias"
         val element = mock<Any> {
             on { this.toString() }.thenReturn(alias)
         }
@@ -68,8 +70,8 @@ internal class QEntityJoinImplTest {
             propertyInfos.copy(
                 parentClass = parentClass,
                 fieldName = fieldName,
-                elementType = ElementType.MAP_KEY,
-                type = keyType,
+                elementType = elementType,
+                type = type,
                 parameterizedTypes = emptyList(),
                 annotations = emptyList(),
                 queryType = QEntityImpl::class.java
@@ -81,19 +83,37 @@ internal class QEntityJoinImplTest {
         assertThat(qPath.propertyInfos).isEqualTo(otherPropertyInfos)
 
         assertThat(qPath.path).isInstanceOf(SimplePath::class.java)
-        assertThat(qPath.path.type).isEqualTo(keyType)
+        assertThat(qPath.path.type).isEqualTo(type)
         assertThat(qPath.path.root).isInstanceOf(PathImpl::class.java)
-        assertThat(qPath.path.root.type).isEqualTo(keyType)
-        assertThat(qPath.path.root.metadata.element).isEqualTo("key($alias)")
-        assertThat(qPath.path.annotatedElement).isEqualTo(keyType)
+        assertThat(qPath.path.root.type).isEqualTo(type)
+        assertThat(qPath.path.root.metadata.element).isEqualTo(variableName)
+        assertThat(qPath.path.annotatedElement).isEqualTo(type)
         assertThat(qPath.path.metadata.pathType).isEqualTo(PathType.VARIABLE)
-        assertThat(qPath.path.metadata.element).isEqualTo("key($alias)")
-        assertThat(qPath.path.metadata.name).isEqualTo("key($alias)")
+        assertThat(qPath.path.metadata.element).isEqualTo(variableName)
+        assertThat(qPath.path.metadata.name).isEqualTo(variableName)
         assertThat(qPath.path.metadata.isRoot).isEqualTo(true)
         assertThat(qPath.path.metadata.parent).isNull()
         assertThat(qPath.path.metadata.rootPath).isNull()
 
         verifyNoMoreInteractions(qEntity)
+    }
+
+    @Test
+    fun throw_exception_when_element_type_is_map_but_invalid_fieldname() {
+        whenever(propertyInfos.elementType).thenReturn(ElementType.MAP)
+
+        val element = mock<Any> {
+            on { this.toString() }.thenReturn("myalias")
+        }
+        val metadata = mock<PathMetadata> {
+            on { this.element }.thenReturn(element)
+        }
+        whenever(qEntity.metadata).thenReturn(metadata)
+
+        val fieldName = "unknown"
+        assertThatThrownBy { qEntityJoin.get(fieldName) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessage("The attribute name '$fieldName' is not authorized for a parent Map")
     }
 
     @Test
@@ -147,5 +167,19 @@ internal class QEntityJoinImplTest {
         whenever(qEntity.annotatedElement).thenReturn(result)
 
         assertThat(qEntityJoin.annotatedElement).isSameAs(result)
+    }
+
+    companion object {
+        val KEY_TYPE = String::class.java
+        val VALUE_TYPE = Int::class.javaObjectType
+
+        @JvmStatic
+        @Suppress("unused")
+        fun get_map_entry(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(MAP_KEY, "myalias", "key(myalias)", ElementType.MAP_KEY, KEY_TYPE),
+                Arguments.of(MAP_VALUE, "myalias", "myalias", ElementType.MAP_VALUE, VALUE_TYPE)
+            )
+        }
     }
 }
