@@ -9,7 +9,6 @@ import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.utils.MAP_KEY
 import com.weedow.spring.data.search.utils.MAP_VALUE
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -99,8 +98,9 @@ internal class QEntityJoinImplTest {
     }
 
     @Test
-    fun throw_exception_when_element_type_is_map_but_invalid_fieldname() {
-        whenever(propertyInfos.elementType).thenReturn(ElementType.MAP)
+    fun get_map_entry_with_unknown_field_name() {
+        val fieldName = "myfield"
+        val qPath = mock<QPath<*>>()
 
         val element = mock<Any> {
             on { this.toString() }.thenReturn("myalias")
@@ -110,10 +110,13 @@ internal class QEntityJoinImplTest {
         }
         whenever(qEntity.metadata).thenReturn(metadata)
 
-        val fieldName = "unknown"
-        assertThatThrownBy { qEntityJoin.get(fieldName) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage("The attribute name '$fieldName' is not authorized for a parent Map")
+        whenever(propertyInfos.elementType).thenReturn(ElementType.MAP)
+
+        whenever(qEntity.get(fieldName)).thenReturn(qPath)
+
+        assertThat(qEntityJoin.get(fieldName)).isSameAs(qPath)
+
+        verifyNoMoreInteractions(qEntity)
     }
 
     @Test

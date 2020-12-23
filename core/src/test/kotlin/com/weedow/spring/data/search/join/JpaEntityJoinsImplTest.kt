@@ -11,7 +11,6 @@ import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.common.model.Vehicle
 import com.weedow.spring.data.search.utils.MAP_KEY
 import com.weedow.spring.data.search.utils.MAP_VALUE
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.query.criteria.internal.JoinImplementor
 import org.hibernate.query.criteria.internal.MapJoinImplementor
@@ -152,20 +151,22 @@ internal class JpaEntityJoinsImplTest {
     }
 
     @Test
-    fun throw_exception_when_field_path_invalid_for_map() {
-        val rootClass = Person::class.java
+    fun get_path_for_map_field_with_entity_field() {
+        val rootClass = Vehicle::class.java
         val entityJoins = EntityJoinsImpl(rootClass)
 
-        val root = mock<Root<Person>>()
+        val root = mock<Root<Vehicle>>()
         whenever(root.javaType).thenReturn(rootClass)
-        val mapJoin = mock<MapJoinImplementor<Any, Any, Any>>()
-        whenever(root.join<Any, Any>(CHARACTERISTICS_FIELD, javax.persistence.criteria.JoinType.LEFT)).thenReturn(mapJoin)
+        val path = mock<Path<Any>>()
+        val mapJoin = mock<MapJoinImplementor<Any, Any, Any>> {
+            on { this.get<Any>("name") }.thenReturn(path)
+        }
+        whenever(root.join<Any, Any>("features", javax.persistence.criteria.JoinType.LEFT)).thenReturn(mapJoin)
 
-        val fieldPath = "$CHARACTERISTICS_FIELD.unknown"
-        Assertions.assertThatThrownBy { entityJoins.getPath(fieldPath, root) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessageStartingWith("The attribute name 'unknown' is not authorized for a parent Map Join")
-            .hasNoCause()
+        val fieldPath = "features.name"
+        val result = entityJoins.getPath(fieldPath, root)
+
+        assertThat(result).isSameAs(path)
 
         verify(root).joins
         verify(root).fetches

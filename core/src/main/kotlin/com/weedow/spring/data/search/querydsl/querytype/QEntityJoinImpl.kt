@@ -37,7 +37,7 @@ class QEntityJoinImpl<T>(
                     PathMetadataFactory.forVariable(alias),
                     propertyInfos
                 )
-                else -> throw IllegalArgumentException("The attribute name '$fieldName' is not authorized for a parent Map")
+                else -> qEntity.get(fieldName)
             }
         } else {
             qEntity.get(fieldName)
