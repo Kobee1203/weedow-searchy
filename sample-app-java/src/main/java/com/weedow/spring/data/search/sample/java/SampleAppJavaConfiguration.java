@@ -6,10 +6,8 @@ import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder;
 import com.weedow.spring.data.search.descriptor.SearchDescriptorRegistry;
 import com.weedow.spring.data.search.sample.java.entity.Person;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 @Configuration
-@DependsOn("jpaSpecificationExecutorFactory")
 public class SampleAppJavaConfiguration implements SearchConfigurer {
 
     @Override

@@ -118,22 +118,11 @@ open class SearchConfigurationSupport {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(value = ["spring.data.search.entity-search-service"], havingValue = "default", matchIfMissing = true)
     open fun entitySearchService(
         queryDslSpecificationService: QueryDslSpecificationService,
         queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory,
     ): EntitySearchService {
         return EntitySearchServiceImpl(queryDslSpecificationService, queryDslSpecificationExecutorFactory)
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnProperty(value = ["spring.data.search.entity-search-service"], havingValue = "jpa", matchIfMissing = false)
-    open fun jpaEntitySearchService(
-        jpaSpecificationService: com.weedow.spring.data.search.specification.JpaSpecificationService,
-        entityJoinManager: EntityJoinManager,
-    ): EntitySearchService {
-        return com.weedow.spring.data.search.service.JpaEntitySearchServiceImpl(jpaSpecificationService, entityJoinManager)
     }
 
     @Bean

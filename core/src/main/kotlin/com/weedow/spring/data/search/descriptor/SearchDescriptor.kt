@@ -5,7 +5,6 @@ import com.weedow.spring.data.search.dto.DtoMapper
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
 import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutor
 import com.weedow.spring.data.search.validation.DataSearchValidator
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
 /**
  * Search Descriptor allows exposing automatically a search endpoint for a JPA Entity.
@@ -40,20 +39,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
  *     return new SearchDescriptorBuilder<Person>(Person.class)
  *                      .jpaSpecificationExecutor(personRepository)
  *                      .build();
- *   }
- * }
- * ```
- *
- * * If the [SearchDescriptor] Bean is declared without a specific [JpaSpecificationExecutor][org.springframework.data.jpa.repository.JpaSpecificationExecutor],
- *   an exception may be thrown if the [SearchDescriptor] Bean is initialized before [JpaSpecificationExecutorFactory][com.weedow.spring.data.search.config.JpaSpecificationExecutorFactory].
- *   In this case, [@DependsOn][org.springframework.context.annotation.DependsOn] must be used to prevent the exception:
- *```java
- * @Configuration
- * public class SearchDescriptorConfiguration {
- *   @Bean
- *   @DependsOn("jpaSpecificationExecutorFactory")
- *   SearchDescriptor<Person> personSearchDescriptor() {
- *     return new SearchDescriptorBuilder<Person>(Person.class).build();
  *   }
  * }
  * ```
@@ -96,14 +81,6 @@ interface SearchDescriptor<T> {
     @JvmDefault
     val dtoMapper: DtoMapper<T, *>
         get() = DefaultDtoMapper()
-
-    /**
-     * Return the [JpaSpecificationExecutor] to search the entities.
-     *
-     * @return JpaSpecificationExecutor
-     * @see JpaSpecificationExecutor
-     */
-    val jpaSpecificationExecutor: JpaSpecificationExecutor<T>
 
     /**
      * Returns the [QueryDslSpecificationExecutor] to search the entities.

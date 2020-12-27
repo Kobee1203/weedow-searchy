@@ -5,7 +5,6 @@ import com.weedow.spring.data.search.alias.AliasResolver
 import com.weedow.spring.data.search.alias.DefaultAliasResolutionService
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.common.model.VehicleType
-import com.weedow.spring.data.search.config.JpaSpecificationExecutorFactory
 import com.weedow.spring.data.search.descriptor.DefaultSearchDescriptorService
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
@@ -20,7 +19,6 @@ import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.converter.Converter
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.data.convert.ReadingConverter
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Component
 import java.lang.reflect.Field
 
@@ -89,10 +87,8 @@ class MySearchDescriptor : SearchDescriptor<Person> {
         get() = "my_descriptor_id"
     override val entityClass: Class<Person>
         get() = Person::class.java
-    override val jpaSpecificationExecutor: JpaSpecificationExecutor<Person>
-        get() = JpaSpecificationExecutorFactory.getJpaSpecificationExecutor(entityClass)
     override val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<Person>?
-        get() = TODO("Not yet implemented")
+        get() = null
 }
 
 @Component

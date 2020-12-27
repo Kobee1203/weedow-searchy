@@ -14,7 +14,7 @@ internal class DataSearchHibernateSerializationAutoConfiguration {
     /**
      * Add-on module for Jackson JSON processor which handles Hibernate (http://www.hibernate.org/) datatypes; and specifically aspects of lazy-loading.
      *
-     * Can be useful when we use [com.weedow.spring.data.search.dto.DefaultDtoMapper] while serializing the result of entities to JSON,
+     * Can be useful when we use [com.weedow.spring.data.search.dto.DtoMapper] while serializing the result of entities to JSON,
      * and manage lazy-loading automatically.
      *
      * To prevent the Jackson infinite recursion problem with bidirectional relationships, please use one of the following solutions:
@@ -23,7 +23,7 @@ internal class DataSearchHibernateSerializationAutoConfiguration {
      * - [@JsonIgnoreProperties][com.fasterxml.jackson.annotation.JsonIgnoreProperties]
      * - [@JsonIgnore][com.fasterxml.jackson.annotation.JsonIgnore]
      *
-     * @see com.weedow.spring.data.search.dto.DefaultDtoMapper
+     * @see com.weedow.spring.data.search.dto.DtoMapper
      * @see com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature
      * @see <a href="https://github.com/FasterXML/jackson-datatype-hibernate">jackson-datatype-hibernate Github</a>
      * @see <a href="https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations">Jackson Annotations</a>

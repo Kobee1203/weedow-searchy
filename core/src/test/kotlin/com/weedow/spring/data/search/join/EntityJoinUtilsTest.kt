@@ -1,43 +1,9 @@
 package com.weedow.spring.data.search.join
 
-import com.weedow.spring.data.search.common.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
-import java.time.LocalDateTime
-import java.util.stream.Stream
 
 internal class EntityJoinUtilsTest {
-
-    companion object {
-        @JvmStatic
-        @Suppress("unused")
-        private fun get_join_name(): Stream<Arguments> {
-            return Stream.of(
-                Arguments.of(Person::class.java, "jobEntity", Job::class.java.canonicalName),
-                Arguments.of(Person::class.java, "addressEntities", Address::class.java.canonicalName),
-                Arguments.of(Person::class.java, "vehicles", Vehicle::class.java.canonicalName),
-                Arguments.of(Person::class.java, "nickNames", Person::class.java.canonicalName + "." + "nickNames"), // ElementCollection
-
-                // Test fields without join annotation, no check in the method
-                Arguments.of(Person::class.java, "firstName", String::class.java.canonicalName),
-                Arguments.of(Person::class.java, "birthday", LocalDateTime::class.java.canonicalName),
-                Arguments.of(Person::class.java, "height", "java.lang.Double"), // Double::class.java returns "double"
-                Arguments.of(Vehicle::class.java, "vehicleType", VehicleType::class.java.canonicalName)
-            )
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("get_join_name")
-    fun get_join_name(entityClass: Class<*>, fieldName: String, expectedJoinName: String) {
-        val field = entityClass.getDeclaredField(fieldName)
-        val joinName = EntityJoinUtils.getJoinName(entityClass, field)
-
-        assertThat(joinName).isEqualTo(expectedJoinName)
-    }
 
     @Test
     fun get_field_path_with_parent_path() {
