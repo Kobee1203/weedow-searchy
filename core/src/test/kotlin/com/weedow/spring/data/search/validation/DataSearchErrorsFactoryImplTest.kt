@@ -9,7 +9,7 @@ internal class DataSearchErrorsFactoryImplTest {
     fun getDataSearchErrors() {
         val dataSearchErrors = DataSearchErrorsFactoryImpl().getDataSearchErrors()
 
-        assertThat(dataSearchErrors).isNotNull()
+        assertThat(dataSearchErrors).isNotNull
         assertThat(dataSearchErrors).isInstanceOf(DefaultDataSearchErrors::class.java)
 
         assertThat(DataSearchErrorsFactoryImpl().getDataSearchErrors()).isNotSameAs(DataSearchErrorsFactoryImpl().getDataSearchErrors())

@@ -1,19 +1,22 @@
 package com.weedow.spring.data.search.join.handler
 
 import com.weedow.spring.data.search.join.JoinInfo
+import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
 
 /**
  * Default [EntityJoinHandler] implementation.
  *
- * Accepts all join types and always returns the default values of [JoinInfo]: join type is [JoinInfo.DEFAULT_JOIN_TYPE] and fetch mode is [JoinInfo.DEFAULT_FETCH_MODE].
+ * Accepts all join types and always returns the default values of [JoinInfo]:
+ * * join type is [JoinInfo.DEFAULT_JOIN_TYPE]
+ * * fetch mode is [JoinInfo.DEFAULT_FETCH_MODE].
  */
-class DefaultEntityJoinHandler<T> : EntityJoinHandler<T> {
+class DefaultEntityJoinHandler : EntityJoinHandler {
 
-    override fun supports(entityClass: Class<*>, fieldClass: Class<*>, fieldName: String, joinAnnotation: Annotation): Boolean {
+    override fun supports(propertyInfos: PropertyInfos): Boolean {
         return true
     }
 
-    override fun handle(entityClass: Class<*>, fieldClass: Class<*>, fieldName: String, joinAnnotation: Annotation): JoinInfo {
+    override fun handle(propertyInfos: PropertyInfos): JoinInfo {
         return JoinInfo()
     }
 

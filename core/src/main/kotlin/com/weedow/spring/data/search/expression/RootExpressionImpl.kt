@@ -2,10 +2,8 @@ package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.join.EntityJoin
 import com.weedow.spring.data.search.join.EntityJoins
-import org.springframework.data.jpa.domain.Specification
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Root
+import com.weedow.spring.data.search.querydsl.QueryDslBuilder
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
 
 /**
  * Default [RootExpression] implementation.
@@ -13,7 +11,7 @@ import javax.persistence.criteria.Root
  * @param expressions [Expression]s
  */
 class RootExpressionImpl<T>(
-        vararg val expressions: Expression
+    vararg val expressions: Expression
 ) : RootExpression<T> {
 
     companion object {
@@ -25,19 +23,19 @@ class RootExpressionImpl<T>(
         return expressions.flatMap { it.toFieldExpressions(negated).toList() }
     }
 
-    override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
-        var specification = Specification { root: Root<T>, query: CriteriaQuery<*>, _: CriteriaBuilder ->
-            query.distinct(true)
+    override fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T> {
+        var specification = QueryDslSpecification { builder: QueryDslBuilder<T> ->
+            builder.distinct()
 
             val fetchJoins = entityJoins.getJoins(FILTER_FETCH_JOINS)
             fetchJoins.values.forEach {
-                entityJoins.getPath(it.fieldPath, root)
+                entityJoins.getQPath(it.fieldPath, builder.qEntityRoot, builder)
             }
 
-            null
+            QueryDslSpecification.NO_PREDICATE
         }
 
-        expressions.forEach { specification = specification.and(it.toSpecification<T>(entityJoins))!! }
+        expressions.forEach { specification = specification.and(it.toQueryDslSpecification(entityJoins)) }
 
         return specification
     }

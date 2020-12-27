@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.CommonTokenStream
  * @param expressionParserVisitorFactory Factory to get the [ExpressionParserVisitor] from the rootClass.
  */
 class ExpressionParserImpl(
-        private val expressionParserVisitorFactory: ExpressionParserVisitorFactory
+    private val expressionParserVisitorFactory: ExpressionParserVisitorFactory
 ) : ExpressionParser {
 
     override fun parse(query: String, rootClass: Class<*>): Expression {

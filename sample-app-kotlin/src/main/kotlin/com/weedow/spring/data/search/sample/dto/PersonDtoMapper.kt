@@ -17,7 +17,7 @@ class PersonDtoMapper : DtoMapper<Person, PersonDto> {
                 .lastName(source.lastName)
                 .email(source.email)
                 .nickNames(source.nickNames)
-                .phoneNumbers(source.phoneNumbers)
+                .phoneNumbers(source.phoneNumbers?.toSet())
                 .addresses(mapAddresses(source.addressEntities))
                 .vehicles(mapVehicles(source.vehicles))
                 .build()

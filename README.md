@@ -461,6 +461,7 @@ Each field criteria is limited to the use of the `EQUALS` operator and the `IN` 
 | Persons who have a vehicle with _'GPS'_<br/>_This will be result from a query on the `feature` field of type `Map`_      | `/search?vehicles.features.value.name=gps`                                             |
 | Persons with the birthday is _'null'_                                                                                    | `/search?birthday=null`                                                                |
 | Persons who don't have jobs                                                                                              | `/search?jobEntity=null`                                                               |
+| Persons who have a vehicle without defined feature in database                                                           | `/search?vehicles.features=null`                                                       |
 | Persons who were born at current date                                                                                    | `/search?birthday=CURRENT_DATE`                                                        |
 | Persons who were born at current time                                                                                    | `/search?birthday=CURRENT_TIME`                                                        |
 | Persons who were born at current datetime                                                                                | `/search?birthday=CURRENT_DATE_TIME`                                                   |
@@ -491,7 +492,7 @@ The value types are the following:
 | Persons with the first name 'John'                                  | /person?query=`firstName='John'`                                         |
 | Persons with the birthday equals to the given `LocalDateTime`       | /person?query=`birthday='1981-03-12T10:36:00'`                           |
 | Persons with the hire date equals to the given `OffsetDateTime`     | /person?query=`job.hireDate='2019-09-01T09:00:00Z'`                      |
-| Persons with the birthday equals to the current `LocalDateTime`     | /person?query=`birthday='CURRENT_DATE_TIME'`                             |
+| Persons with the birthday equals to the current `LocalDateTime`     | /person?query=`birthday=CURRENT_DATE_TIME`                               |
 | Persons who own a car (VehicleType is an Enum)                      | /person?query=`vehicle.vehicleType='CAR'`                                |
 | Persons who are 1,74 m tall                                         | /person?query=`height=174`                                               |
 | Persons who are actively employed                                   | /person?query=`job.active=true`                                          |
@@ -503,7 +504,7 @@ The value types are the following:
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | Persons who are not named 'John'                                    | /person?query=`firstName!='John'`                     |
 | Persons with the birthday not equals to the given `LocalDateTime`   | /person?query=`birthday!='1981-03-12T10:36:00'`       |
-| Persons with the birthday not equals to the current `LocalDateTime` | /person?query=`birthday='CURRENT_DATE_TIME'`          |
+| Persons with the birthday not equals to the current `LocalDateTime` | /person?query=`birthday=CURRENT_DATE_TIME`            |
 | Persons with the hire date not equals to the given `OffsetDateTime` | /person?query=`job.hireDate!='2019-09-01T09:00:00Z'`  |
 | Persons who don't own a car (VehicleType is an Enum)                | /person?query=`vehicle.vehicleType!='CAR'`            |
 | Persons who are not 1,74 m tall                                     | /person?query=`height!=174`                           |
@@ -515,7 +516,7 @@ The value types are the following:
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | Persons who were born before the given `LocalDateTime`              | /person?query=`birthday<'1981-03-12T10:36:00'`        |
 | Persons who are hired before the given `OffsetDateTime`             | /person?query=`job.hireDate<'2019-09-01T09:00:00Z'`   |
-| Persons who are hired before current datetime                       | /person?query=`job.hireDate<'CURRENT_DATE_TIME'`      |
+| Persons who are hired before current datetime                       | /person?query=`job.hireDate<CURRENT_DATE_TIME`        |
 | Persons who are smaller than 1,74 m                                 | /person?query=`height<174`                            |
 
 1. <a name="less-than-or-equals-operator"></a> Less than or equals operator `<=`
@@ -524,7 +525,7 @@ The value types are the following:
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | Persons who were born before or on the given `LocalDateTime`        | /person?query=`birthday<='1981-03-12T10:36:00'`       |
 | Persons who are hired before or on the given `OffsetDateTime`       | /person?query=`job.hireDate<='2019-09-01T09:00:00Z'`  |
-| Persons who are hired before or on current datetime                 | /person?query=`job.hireDate<='CURRENT_DATE_TIME'`     |
+| Persons who are hired before or on current datetime                 | /person?query=`job.hireDate<=CURRENT_DATE_TIME`       |
 | Persons who are smaller than or equal to 1,74 m                     | /person?query=`height<=174`                           |
 
 1. <a name="greater-than-operator"></a> Greater than operator `>`
@@ -533,7 +534,7 @@ The value types are the following:
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | Persons who were born after the given `LocalDateTime`               | /person?query=`birthday>'1981-03-12T10:36:00'`        |
 | Persons who are hired after the given `OffsetDateTime`              | /person?query=`job.hireDate>'2019-09-01T09:00:00Z'`   |
-| Persons who are hired after the current datetime                    | /person?query=`job.hireDate>'CURRENT_DATE_TIME'`      |
+| Persons who are hired after the current datetime                    | /person?query=`job.hireDate>CURRENT_DATE_TIME`        |
 | Persons who are taller than 1,74 m                                  | /person?query=`height>174`                            |
 
 1. <a name="greater-than-or-equals-operator"></a> Greater than or equals operator `>=`
@@ -542,7 +543,7 @@ The value types are the following:
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | Persons who were born after or on the given `LocalDateTime`         | /person?query=`birthday>='1981-03-12T10:36:00'`       |
 | Persons who are hired after or on the given `OffsetDateTime`        | /person?query=`job.hireDate>='2019-09-01T09:00:00Z'`  |
-| Persons who are hired after or on current datetime                  | /person?query=`job.hireDate>='CURRENT_DATE_TIME'`     |
+| Persons who are hired after or on current datetime                  | /person?query=`job.hireDate>=CURRENT_DATE_TIME`       |
 | Persons who are taller than or equal to 1,74 m                      | /person?query=`height>=174`                           |
 
 1. <a name="matches-operator"></a> Matches operator `MATCHES`
@@ -578,16 +579,28 @@ _Use the wildcard character `*` to match any string with zero or more characters
 | Persons who own one of the given vehicle types (VehicleType is an Enum) | /person?query=`vehicle.vehicleType IN ('CAR', 'MOTORBIKE', 'TRUCK')` |
 | Persons who are not named 'John' or 'Jane'                              | /person?query=`firstName NOT IN ('John', 'Jane')`                    |
 
-1. <a name="current_date_time-comparison"></a> `CURRENT_DATE_TIME` comparison
+1. <a name="date-comparison"></a> Date comparison
 
-| What you want to query                                  | Example                                                                 |
-| ------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Persons with the birthday is at current time            | /person?query=`birthday=CURRENT_DATE_TIME`<br/>/person?query=`birthday IS CURRENT_DATE_TIME`      |
-| Persons with the birthday is not at current time        | /person?query=`birthday!=CURRENT_DATE_TIME`<br/>/person?query=`birthday IS NOT CURRENT_DATE_TIME` |
-| Persons with the birthday is after current time         | /person?query=`birthday>CURRENT_DATE_TIME`<br/>/person?query=`birthday >= CURRENT_DATE_TIME`      |
-| Persons with the birthday is after or at current time   | /person?query=`birthday>=CURRENT_DATE_TIME`<br/>/person?query=`birthday >= CURRENT_DATE_TIME`     |
-| Persons with the birthday is before current time        | /person?query=`birthday<CURRENT_DATE_TIME`<br/>/person?query=`birthday < CURRENT_DATE_TIME`       |
-| Persons with the birthday is before or at current time  | /person?query=`birthday<=CURRENT_DATE_TIME`<br/>/person?query=`birthday <= CURRENT_DATE_TIME`     |
+The fields representing a date, time, or datetime can be compared with a string having a valid format according to the type of the field.
+
+| What you want to query                                          | Example                                             |
+| --------------------------------------------------------------- | --------------------------------------------------- |
+| Persons with the birthday equals to the given `LocalDateTime`   | /person?query=`birthday='1981-03-12T10:36:00'`      |
+| Persons with the hire date equals to the given `OffsetDateTime` | /person?query=`job.hireDate='2019-09-01T09:00:00Z'` |
+
+Also, the fields representing a date, time, or datetime can be compared with the following keywords:
+* `CURRENT_DATE`: keyword representing the current date
+* `CURRENT_TIME`: keyword representing the current time
+* `CURRENT_DATE_TIME`: keyword representing the current date and time
+
+| What you want to query                                      | Example                                     |
+| ----------------------------------------------------------- | ------------------------------------------- |
+| Persons with the birthday is at current datetime            | /person?query=`birthday=CURRENT_DATE_TIME`  |
+| Persons with the birthday is not at current datetime        | /person?query=`birthday!=CURRENT_DATE_TIME` |
+| Persons with the birthday is after current datetime         | /person?query=`birthday>CURRENT_DATE_TIME`  |
+| Persons with the birthday is after or at current datetime   | /person?query=`birthday>=CURRENT_DATE_TIME` |
+| Persons with the birthday is before current datetime        | /person?query=`birthday<CURRENT_DATE_TIME`  |
+| Persons with the birthday is before or at current datetime  | /person?query=`birthday<=CURRENT_DATE_TIME` |
 
 1. <a name="null-comparison"></a> `NULL` comparison
 

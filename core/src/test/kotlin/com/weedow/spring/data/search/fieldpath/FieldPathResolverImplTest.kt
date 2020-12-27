@@ -92,9 +92,9 @@ internal class FieldPathResolverImplTest {
         whenever(aliasResolutionService.resolve(parentClass, "unknown")).thenReturn("unknown")
 
         assertThatThrownBy { fieldPathResolver.resolveFieldPath(rootClass, fieldPath) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-                .hasMessageStartingWith("Invalid field path: $fieldPath. The part 'unknown' is not authorized for a parent field of type Map")
-                .hasNoCause()
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessageStartingWith("Invalid field path: $fieldPath. The part 'unknown' is not authorized for a parent field of type Map")
+            .hasNoCause()
     }
 
     @Test
@@ -105,8 +105,8 @@ internal class FieldPathResolverImplTest {
         whenever(aliasResolutionService.resolve(rootClass, "unknown")).thenReturn("unknown")
 
         assertThatThrownBy { fieldPathResolver.resolveFieldPath(rootClass, fieldPath) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-                .hasMessageStartingWith("Could not resolve the field path [$fieldPath] from [$rootClass]")
-                .hasCauseInstanceOf(NoSuchFieldException::class.java)
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessageStartingWith("Could not resolve the field path [$fieldPath] from [$rootClass]")
+            .hasCauseInstanceOf(NoSuchFieldException::class.java)
     }
 }

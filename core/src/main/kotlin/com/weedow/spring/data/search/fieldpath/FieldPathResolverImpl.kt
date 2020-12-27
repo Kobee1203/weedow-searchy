@@ -10,22 +10,26 @@ import java.lang.reflect.Field
  * The field paths are resolved by splitting the paths to a list of Strings around occurrences of the delimiter [FIELD_PATH_SEPARATOR].
  *
  * An [AliasResolutionService] checks if a part of the field path is an alias. If so, it returns the real field name, otherwise it returns the received part.
+ *
+ * @param aliasResolutionService [AliasResolutionService]
  */
-class FieldPathResolverImpl(private val aliasResolutionService: AliasResolutionService) : FieldPathResolver {
+class FieldPathResolverImpl(
+    private val aliasResolutionService: AliasResolutionService
+) : FieldPathResolver {
 
     companion object {
         private val log by klogger()
     }
 
     init {
-        if (log.isDebugEnabled) log.debug("Initialized FieldPathResolver: {}", this)
+        if (log.isDebugEnabled) log.debug("Initialized FieldPathResolver: {}", this::class.qualifiedName)
     }
 
     override fun resolveFieldPath(rootClass: Class<*>, fieldPath: String): FieldPathInfo {
         var fieldName: String = fieldPath
         var fieldClass = rootClass
         var parentClass = rootClass
-        var resolvedFieldPath = mutableListOf<String>()
+        val resolvedFieldPath = mutableListOf<String>()
         try {
             var field: Field? = null
             val parts = fieldPath.split(FIELD_PATH_SEPARATOR)
@@ -33,17 +37,21 @@ class FieldPathResolverImpl(private val aliasResolutionService: AliasResolutionS
                 parentClass = fieldClass
                 fieldName = aliasResolutionService.resolve(parentClass, fieldPart)
                 fieldClass =
-                        if (Map::class.java.isAssignableFrom(parentClass)) {
-                            val genericTypes = EntityUtils.getGenericTypes(field!!)
-                            when (fieldName) {
-                                MAP_KEY -> genericTypes[0]
-                                MAP_VALUE -> genericTypes[1]
-                                else -> throw IllegalArgumentException("Invalid field path: $fieldPath. The part '$fieldName' is not authorized for a parent field of type Map")
-                            }
-                        } else {
-                            field = parentClass.getDeclaredField(fieldName)
-                            EntityUtils.getFieldClass(field)
+                    if (Map::class.java.isAssignableFrom(parentClass)) {
+                        val genericTypes = EntityUtils.getParameterizedTypes(field!!)
+                        when (fieldName) {
+                            MAP_KEY -> genericTypes[0]
+                            MAP_VALUE -> genericTypes[1]
+                            else -> throw IllegalArgumentException("Invalid field path: $fieldPath. The part '$fieldName' is not authorized for a parent field of type Map")
                         }
+                    } else {
+                        field = parentClass.getDeclaredField(fieldName)
+                        if (Collection::class.java.isAssignableFrom(field.type)) {
+                            EntityUtils.getParameterizedTypes(field!!)[0]
+                        } else {
+                            field.type
+                        }
+                    }
                 resolvedFieldPath.add(fieldName)
             }
         } catch (e: NoSuchFieldException) {

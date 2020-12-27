@@ -15,8 +15,8 @@ internal class ExpressionParserVisitorFactoryImplTest {
 
         val expressionParserVisitor = ExpressionParserVisitorFactoryImpl(expressionResolver).getExpressionParserVisitor(rootClass)
         assertThat(expressionParserVisitor)
-                .isInstanceOf(ExpressionParserVisitorImpl::class.java)
-                .extracting("expressionResolver", "rootClass")
-                .containsExactly(expressionResolver, rootClass)
+            .isInstanceOf(ExpressionParserVisitorImpl::class.java)
+            .extracting("expressionResolver", "rootClass")
+            .containsExactly(expressionResolver, rootClass)
     }
 }

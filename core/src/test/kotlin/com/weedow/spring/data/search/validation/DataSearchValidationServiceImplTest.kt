@@ -76,9 +76,9 @@ internal class DataSearchValidationServiceImplTest {
 
         val status = HttpStatus.BAD_REQUEST
         assertThatThrownBy { dataSearchValidationService.validate(fieldExpressions, searchDescriptor) }
-                .isInstanceOf(ValidationException::class.java)
-                .hasMessage("${status.value()} ${status.name} \"Validation Errors: [$errorCode: $errorMessage]\"")
-                .extracting("status", "reason").contains(status, "Validation Errors: [$errorCode: $errorMessage]")
+            .isInstanceOf(ValidationException::class.java)
+            .hasMessage("${status.value()} ${status.name} \"Validation Errors: [$errorCode: $errorMessage]\"")
+            .extracting("status", "reason").contains(status, "Validation Errors: [$errorCode: $errorMessage]")
 
         verify(validator).validate(fieldExpressions, dataSearchErrors)
     }

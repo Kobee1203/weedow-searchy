@@ -1,10 +1,10 @@
 package com.weedow.spring.data.search.sample.java;
 
-import com.weedow.spring.data.search.sample.java.entity.Person;
 import com.weedow.spring.data.search.config.SearchConfigurer;
 import com.weedow.spring.data.search.descriptor.SearchDescriptor;
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder;
 import com.weedow.spring.data.search.descriptor.SearchDescriptorRegistry;
+import com.weedow.spring.data.search.sample.java.entity.Person;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration

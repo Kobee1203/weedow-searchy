@@ -12,13 +12,22 @@ import java.util.stream.Collectors
 
 /**
  * Default [ExpressionResolver] implementation.
+ *
+ * @param fieldPathResolver [FieldPathResolver]
+ * @param conversionService [ConversionService]
  */
 class ExpressionResolverImpl(
-        private val fieldPathResolver: FieldPathResolver,
-        private val conversionService: ConversionService
+    private val fieldPathResolver: FieldPathResolver,
+    private val conversionService: ConversionService
 ) : ExpressionResolver {
 
-    override fun resolveExpression(rootClass: Class<*>, fieldPath: String, fieldValues: List<String>, operator: Operator, negated: Boolean): Expression {
+    override fun resolveExpression(
+        rootClass: Class<*>,
+        fieldPath: String,
+        fieldValues: List<String>,
+        operator: Operator,
+        negated: Boolean
+    ): Expression {
         val fieldPathInfo = toFieldKey(rootClass, fieldPath)
         val values = toFieldValues(fieldPathInfo, fieldValues)
 
@@ -43,20 +52,18 @@ class ExpressionResolverImpl(
 
     private fun toFieldValues(fieldPathInfo: FieldPathInfo, fieldValues: List<String>): List<Any> {
         return fieldValues.stream()
-                .map { fieldValue -> convert(fieldValue, fieldPathInfo.fieldClass) }
-                .collect(Collectors.toList())
+            .map { fieldValue -> convert(fieldValue, fieldPathInfo.fieldClass) }
+            .collect(Collectors.toList())
     }
 
     private fun convert(value: String, clazz: Class<*>): Any {
         return when {
-            CURRENT_DATE.equalsIgnoringCase(value) -> CURRENT_DATE
-            CURRENT_TIME.equalsIgnoringCase(value) -> CURRENT_TIME
-            CURRENT_DATE_TIME.equalsIgnoringCase(value) -> CURRENT_DATE_TIME
-            NULL_VALUE.equalsIgnoringCase(value) -> NullValue
+            CURRENT_DATE.equals(value, ignoreCase = true) -> CURRENT_DATE
+            CURRENT_TIME.equals(value, ignoreCase = true) -> CURRENT_TIME
+            CURRENT_DATE_TIME.equals(value, ignoreCase = true) -> CURRENT_DATE_TIME
+            NULL_VALUE.equals(value, ignoreCase = true) -> NullValue
             else -> conversionService.convert(value, clazz)!!
         }
     }
-
-    private fun String.equalsIgnoringCase(value: String): Boolean = this.equals(value, ignoreCase = true)
 
 }

@@ -16,13 +16,13 @@ internal class DefaultAliasResolutionServiceTest {
         @Suppress("unused")
         private fun resolve_alias_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("firstName", "firstName"), // No resolution
-                    Arguments.of("first_name", "firstName"),
-                    Arguments.of("last_name", "lastName"),
-                    Arguments.of("addressEntities", "addressEntities"), // No resolution
-                    Arguments.of("addresses", "addressEntities"),
-                    Arguments.of("address", "addressEntities"),
-                    Arguments.of("jobEntity", "jobEntity") // No resolution
+                Arguments.of("firstName", "firstName"), // No resolution
+                Arguments.of("first_name", "firstName"),
+                Arguments.of("last_name", "lastName"),
+                Arguments.of("addressEntities", "addressEntities"), // No resolution
+                Arguments.of("addresses", "addressEntities"),
+                Arguments.of("address", "addressEntities"),
+                Arguments.of("jobEntity", "jobEntity") // No resolution
             )
         }
     }

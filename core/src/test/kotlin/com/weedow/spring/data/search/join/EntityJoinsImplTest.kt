@@ -3,375 +3,168 @@ package com.weedow.spring.data.search.join
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
-import com.nhaarman.mockitokotlin2.whenever
+import com.querydsl.core.JoinType
+import com.querydsl.core.types.Path
 import com.weedow.spring.data.search.common.model.Address
-import com.weedow.spring.data.search.common.model.Feature
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.common.model.Vehicle
-import com.weedow.spring.data.search.utils.MAP_KEY
-import com.weedow.spring.data.search.utils.MAP_VALUE
-import org.assertj.core.api.Assertions
+import com.weedow.spring.data.search.querydsl.QueryDslBuilder
+import com.weedow.spring.data.search.querydsl.querytype.*
 import org.assertj.core.api.Assertions.assertThat
-import org.hibernate.query.criteria.internal.JoinImplementor
-import org.hibernate.query.criteria.internal.MapJoinImplementor
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
-import javax.persistence.criteria.JoinType
-import javax.persistence.criteria.Path
-import javax.persistence.criteria.Root
-import javax.persistence.metamodel.Attribute
 
 @ExtendWith(MockitoExtension::class)
 internal class EntityJoinsImplTest {
 
-    companion object {
-        private const val ADDRESS_ENTITIES_FIELD = "addressEntities"
-        private const val FIRST_NAME_FIELD = "firstName"
-        private const val PERSONS_FIELD = "persons"
-        private const val VEHICLES_FIELD = "vehicles"
-        private const val FEATURES_FIELD = "features"
-        private const val FEATURE_NAME_FIELD = "name"
-        private const val COUNTRY_FIELD = "country"
-        private const val NICK_NAMES_FIELD = "nickNames"
-        private const val CHARACTERISTICS_FIELD = "characteristics"
-        private const val COUNTRY_PATH = "addressEntities.country"
-    }
-
     @Test
-    fun check_already_processed() {
+    fun check_already_processed_when_property_infos_matches_root_entity_class() {
         val entityJoins = EntityJoinsImpl(Person::class.java)
 
-        val entityJoin = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD))
-        entityJoins.add(entityJoin)
-
         // Root class
-        assertThat(entityJoins.alreadyProcessed(Address::class.java, Address::class.java.getDeclaredField(PERSONS_FIELD))).isTrue()
+        val propertyInfos: PropertyInfos = mock {
+            on { this.elementType }.thenReturn(ElementType.SET)
+            on { this.parameterizedTypes }.thenReturn(listOf(Person::class.java))
+        }
+        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isTrue
+    }
+
+    @Test
+    fun check_already_processed_when_property_infos_matches_entity_join() {
+        val entityJoins = EntityJoinsImpl(Person::class.java)
+
+        val entityJoin = EntityJoin("addressEntities", "addressEntities", Address::class.java.canonicalName)
+        entityJoins.add(entityJoin)
+
         // Join already added
-        assertThat(entityJoins.alreadyProcessed(Person::class.java, Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD))).isTrue()
+        val propertyInfos = mock<PropertyInfos> {
+            on { qName }.thenReturn(Address::class.java.canonicalName)
+            on { elementType }.thenReturn(ElementType.SET)
+            on { parameterizedTypes }.thenReturn(listOf<Class<*>>(Address::class.java))
+        }
+        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isTrue
+    }
+
+    @Test
+    fun check_not_already_processed_when_property_infos_does_not_match_entity_join() {
+        val entityJoins = EntityJoinsImpl(Person::class.java)
+
         // Join not already processed
-        assertThat(entityJoins.alreadyProcessed(Person::class.java, Person::class.java.getDeclaredField(VEHICLES_FIELD))).isFalse()
-    }
-
-    @Test
-    fun get_path_for_simple_field() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
-
-        val expectedPath = mock<Path<Any>>()
-
-        val root = mock<Root<Person>>()
-        whenever(root.javaType).thenReturn(rootClass)
-        whenever(root.get<Any>(FIRST_NAME_FIELD)).thenReturn(expectedPath)
-
-        val path = entityJoins.getPath(FIRST_NAME_FIELD, root)
-
-        assertThat(path).isEqualTo(expectedPath)
-
-        verifyNoMoreInteractions(root)
-    }
-
-    @Test
-    fun get_path_for_inner_join_field() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
-
-        val expectedPath = mock<Path<Any>>()
-
-        val root = mock<Root<Person>>()
-        whenever(root.javaType).thenReturn(rootClass)
-        whenever(root.join<Any, Any>(ADDRESS_ENTITIES_FIELD, JoinType.INNER)).thenReturn(mock<JoinImplementor<Any, Any>>())
-        whenever(root.get<Any>(ADDRESS_ENTITIES_FIELD)).thenReturn(expectedPath)
-
-        val entityJoin = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD), JoinType.INNER)
-        entityJoins.add(entityJoin)
-
-        val path = entityJoins.getPath(ADDRESS_ENTITIES_FIELD, root)
-
-        assertThat(path).isEqualTo(expectedPath)
-
-        verify(root).joins
-        verify(root).fetches
-        verifyNoMoreInteractions(root)
-    }
-
-    @Test
-    fun get_path_for_entity_as_map_key() {
-        // TODO UPDATE ENTITIES TO TEST THE CASE
-    }
-
-    @Test
-    fun get_path_for_entity_as_map_value() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
-
-        val expectedPath = mock<Path<Any>>()
-
-        val root = mock<Root<Person>>()
-        whenever(root.javaType).thenReturn(rootClass)
-
-        val vehicleJoin = mock<JoinImplementor<Any, Any>>()
-        whenever(root.join<Any, Any>(VEHICLES_FIELD, JoinType.LEFT)).thenReturn(vehicleJoin)
-        whenever(vehicleJoin.javaType).thenReturn(Vehicle::class.java)
-
-        val mapJoin = mock<MapJoinImplementor<Any, Any, Any>>()
-        whenever(vehicleJoin.join<Any, Any>(FEATURES_FIELD, JoinType.LEFT)).thenReturn(mapJoin)
-
-        val mapValuePath = mock<Path<Any>>()
-        whenever(mapJoin.value()).thenReturn(mapValuePath)
-        whenever(mapValuePath.javaType).thenReturn(Feature::class.java)
-        whenever(mapValuePath.get<Any>(FEATURE_NAME_FIELD)).thenReturn(expectedPath)
-
-        val path = entityJoins.getPath("$VEHICLES_FIELD.$FEATURES_FIELD.value.$FEATURE_NAME_FIELD", root)
-
-        assertThat(path).isEqualTo(expectedPath)
-
-        verify(root).joins
-        verify(root).fetches
-        verifyNoMoreInteractions(root)
-    }
-
-    @Test
-    fun get_path_for_map_key_field() {
-        get_path_for_map_field(MAP_KEY) { mapJoin: MapJoinImplementor<Any, Any, Any>, expectedPath: Path<Any> ->
-            whenever(mapJoin.key()).thenReturn(expectedPath)
+        val propertyInfos = mock<PropertyInfos> {
+            on { qName }.thenReturn(Vehicle::class.java.canonicalName)
+            on { elementType }.thenReturn(ElementType.SET)
+            on { parameterizedTypes }.thenReturn(listOf<Class<*>>(Vehicle::class.java))
         }
+        assertThat(entityJoins.alreadyProcessed(propertyInfos)).isFalse
     }
 
     @Test
-    fun get_path_for_map_value_field() {
-        get_path_for_map_field(MAP_VALUE) { mapJoin: MapJoinImplementor<Any, Any, Any>, expectedPath: Path<Any> ->
-            whenever(mapJoin.value()).thenReturn(expectedPath)
+    fun get_qpath_when_fieldpath_is_simple_field() {
+        val entityJoins = EntityJoinsImpl(Person::class.java)
+
+        val qPath = mock<QPath<*>> {
+            val propertyInfos = mock<PropertyInfos> {
+                on { this.qName }.thenReturn("firstName")
+            }
+            on { this.propertyInfos }.thenReturn(propertyInfos)
         }
-    }
 
-    private fun get_path_for_map_field(specialKey: String, stubbingMethod: (MapJoinImplementor<Any, Any, Any>, Path<Any>) -> Unit) {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
+        val qEntityRoot = mock<QEntityRoot<Person>> {
+            on { this.get("firstName") }.thenReturn(qPath)
+        }
 
-        val expectedPath = mock<Path<Any>>()
+        val queryDslBuilder = mock<QueryDslBuilder<Person>>()
 
-        val root = mock<Root<Person>>()
-        whenever(root.javaType).thenReturn(rootClass)
-        val mapJoin = mock<MapJoinImplementor<Any, Any, Any>>()
-        whenever(root.join<Any, Any>(CHARACTERISTICS_FIELD, JoinType.LEFT)).thenReturn(mapJoin)
-        // Custom stubbing method
-        stubbingMethod(mapJoin, expectedPath)
+        val result = entityJoins.getQPath("firstName", qEntityRoot, queryDslBuilder)
 
-        val path = entityJoins.getPath("$CHARACTERISTICS_FIELD.$specialKey", root)
-
-        assertThat(path).isEqualTo(expectedPath)
-
-        verify(root).joins
-        verify(root).fetches
-        verifyNoMoreInteractions(root)
+        assertThat(result).isSameAs(qPath)
+        verifyNoMoreInteractions(queryDslBuilder)
     }
 
     @Test
-    fun throw_exception_when_field_path_invalid_for_map() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
+    fun get_qpath_when_fieldpath_is_composed_with_parent_and_field() {
+        val entityJoins = EntityJoinsImpl(Person::class.java)
 
-        val root = mock<Root<Person>>()
-        whenever(root.javaType).thenReturn(rootClass)
-        val mapJoin = mock<MapJoinImplementor<Any, Any, Any>>()
-        whenever(root.join<Any, Any>(CHARACTERISTICS_FIELD, JoinType.LEFT)).thenReturn(mapJoin)
+        val qPath = mock<QPath<*>> {
+            val propertyInfos = mock<PropertyInfos> {
+                on { this.qName }.thenReturn("addressEntities.city")
+            }
+            on { this.propertyInfos }.thenReturn(propertyInfos)
+        }
 
-        val fieldPath = "$CHARACTERISTICS_FIELD.unknown"
-        Assertions.assertThatThrownBy { entityJoins.getPath(fieldPath, root) }
-                .isInstanceOf(IllegalArgumentException::class.java)
-                .hasMessageStartingWith("The attribute name 'unknown' is not authorized for a parent Map Join")
-                .hasNoCause()
+        val qPathParent = mock<QPath<*>> {
+            val path = mock<Path<*>> {
+                on { this.toString() }.thenReturn("addressEntities")
+            }
+            val propertyInfos = mock<PropertyInfos> {
+                on { this.qName }.thenReturn(Address::class.java.canonicalName)
+            }
+            on { this.path }.thenReturn(path)
+            on { this.propertyInfos }.thenReturn(propertyInfos)
+        }
 
-        verify(root).joins
-        verify(root).fetches
-        verifyNoMoreInteractions(root)
+        val qEntityRoot = mock<QEntityRoot<Person>> {
+            on { get("addressEntities") }.thenReturn(qPathParent)
+        }
+        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+            val join = mock<QEntityJoin<*>> {
+                on { get("city") }.thenReturn(qPath)
+            }
+            on { this.join(qPathParent, JoinType.LEFTJOIN, false) }.thenReturn(join)
+        }
+
+        val result = entityJoins.getQPath("addressEntities.city", qEntityRoot, queryDslBuilder)
+
+        assertThat(result).isSameAs(qPath)
+        verifyNoMoreInteractions(queryDslBuilder)
     }
 
     @Test
-    fun get_path_for_left_join_field() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
+    fun get_qpath_when_fieldpath_is_composed_with_parent_and_field_and_entity_join_already_present() {
+        val entityJoins = EntityJoinsImpl(Person::class.java)
 
-        val expectedPath = mock<Path<Any>>()
+        val qName1 = Address::class.java.canonicalName
+        val joinType1 = JoinType.INNERJOIN
+        val fetched1 = true
+        val qName2 = Address::class.java.canonicalName
+        val joinType2 = JoinType.INNERJOIN
+        val fetched2 = true
 
-        val root = mock<Root<Person>>()
-        whenever(root.javaType).thenReturn(rootClass)
-        whenever(root.fetch<Any, Any>(ADDRESS_ENTITIES_FIELD, JoinType.LEFT)).thenReturn(mock<JoinImplementor<Any, Any>>())
-        whenever(root.get<Any>(ADDRESS_ENTITIES_FIELD)).thenReturn(expectedPath)
-
-        val entityJoin = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD), JoinType.LEFT, true)
-        entityJoins.add(entityJoin)
-
-        val path = entityJoins.getPath(ADDRESS_ENTITIES_FIELD, root)
-
-        assertThat(path).isEqualTo(expectedPath)
-
-        verify(root).joins
-        verify(root).fetches
-        verifyNoMoreInteractions(root)
-    }
-
-    @Test
-    fun get_path_for_field_in_sub_parent() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
-
-        val expectedPath = mock<Path<Any>>()
-
-        val root = mock<Root<Person>>()
-        whenever(root.javaType).thenReturn(rootClass)
-        val join = mock<JoinImplementor<Any, Any>>()
-        whenever(root.fetch<Any, Any>(ADDRESS_ENTITIES_FIELD, JoinType.LEFT)).thenReturn(join)
-        whenever(join.javaType).thenReturn(Address::class.java)
-        whenever(join.get<Any>(COUNTRY_FIELD)).thenReturn(expectedPath)
-
-        val entityJoin = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD), JoinType.LEFT, true)
-        entityJoins.add(entityJoin)
-
-        val path = entityJoins.getPath(COUNTRY_PATH, root)
-
-        assertThat(path).isEqualTo(expectedPath)
-
-        verify(root).joins
-        verify(root).fetches
-        verifyNoMoreInteractions(root)
-    }
-
-    @Test
-    fun get_path_for_field_in_sub_parent_with_default_EntityJoin() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
-
-        val expectedPath = mock<Path<Any>>()
-
-        val root = mock<Root<Person>>()
-        whenever(root.javaType).thenReturn(rootClass)
-        val join = mock<JoinImplementor<Any, Any>>()
-        whenever(root.join<Any, Any>(ADDRESS_ENTITIES_FIELD, JoinType.LEFT)).thenReturn(join)
-        whenever(join.javaType).thenReturn(Address::class.java)
-        whenever(join.get<Any>(COUNTRY_FIELD)).thenReturn(expectedPath)
-
-        val path = entityJoins.getPath(COUNTRY_PATH, root)
-
-        assertThat(path).isEqualTo(expectedPath)
-
-        verify(root).joins
-        verify(root).fetches
-        verifyNoMoreInteractions(root)
-    }
-
-    @Test
-    fun get_path_for_field_in_sub_parent_with_inner_join_already_present_in_parent_join() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
-
-        val expectedPath = mock<Path<Any>>()
-
-        val root = mock<Root<Person>>()
-        whenever(root.javaType).thenReturn(rootClass)
-
-        val join = mock<JoinImplementor<Person, Any>>()
-        whenever(root.joins).thenReturn(setOf(join))
-
-        whenever(join.javaType).thenReturn(Address::class.java)
-        whenever(join.get<Any>(COUNTRY_FIELD)).thenReturn(expectedPath)
-
-        val attribute = mock<Attribute<in Person, *>>()
-        whenever(join.attribute).thenReturn(attribute)
-
-        whenever(attribute.name).thenReturn(ADDRESS_ENTITIES_FIELD)
-        whenever(join.joinType).thenReturn(JoinType.INNER)
-
-        val entityJoin = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD), JoinType.INNER, true)
-        entityJoins.add(entityJoin)
-
-        val path = entityJoins.getPath(COUNTRY_PATH, root)
-
-        assertThat(path).isEqualTo(expectedPath)
-    }
-
-    @Test
-    fun get_path_for_field_in_sub_parent_with_left_join_already_present_in_parent_join() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
-
-        val expectedPath = mock<Path<Any>>()
-
-        val root = mock<Root<Person>>()
-        whenever(root.javaType).thenReturn(rootClass)
-
-        val join = mock<JoinImplementor<Person, Any>>()
-        whenever(root.fetches).thenReturn(setOf(join))
-
-        whenever(join.javaType).thenReturn(Address::class.java)
-        whenever(join.get<Any>(COUNTRY_FIELD)).thenReturn(expectedPath)
-
-        val attribute = mock<Attribute<in Person, *>>()
-        whenever(join.attribute).thenReturn(attribute)
-
-        whenever(attribute.name).thenReturn(ADDRESS_ENTITIES_FIELD)
-        whenever(join.joinType).thenReturn(JoinType.LEFT)
-
-        val entityJoin = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD), JoinType.LEFT, true)
-        entityJoins.add(entityJoin)
-
-        val path = entityJoins.getPath(COUNTRY_PATH, root)
-
-        assertThat(path).isEqualTo(expectedPath)
-    }
-
-    @Test
-    fun get_joins_when_no_join_is_added() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
-
-        assertThat(entityJoins.getJoins()).isEmpty()
-    }
-
-    @Test
-    fun get_joins_when_any_joins_are_added() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
-
-        val entityJoin1 = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD))
+        val entityJoin1 = EntityJoin("addressEntities", "addressEntities", qName1, joinType1, fetched1)
         entityJoins.add(entityJoin1)
-        val entityJoin2 = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(VEHICLES_FIELD), JoinType.LEFT, true)
+        val entityJoin2 = EntityJoin("addressEntities.city", "city", qName2, joinType2, fetched2)
         entityJoins.add(entityJoin2)
-        val entityJoin3 = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(NICK_NAMES_FIELD), JoinType.LEFT, true)
-        entityJoins.add(entityJoin3)
 
-        val joins = entityJoins.getJoins()
-        assertThat(joins).containsExactlyInAnyOrderEntriesOf(mutableMapOf(
-                Address::class.java.canonicalName to entityJoin1,
-                Vehicle::class.java.canonicalName to entityJoin2,
-                Person::class.java.canonicalName + "." + NICK_NAMES_FIELD to entityJoin3
-        ))
-    }
+        val qPath = mock<QPath<*>> {
+            val propertyInfos = mock<PropertyInfos> {
+                on { this.qName }.thenReturn(qName2)
+            }
+            on { this.propertyInfos }.thenReturn(propertyInfos)
+        }
 
-    @Test
-    fun get_joins_by_using_filter() {
-        val rootClass = Person::class.java
-        val entityJoins = EntityJoinsImpl(rootClass)
+        val qPathParent = mock<QPath<*>> {
+            val parentPropertyInfos = mock<PropertyInfos> {
+                on { this.qName }.thenReturn(qName1)
+            }
+            on { this.propertyInfos }.thenReturn(parentPropertyInfos)
+        }
 
-        val entityJoin1 = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(ADDRESS_ENTITIES_FIELD), JoinType.INNER)
-        entityJoins.add(entityJoin1)
-        val entityJoin2 = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(VEHICLES_FIELD), JoinType.LEFT, true)
-        entityJoins.add(entityJoin2)
-        val entityJoin3 = EntityJoin(Person::class.java, "", Person::class.java.getDeclaredField(NICK_NAMES_FIELD), JoinType.LEFT, true)
-        entityJoins.add(entityJoin3)
+        val qEntityRoot = mock<QEntityRoot<Person>> {
+            on { get("addressEntities") }.thenReturn(qPathParent)
+        }
+        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+            val join = mock<QEntityJoin<*>> {
+                on { get("city") }.thenReturn(qPath)
+            }
+            on { this.join(qPathParent, joinType1, fetched1) }.thenReturn(join)
+        }
 
-        assertThat(entityJoins.getJoins { it.fetched }).containsExactlyInAnyOrderEntriesOf(mutableMapOf(
-                Vehicle::class.java.canonicalName to entityJoin2,
-                Person::class.java.canonicalName + "." + NICK_NAMES_FIELD to entityJoin3
-        ))
+        val result = entityJoins.getQPath("addressEntities.city", qEntityRoot, queryDslBuilder)
 
-        assertThat(entityJoins.getJoins { it.joinType == JoinType.INNER }).containsExactlyInAnyOrderEntriesOf(mutableMapOf(
-                Address::class.java.canonicalName to entityJoin1
-        ))
-
-        assertThat(entityJoins.getJoins { it.joinName.contains("address", true) }).containsExactlyInAnyOrderEntriesOf(mutableMapOf(
-                Address::class.java.canonicalName to entityJoin1
-        ))
+        assertThat(result).isSameAs(qPath)
+        verify(queryDslBuilder).join(qPath, joinType2, fetched2)
+        verifyNoMoreInteractions(queryDslBuilder)
+        verifyNoMoreInteractions(qPathParent)
     }
 }

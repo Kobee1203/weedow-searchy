@@ -32,14 +32,14 @@ internal class PatternValidatorTest : BaseValidatorTest() {
             verify(dataSearchErrors, times(3)).reject(eq("pattern"), eq("Invalid value for expression ''{0}''. Must match ''{1}''."), capture())
 
             assertThat(allValues).containsExactly(
-                    "field1 EQUALS john.12345",
-                    "[a-zA-Z_0-9]+",
+                "field1 EQUALS john.12345",
+                "[a-zA-Z_0-9]+",
 
-                    "field2 IN [JOHN.13245, Jane.2]",
-                    "[a-zA-Z_0-9]+",
+                "field2 IN [JOHN.13245, Jane.2]",
+                "[a-zA-Z_0-9]+",
 
-                    "field2 IN [JOHN.13245, Jane.2]",
-                    "[a-zA-Z_0-9]+"
+                "field2 IN [JOHN.13245, Jane.2]",
+                "[a-zA-Z_0-9]+"
             )
         }
     }

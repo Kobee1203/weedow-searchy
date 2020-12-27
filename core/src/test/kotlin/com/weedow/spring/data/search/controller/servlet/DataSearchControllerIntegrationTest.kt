@@ -44,8 +44,8 @@ internal class DataSearchControllerIntegrationTest {
         whenever(searchProperties.basePath).thenReturn(SearchProperties.DEFAULT_BASE_PATH)
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(dataSearchController)
-                .setCustomHandlerMapping { requestMappingHandlerMapping }
-                .build()
+            .setCustomHandlerMapping { requestMappingHandlerMapping }
+            .build()
     }
 
     @Test
@@ -146,15 +146,15 @@ internal class DataSearchControllerIntegrationTest {
 
     private fun createPerson(firstName: String, lastName: String): Pair<PersonDto, String> {
         val json = ""
-                .plus("{")
-                .plus("\"firstName\":\"$firstName\",")
-                .plus("\"lastName\":\"$lastName\",")
-                .plus("\"email\":null,")
-                .plus("\"phoneNumbers\":null,")
-                .plus("\"nickNames\":null,")
-                .plus("\"addresses\":null,")
-                .plus("\"vehicles\":null")
-                .plus("}")
+            .plus("{")
+            .plus("\"firstName\":\"$firstName\",")
+            .plus("\"lastName\":\"$lastName\",")
+            .plus("\"email\":null,")
+            .plus("\"phoneNumbers\":null,")
+            .plus("\"nickNames\":null,")
+            .plus("\"addresses\":null,")
+            .plus("\"vehicles\":null")
+            .plus("}")
         return PersonDto.Builder().firstName(firstName).lastName(lastName).build() to json
     }
 

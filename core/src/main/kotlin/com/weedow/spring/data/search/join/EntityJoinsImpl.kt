@@ -1,12 +1,9 @@
 package com.weedow.spring.data.search.join
 
-import com.weedow.spring.data.search.utils.*
-import org.hibernate.query.criteria.internal.JoinImplementor
-import java.lang.reflect.Field
-import javax.persistence.criteria.From
-import javax.persistence.criteria.MapJoin
-import javax.persistence.criteria.Path
-import javax.persistence.criteria.Root
+import com.weedow.spring.data.search.querydsl.QueryDslBuilder
+import com.weedow.spring.data.search.querydsl.querytype.*
+import com.weedow.spring.data.search.utils.FIELD_PATH_SEPARATOR
+import com.weedow.spring.data.search.utils.klogger
 
 /**
  * Default [EntityJoins] implementation.
@@ -24,17 +21,26 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
      *
      * If the field class is the same class as the root entity, the field is considered as already processed.
      *
-     * @param entityClass Class of the Entity
-     * @param field a field of the Entity declared with a with a Join Annotation
-     * @return
+     * @param propertyInfos Information about an Entity field declared with a Join Annotation
+     * @return `true` if the property has been already processed, `false` instead
      */
-    fun alreadyProcessed(entityClass: Class<*>, field: Field): Boolean {
+    fun alreadyProcessed(propertyInfos: PropertyInfos): Boolean {
+        val fieldClass = when (propertyInfos.elementType) {
+            ElementType.SET,
+            ElementType.LIST,
+            ElementType.COLLECTION,
+            -> {
+                propertyInfos.parameterizedTypes[0]
+            }
+            else -> propertyInfos.type
+        }
+
         // Do not create a join with the root Entity class
-        if (this.rootClass == EntityUtils.getFieldClass(field)) {
+        if (this.rootClass == fieldClass) {
             return true
         }
 
-        val joinName = EntityJoinUtils.getJoinName(entityClass, field)
+        val joinName = propertyInfos.qName
         return joins.keys.stream().anyMatch { it == joinName }
     }
 
@@ -45,81 +51,32 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         joins[entityJoin.joinName] = entityJoin
     }
 
-    override fun <T> getPath(fieldPath: String, root: Root<T>): Path<*> {
+    override fun <T> getQPath(fieldPath: String, qEntityRoot: QEntityRoot<T>, queryDslBuilder: QueryDslBuilder<T>): QPath<*> {
         val parts = fieldPath.split(FIELD_PATH_SEPARATOR)
         val fieldName = parts[parts.size - 1]
         val parents = parts.subList(0, parts.size - 1)
 
-        var parentPath = ""
-        var join = root as Path<*>
+        var join: QEntity<*> = qEntityRoot
         for (parent in parents) {
-            join = if (MapJoin::class.java.isAssignableFrom(join.javaClass)) {
-                getMapJoinPath(join as MapJoin<*, *, *>, parent)
-            } else {
-                getOrCreateJoin(join as From<*, *>, parentPath, parent)
+            val qPath = join.get(parent)
+            val qName = qPath.propertyInfos.qName
+            val entityJoin = joins.getOrElse(qName) {
+                EntityJoin(qPath.path.toString(), parent, qName)
             }
-            parentPath = EntityJoinUtils.getFieldPath(parentPath, parent)
+            join = queryDslBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
         }
 
-        if (MapJoin::class.java.isAssignableFrom(join.javaClass)) {
-            val mapJoin = join as MapJoin<*, *, *>
-            return getMapJoinPath(mapJoin, fieldName)
-        } else {
-            val joinName = EntityJoinUtils.getJoinName(join.javaType, join.javaType.getDeclaredField(fieldName))
-            val entityJoin = joins[joinName]
-            if (entityJoin != null) {
-                getOrCreateJoin(join as From<*, *>, parentPath, fieldName)
-            }
-
-            return join.get<Any>(fieldName)
+        val qPath = join.get(fieldName)
+        val qName = qPath.propertyInfos.qName
+        val entityJoin = joins[qName]
+        if (entityJoin != null) {
+            queryDslBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
         }
+        return qPath
     }
 
     override fun getJoins(filter: (EntityJoin) -> Boolean): Map<String, EntityJoin> {
         return joins.filter { filter(it.value) }
-    }
-
-    private fun getMapJoinPath(mapJoin: MapJoin<*, *, *>, attributeName: String): Path<*> {
-        return when (attributeName) {
-            MAP_KEY -> mapJoin.key()
-            MAP_VALUE -> mapJoin.value()
-            else -> throw IllegalArgumentException("The attribute name '$attributeName' is not authorized for a parent Map Join")
-        }
-    }
-
-    private fun getOrCreateJoin(from: From<*, *>, parentPath: String, attributeName: String): JoinImplementor<*, *> {
-        val entityClass = from.javaType
-
-        val field = entityClass.getDeclaredField(attributeName)
-
-        val joinName = EntityJoinUtils.getJoinName(entityClass, field)
-        val entityJoin = joins.getOrElse(joinName) {
-            EntityJoin(entityClass, parentPath, field)
-        }
-
-        for (join in from.joins) {
-            if (join.attribute.name == entityJoin.fieldName && join.joinType == entityJoin.joinType) {
-                return join as JoinImplementor<*, *>
-            }
-        }
-        for (join in from.fetches) {
-            if (join.attribute.name == entityJoin.fieldName && join.joinType == entityJoin.joinType) {
-                return join as JoinImplementor<*, *>
-            }
-        }
-
-        return createJoin(entityJoin, from, attributeName)
-    }
-
-    private fun createJoin(entityJoin: EntityJoin, from: From<*, *>, attributeName: String): JoinImplementor<*, *> {
-        val join = if (entityJoin.fetched) {
-            if (log.isDebugEnabled) log.debug("Creating a fetch join to the ${from.javaType.canonicalName}.$attributeName field using the join type ${entityJoin.joinType}")
-            from.fetch<Any, Any>(attributeName, entityJoin.joinType) as JoinImplementor<*, *>
-        } else {
-            if (log.isDebugEnabled) log.debug("Creating a join to the ${from.javaType.canonicalName}.$attributeName field using the join type ${entityJoin.joinType}")
-            from.join<Any, Any>(attributeName, entityJoin.joinType) as JoinImplementor<*, *>
-        }
-        return join
     }
 
 }

@@ -2,17 +2,15 @@ package com.weedow.spring.data.search.expression
 
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
+import com.querydsl.core.types.Predicate
 import com.weedow.spring.data.search.join.EntityJoins
+import com.weedow.spring.data.search.querydsl.QueryDslBuilder
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.data.jpa.domain.Specification
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Predicate
-import javax.persistence.criteria.Root
 
 @ExtendWith(MockitoExtension::class)
 internal class LogicalExpressionTest {
@@ -22,10 +20,8 @@ internal class LogicalExpressionTest {
 
     private lateinit var entityJoins: EntityJoins
 
-    private lateinit var root: Root<Any>
-    private lateinit var criteriaQuery: CriteriaQuery<*>
+    private lateinit var queryDslBuilder: QueryDslBuilder<Any>
 
-    private lateinit var criteriaBuilder: CriteriaBuilder
     private lateinit var mockPredicate1: Predicate
     private lateinit var mockPredicate2: Predicate
 
@@ -38,19 +34,17 @@ internal class LogicalExpressionTest {
     private fun setUpSpecification() {
         entityJoins = mock()
 
-        root = mock()
-        criteriaQuery = mock()
-        criteriaBuilder = mock()
+        queryDslBuilder = mock()
 
-        val mockSpecification1 = mock<Specification<Any>>()
-        whenever(mockExpression1.toSpecification<Any>(entityJoins)).thenReturn(mockSpecification1)
+        val mockSpecification1 = mock<QueryDslSpecification<Any>>()
+        whenever(mockExpression1.toQueryDslSpecification<Any>(entityJoins)).thenReturn(mockSpecification1)
         mockPredicate1 = mock(name = "mockPredicate1")
-        whenever(mockSpecification1.toPredicate(root, criteriaQuery, criteriaBuilder)).thenReturn(mockPredicate1)
+        whenever(mockSpecification1.toPredicate(queryDslBuilder)).thenReturn(mockPredicate1)
 
-        val mockSpecification2 = mock<Specification<Any>>()
-        whenever(mockExpression2.toSpecification<Any>(entityJoins)).thenReturn(mockSpecification2)
+        val mockSpecification2 = mock<QueryDslSpecification<Any>>()
+        whenever(mockExpression2.toQueryDslSpecification<Any>(entityJoins)).thenReturn(mockSpecification2)
         mockPredicate2 = mock(name = "mockPredicate2")
-        whenever(mockSpecification2.toPredicate(root, criteriaQuery, criteriaBuilder)).thenReturn(mockPredicate2)
+        whenever(mockSpecification2.toPredicate(queryDslBuilder)).thenReturn(mockPredicate2)
     }
 
     @Test
@@ -58,14 +52,12 @@ internal class LogicalExpressionTest {
         setUpSpecification()
 
         val predicate = mock<Predicate>()
-        val mockPredicateExpression1 = mockPredicate1 as javax.persistence.criteria.Expression<Boolean>
-        val mockPredicateExpression2 = mockPredicate2 as javax.persistence.criteria.Expression<Boolean>
-        whenever(criteriaBuilder.or(mockPredicateExpression2, mockPredicateExpression1)).thenReturn(predicate)
+        whenever(queryDslBuilder.or(mockPredicate1, mockPredicate2)).thenReturn(predicate)
 
         val expression = LogicalExpression(LogicalOperator.OR, listOf(mockExpression1, mockExpression2))
-        val specification = expression.toSpecification<Any>(entityJoins)
+        val specification = expression.toQueryDslSpecification<Any>(entityJoins)
 
-        val result = specification.toPredicate(root, criteriaQuery, criteriaBuilder)
+        val result = specification.toPredicate(queryDslBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }
@@ -75,14 +67,12 @@ internal class LogicalExpressionTest {
         setUpSpecification()
 
         val predicate = mock<Predicate>()
-        val mockPredicateExpression1 = mockPredicate1 as javax.persistence.criteria.Expression<Boolean>
-        val mockPredicateExpression2 = mockPredicate2 as javax.persistence.criteria.Expression<Boolean>
-        whenever(criteriaBuilder.and(mockPredicateExpression2, mockPredicateExpression1)).thenReturn(predicate)
+        whenever(queryDslBuilder.and(mockPredicate1, mockPredicate2)).thenReturn(predicate)
 
         val expression = LogicalExpression(LogicalOperator.AND, listOf(mockExpression1, mockExpression2))
-        val specification = expression.toSpecification<Any>(entityJoins)
+        val specification = expression.toQueryDslSpecification<Any>(entityJoins)
 
-        val result = specification.toPredicate(root, criteriaQuery, criteriaBuilder)
+        val result = specification.toPredicate(queryDslBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }

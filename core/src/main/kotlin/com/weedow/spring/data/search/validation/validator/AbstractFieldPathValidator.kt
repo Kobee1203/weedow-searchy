@@ -39,9 +39,11 @@ import com.weedow.spring.data.search.validation.DataSearchValidator
  *          .validators(EmailValidator("email", "job.email"))
  *          .build()
  * ```
+ *
+ * @param fieldPaths Field paths to validate
  */
 abstract class AbstractFieldPathValidator(
-        internal vararg val fieldPaths: String
+    internal vararg val fieldPaths: String
 ) : DataSearchValidator {
 
     override fun supports(fieldExpression: FieldExpression): Boolean {

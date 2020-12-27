@@ -13,7 +13,7 @@ internal class TypeReferenceTest {
     @Test
     fun testSimple() {
         val ref = object : TypeReference<List<String>>() {}
-        assertThat(ref).isNotNull()
+        assertThat(ref).isNotNull
         assertThat(ref.type.typeName).isEqualTo("java.util.List<? extends java.lang.String>")
     }
 

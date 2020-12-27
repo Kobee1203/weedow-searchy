@@ -12,7 +12,7 @@ internal class DataSearchValidatorTest {
     fun test_default_method_validate_single() {
         val validator = object : DataSearchValidator {}
 
-        assertThat(validator.supports(mock())).isTrue()
+        assertThat(validator.supports(mock())).isTrue
 
         validator.validateSingle(mock(), mock(), mock())
     }

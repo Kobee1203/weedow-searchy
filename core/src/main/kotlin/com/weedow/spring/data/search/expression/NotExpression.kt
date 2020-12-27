@@ -1,10 +1,12 @@
 package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.join.EntityJoins
-import org.springframework.data.jpa.domain.Specification
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
 
 /**
  * Expression to negate the given [expression].
+ *
+ * @param expression Expression to be negated
  */
 internal data class NotExpression(private val expression: Expression) : Expression {
 
@@ -12,8 +14,8 @@ internal data class NotExpression(private val expression: Expression) : Expressi
         return expression.toFieldExpressions(!negated)
     }
 
-    override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
-        return Specification.not(expression.toSpecification<T>(entityJoins))
+    override fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T> {
+        return QueryDslSpecification.not(expression.toQueryDslSpecification(entityJoins))
     }
 
 }

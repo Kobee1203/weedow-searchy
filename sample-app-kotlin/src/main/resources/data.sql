@@ -44,3 +44,12 @@ INSERT INTO PERSON_ADDRESS(person_id, address_id) VALUES (2, 2);
 
 INSERT INTO JOB(id, person_id, created_on, updated_on, active, title, company, salary, hire_date) VALUES (1, 1, '2020-03-12T10:36:00Z', '2020-04-17T12:00:00Z', true, 'Lab Technician', 'Acme', '50000', '2019-09-01T09:00:00Z');
 INSERT INTO JOB(id, person_id, created_on, updated_on, active, title, company, salary, hire_date) VALUES (2, 2, '2020-03-12T10:36:00Z', '2020-04-17T12:00:00Z', true, 'Commercial Fisherman', 'Fishing & Co', '60000', '2019-09-01T09:00:00Z');
+
+INSERT INTO TASK(id, created_on, updated_on, name, description) VALUES (1, '2020-12-06T12:00:00Z','2020-12-06T12:00:00Z','Go shopping', 'Go shopping with the family');
+INSERT INTO TASK(id, created_on, updated_on, name, description) VALUES (2, '2020-12-06T12:00:00Z','2020-12-06T12:00:00Z','Go to the doctor''s appointment', 'Go to the doctor''s appointment next Monday');
+INSERT INTO TASK(id, created_on, updated_on, name, description) VALUES (3, '2020-12-06T12:00:00Z','2020-12-06T12:00:00Z','Clean up the garage', null);
+
+INSERT INTO PERSON_TASKS(person_id, task_id, task_date) VALUES (1, 1, '2020-12-24T12:00:00Z');
+INSERT INTO PERSON_TASKS(person_id, task_id, task_date) VALUES (2, 1, '2020-12-24T12:00:00Z');
+INSERT INTO PERSON_TASKS(person_id, task_id, task_date) VALUES (1, 2, '2020-12-28T12:00:00Z');
+INSERT INTO PERSON_TASKS(person_id, task_id, task_date) VALUES (1, 3, '2020-12-30T12:00:00Z');

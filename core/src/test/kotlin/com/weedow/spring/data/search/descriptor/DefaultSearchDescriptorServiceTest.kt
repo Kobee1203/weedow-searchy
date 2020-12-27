@@ -4,11 +4,11 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.dto.DefaultDtoMapper
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
 @ExtendWith(MockitoExtension::class)
 internal class DefaultSearchDescriptorServiceTest {
@@ -24,7 +24,7 @@ internal class DefaultSearchDescriptorServiceTest {
         val searchDescriptor2 = object : SearchDescriptor<Person> {
             override val id = searchDescriptorId2
             override val entityClass = Person::class.java
-            override val jpaSpecificationExecutor = mock<JpaSpecificationExecutor<Person>>()
+            override val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<Person>? = null
         }
 
         val searchDescriptorService = DefaultSearchDescriptorService()

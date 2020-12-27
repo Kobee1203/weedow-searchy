@@ -22,13 +22,18 @@ import java.util.stream.Collectors
  *
  * This implementation uses transactions for any calls to methods of this class.
  * The transactions are `read-only` by default.
+ *
+ * @param searchDescriptorService [SearchDescriptorService]
+ * @param expressionMapper [ExpressionMapper]
+ * @param dataSearchValidationService [DataSearchValidationService]
+ * @param entitySearchService [EntitySearchService]
  */
 @Transactional(readOnly = true)
 class DataSearchServiceImpl(
-        private val searchDescriptorService: SearchDescriptorService,
-        private val expressionMapper: ExpressionMapper,
-        private val dataSearchValidationService: DataSearchValidationService,
-        private val entitySearchService: EntitySearchService
+    private val searchDescriptorService: SearchDescriptorService,
+    private val expressionMapper: ExpressionMapper,
+    private val dataSearchValidationService: DataSearchValidationService,
+    private val entitySearchService: EntitySearchService
 ) : DataSearchService {
 
     companion object {
@@ -36,7 +41,7 @@ class DataSearchServiceImpl(
     }
 
     init {
-        if (log.isDebugEnabled) log.debug("Initialized DataSearchService: {}", this)
+        if (log.isDebugEnabled) log.debug("Initialized DataSearchService: {}", this::class.qualifiedName)
     }
 
     /**
@@ -47,7 +52,7 @@ class DataSearchServiceImpl(
     override fun search(searchDescriptorId: String, params: Map<String, List<String>>): List<*> {
         // Find Entity Search Descriptor
         val searchDescriptor = searchDescriptorService.getSearchDescriptor(searchDescriptorId)
-                ?: throw SearchDescriptorNotFound(searchDescriptorId)
+            ?: throw SearchDescriptorNotFound(searchDescriptorId)
 
         return doSearch(params, searchDescriptor)
     }
@@ -70,8 +75,8 @@ class DataSearchServiceImpl(
         val dtoMapper = searchDescriptor.dtoMapper
 
         return entities.stream()
-                .map { entity -> dtoMapper.map(entity) }
-                .collect(Collectors.toList())
+            .map { entity -> dtoMapper.map(entity) }
+            .collect(Collectors.toList())
     }
 
 }

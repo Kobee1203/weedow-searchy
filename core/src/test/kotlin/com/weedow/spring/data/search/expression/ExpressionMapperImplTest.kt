@@ -32,7 +32,7 @@ internal class ExpressionMapperImplTest {
 
         val rootExpression = expressionMapper.toExpression(params, rootClass)
 
-        assertThat(rootExpression).isNotNull()
+        assertThat(rootExpression).isNotNull
         val expressions = (rootExpression as RootExpressionImpl<Person>).expressions
         assertThat(expressions).isEmpty()
 
@@ -55,7 +55,7 @@ internal class ExpressionMapperImplTest {
         val params = mapOf(fieldPath to fieldValues)
         val rootExpression = expressionMapper.toExpression(params, rootClass)
 
-        assertThat(rootExpression).isNotNull()
+        assertThat(rootExpression).isNotNull
         val expressions = (rootExpression as RootExpressionImpl<Person>).expressions
         assertThat(expressions).containsExactly(expression)
 
@@ -76,7 +76,7 @@ internal class ExpressionMapperImplTest {
         val params = mapOf(fieldPath to fieldValues)
         val rootExpression = expressionMapper.toExpression(params, rootClass)
 
-        assertThat(rootExpression).isNotNull()
+        assertThat(rootExpression).isNotNull
         val expressions = (rootExpression as RootExpressionImpl<Person>).expressions
         assertThat(expressions).containsExactly(expression)
 
@@ -106,16 +106,16 @@ internal class ExpressionMapperImplTest {
         whenever(expressionResolver.resolveExpression(rootClass, fieldPath2, fieldValues2, operator2, false)).thenReturn(expression2)
 
         val params = mapOf(
-                fieldPath1 to fieldValues1,
-                fieldPath2 to fieldValues2
+            fieldPath1 to fieldValues1,
+            fieldPath2 to fieldValues2
         )
         val rootExpression = expressionMapper.toExpression(params, rootClass)
 
-        assertThat(rootExpression).isNotNull()
+        assertThat(rootExpression).isNotNull
         val expressions = (rootExpression as RootExpressionImpl<Person>).expressions
         assertThat(expressions).containsExactly(
-                expression1,
-                expression2
+            expression1,
+            expression2
         )
 
         verifyZeroInteractions(expressionParser)
@@ -139,15 +139,15 @@ internal class ExpressionMapperImplTest {
         val fieldValues = listOf(query)
 
         val expression = ExpressionUtils.and(
-                ExpressionUtils.equals(FieldInfo(fieldPath1, fieldName1, parentClass1), fieldValues1),
-                ExpressionUtils.equals(FieldInfo(fieldPath2, fieldName2, parentClass2), fieldValues2)
+            ExpressionUtils.equals(FieldInfo(fieldPath1, fieldName1, parentClass1), fieldValues1),
+            ExpressionUtils.equals(FieldInfo(fieldPath2, fieldName2, parentClass2), fieldValues2)
         )
         whenever(expressionParser.parse(query, rootClass)).thenReturn(expression)
 
         val params = mapOf("query" to fieldValues)
         val rootExpression = expressionMapper.toExpression(params, rootClass)
 
-        assertThat(rootExpression).isNotNull()
+        assertThat(rootExpression).isNotNull
         val expressions = (rootExpression as RootExpressionImpl<Person>).expressions
         assertThat(expressions).containsExactly(expression)
 

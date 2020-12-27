@@ -11,7 +11,14 @@ class SyntaxErrorListenerImpl : SyntaxErrorListener, BaseErrorListener() {
 
     override val syntaxErrors: MutableList<SyntaxError> = mutableListOf()
 
-    override fun syntaxError(recognizer: Recognizer<*, *>, offendingSymbol: Any, line: Int, charPositionInLine: Int, msg: String, e: RecognitionException) {
+    override fun syntaxError(
+        recognizer: Recognizer<*, *>,
+        offendingSymbol: Any,
+        line: Int,
+        charPositionInLine: Int,
+        msg: String,
+        e: RecognitionException
+    ) {
         syntaxErrors.add(SyntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e))
     }
 

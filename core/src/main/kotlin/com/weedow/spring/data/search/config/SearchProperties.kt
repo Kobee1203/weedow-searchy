@@ -10,13 +10,13 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
 @ConstructorBinding
 @ConfigurationProperties(prefix = "spring.data.search")
 data class SearchProperties(
-        /**
-         * Base path to be used by Spring Data Search to expose data search resources. Default is '/search'.
-         */
-        val basePath: String = DEFAULT_BASE_PATH,
+    /**
+     * Base path to be used by Spring Data Search to expose data search resources. Default is '/search'.
+     */
+    val basePath: String = DEFAULT_BASE_PATH,
 
-        @NestedConfigurationProperty
-        val defaultAliasResolver: DefaultAliasResolver = DefaultAliasResolver()
+    @NestedConfigurationProperty
+    val defaultAliasResolver: DefaultAliasResolver = DefaultAliasResolver()
 ) {
     companion object {
         /** Default Base Path */
@@ -26,8 +26,11 @@ data class SearchProperties(
 
 @ConstructorBinding
 data class DefaultAliasResolver(
-        /** Comma-separated list of field suffixes to be removed in order to create a field's alias from the com.weedow.spring.data.search.config.DefaultAliasResolver. Default is `Entity,Entities` */
-        val fieldSuffixes: List<String> = FIELD_SUFFIXES
+    /**
+     * Comma-separated list of field suffixes to be removed in order to create a field's alias from the [DefaultAliasResolver].
+     * Default is `Entity,Entities
+     */
+    val fieldSuffixes: List<String> = FIELD_SUFFIXES
 ) {
 
     companion object {
@@ -35,8 +38,8 @@ data class DefaultAliasResolver(
          * Default Field suffixes to be removed
          */
         private val FIELD_SUFFIXES = listOf(
-                "Entity",
-                "Entities"
+            "Entity",
+            "Entities"
         )
     }
 }

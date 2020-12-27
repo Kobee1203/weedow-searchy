@@ -11,7 +11,6 @@ enum class Operator {
     LESS_THAN_OR_EQUALS,
     GREATER_THAN,
     GREATER_THAN_OR_EQUALS,
-    // BETWEEN, // Not Necessary, we use LESS_THAN AND GREATER_THAN
     IN
 }
 

@@ -8,7 +8,7 @@ import com.weedow.spring.data.search.expression.ExpressionResolver
  * @param expressionResolver [ExpressionResolver] used by the parser to resolve the Expressions from the query
  */
 class ExpressionParserVisitorFactoryImpl(
-        private val expressionResolver: ExpressionResolver
+    private val expressionResolver: ExpressionResolver
 ) : ExpressionParserVisitorFactory {
 
     override fun getExpressionParserVisitor(rootClass: Class<*>): ExpressionParserVisitor {

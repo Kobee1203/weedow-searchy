@@ -1,7 +1,7 @@
 package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.join.EntityJoins
-import org.springframework.data.jpa.domain.Specification
+import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
 
 /**
  * Interface to represent a query Expression.
@@ -17,11 +17,11 @@ interface Expression {
     fun toFieldExpressions(negated: Boolean): Collection<FieldExpression>
 
     /**
-     * Converts this Expression to a [Specification].
+     * Converts this Expression to a [QueryDslSpecification].
      *
-     * @param entityJoins
-     * @return [Specification] instance
+     * @param entityJoins [EntityJoins] instance
+     * @return [QueryDslSpecification] instance
      */
-    fun <T> toSpecification(entityJoins: EntityJoins): Specification<T>
+    fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T>
 
 }
