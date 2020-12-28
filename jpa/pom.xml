@@ -8,14 +8,9 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>spring-data-search-core</artifactId>
-    <name>spring-data-search-core</name>
-    <description>Spring Data Search Core Library</description>
-
-    <properties>
-        <!-- Dependencies versions -->
-        <jakarta.persistence-api.version>2.2.3</jakarta.persistence-api.version>
-    </properties>
+    <artifactId>spring-data-search-jpa</artifactId>
+    <name>spring-data-search-jpa</name>
+    <description>Spring Data Search JPA implementation</description>
 
     <dependencies>
         <dependency>
@@ -30,37 +25,18 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webflux</artifactId>
-            <optional>true</optional>
+            <groupId>com.weedow</groupId>
+            <artifactId>spring-data-search-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-core</artifactId>
+            <artifactId>querydsl-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-collections</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
         <dependency>
@@ -83,21 +59,11 @@
             <artifactId>commons-beanutils</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
-        </dependency>
-
         <!-- Testing Dependencies -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -119,21 +85,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-            <!--<scope>test</scope>--><!--After JPA migration into the 'jpa' module, define this library as scope 'test' -->
-        </dependency>
-        <!-- After JPA migration into the 'jpa' module, remove the following dependencies -->
-        <dependency>
-            <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -141,30 +92,6 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr4-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>antlr4</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <listener>true</listener>
-                    <visitor>true</visitor>
-                    <outputDirectory>${project.build.directory}/generated-sources/antlr4</outputDirectory>
-                    <arguments>
-                        <!-- antlr4-maven-plugin confuses package and outputDirectory: https://github.com/antlr/antlr4/issues/2738 -->
-                        <argument>-package</argument>
-                        <argument>com.weedow.spring.data.search.expression.parser</argument>
-                        <argument>-o</argument>
-                        <argument>${project.build.directory}/generated-sources/antlr4/com/weedow/spring/data/search/expression/parser</argument>
-                    </arguments>
-                </configuration>
             </plugin>
         </plugins>
     </build>
