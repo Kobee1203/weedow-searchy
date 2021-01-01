@@ -1,7 +1,7 @@
 package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.join.EntityJoins
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
+import com.weedow.spring.data.search.query.specification.Specification
 
 /**
  * Logical Expression represented by the logical operators [AND][LogicalOperator.AND] and [OR][LogicalOperator.OR] that specify the relationship between [expressions].
@@ -18,14 +18,14 @@ internal data class LogicalExpression(
         return expressions.flatMap { it.toFieldExpressions(negated).toList() }
     }
 
-    override fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T> {
-        var lastSpecification = QueryDslSpecification.where<T>(null)
+    override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
+        var lastSpecification = Specification.where<T>(null)
         expressions.forEach { expression ->
-            val specification = expression.toQueryDslSpecification<T>(entityJoins)
+            val specification = expression.toSpecification<T>(entityJoins)
             lastSpecification =
                 if (logicalOperator == LogicalOperator.OR) lastSpecification.or(specification) else lastSpecification.and(specification)
         }
-        return QueryDslSpecification.where(lastSpecification)
+        return Specification.where(lastSpecification)
     }
 
 }

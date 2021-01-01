@@ -4,8 +4,8 @@ import com.querydsl.core.types.Path
 import com.querydsl.core.types.Predicate
 import com.weedow.spring.data.search.expression.Operator.*
 import com.weedow.spring.data.search.join.EntityJoins
-import com.weedow.spring.data.search.querydsl.QueryDslBuilder
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
+import com.weedow.spring.data.search.query.QueryBuilder
+import com.weedow.spring.data.search.query.specification.Specification
 import com.weedow.spring.data.search.utils.NullValue
 
 /**
@@ -25,8 +25,8 @@ internal data class SimpleExpression(
         return listOf(FieldExpressionImpl(fieldInfo, value, operator, negated))
     }
 
-    override fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T> {
-        return QueryDslSpecification { builder: QueryDslBuilder<T> ->
+    override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
+        return Specification { builder: QueryBuilder<T> ->
             val qpath = entityJoins.getQPath(fieldInfo.fieldPath, builder.qEntityRoot, builder)
 
             when (operator) {
@@ -42,40 +42,40 @@ internal data class SimpleExpression(
         }
     }
 
-    private fun equals(queryDslBuilder: QueryDslBuilder<*>, path: Path<*>, value: Any): Predicate {
+    private fun equals(queryBuilder: QueryBuilder<*>, path: Path<*>, value: Any): Predicate {
         return if (value === NullValue) {
-            queryDslBuilder.isNull(path)
+            queryBuilder.isNull(path)
         } else {
-            queryDslBuilder.equal(path, value)
+            queryBuilder.equal(path, value)
         }
     }
 
-    private fun like(queryDslBuilder: QueryDslBuilder<*>, path: Path<String>, value: String): Predicate {
-        return queryDslBuilder.like(path, value)
+    private fun like(queryBuilder: QueryBuilder<*>, path: Path<String>, value: String): Predicate {
+        return queryBuilder.like(path, value)
     }
 
-    private fun ilike(queryDslBuilder: QueryDslBuilder<*>, path: Path<String>, value: String): Predicate {
-        return queryDslBuilder.ilike(path, value)
+    private fun ilike(queryBuilder: QueryBuilder<*>, path: Path<String>, value: String): Predicate {
+        return queryBuilder.ilike(path, value)
     }
 
-    private fun lessThan(queryDslBuilder: QueryDslBuilder<*>, path: Path<*>, value: Any): Predicate {
-        return queryDslBuilder.lessThan(path, value)
+    private fun lessThan(queryBuilder: QueryBuilder<*>, path: Path<*>, value: Any): Predicate {
+        return queryBuilder.lessThan(path, value)
     }
 
-    private fun lessThanOrEquals(queryDslBuilder: QueryDslBuilder<*>, path: Path<*>, value: Any): Predicate {
-        return queryDslBuilder.lessThanOrEquals(path, value)
+    private fun lessThanOrEquals(queryBuilder: QueryBuilder<*>, path: Path<*>, value: Any): Predicate {
+        return queryBuilder.lessThanOrEquals(path, value)
     }
 
-    private fun greaterThan(queryDslBuilder: QueryDslBuilder<*>, path: Path<*>, value: Any): Predicate {
-        return queryDslBuilder.greaterThan(path, value)
+    private fun greaterThan(queryBuilder: QueryBuilder<*>, path: Path<*>, value: Any): Predicate {
+        return queryBuilder.greaterThan(path, value)
     }
 
-    private fun greaterThanOrEquals(queryDslBuilder: QueryDslBuilder<*>, path: Path<*>, value: Any): Predicate {
-        return queryDslBuilder.greaterThanOrEquals(path, value)
+    private fun greaterThanOrEquals(queryBuilder: QueryBuilder<*>, path: Path<*>, value: Any): Predicate {
+        return queryBuilder.greaterThanOrEquals(path, value)
     }
 
-    private fun inPredicate(queryDslBuilder: QueryDslBuilder<*>, path: Path<*>, value: Collection<*>): Predicate {
-        return queryDslBuilder.`in`(path, value)
+    private fun inPredicate(queryBuilder: QueryBuilder<*>, path: Path<*>, value: Collection<*>): Predicate {
+        return queryBuilder.`in`(path, value)
     }
 
 }

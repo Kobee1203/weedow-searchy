@@ -28,7 +28,7 @@
 
         <dependency>
             <groupId>com.weedow</groupId>
-            <artifactId>spring-data-search-core</artifactId>
+            <artifactId>spring-data-search-jpa</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

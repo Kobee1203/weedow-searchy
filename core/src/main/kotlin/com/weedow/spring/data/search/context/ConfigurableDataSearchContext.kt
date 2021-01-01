@@ -1,6 +1,6 @@
 package com.weedow.spring.data.search.context
 
-import com.weedow.spring.data.search.querydsl.querytype.QEntity
+import com.weedow.spring.data.search.query.querytype.QEntity
 
 /**
  * Configuration interface to be implemented by most if not all [DataSearchContext] types.

@@ -2,7 +2,7 @@ package com.weedow.spring.data.search.join.handler
 
 import com.querydsl.core.JoinType
 import com.weedow.spring.data.search.join.JoinInfo
-import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
+import com.weedow.spring.data.search.query.querytype.PropertyInfos
 
 /**
  * [EntityJoinHandler] implementation to fetch all fields (entity fields and nested fields included) with any Join Annotation.

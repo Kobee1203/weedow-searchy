@@ -1,9 +1,8 @@
 package com.weedow.spring.data.search.descriptor
 
-import com.weedow.spring.data.search.dto.DefaultDtoMapper
 import com.weedow.spring.data.search.dto.DtoMapper
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutor
+import com.weedow.spring.data.search.query.specification.SpecificationExecutor
 import com.weedow.spring.data.search.validation.DataSearchValidator
 
 /**
@@ -78,21 +77,19 @@ interface SearchDescriptor<T> {
      * @param <R> represents the DTO type
      * @return DTO Object
      */
-    @JvmDefault
-    val dtoMapper: DtoMapper<T, *>
-        get() = DefaultDtoMapper()
+    val dtoMapper: DtoMapper<T, *>?
 
     /**
-     * Returns the [QueryDslSpecificationExecutor] to search the entities.
+     * Returns the [SpecificationExecutor] to search the entities.
      *
      * If it's not defined, it will be identified automatically by the instance of
-     * [QueryDslSpecificationExecutorFactory][com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory].
+     * [SpecificationExecutorFactory][com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory].
      *
-     * @return QueryDslSpecificationExecutor
-     * @see QueryDslSpecificationExecutor
-     * @see com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory
+     * @return SpecificationExecutor
+     * @see SpecificationExecutor
+     * @see com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory
      */
-    val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<T>?
+    val specificationExecutor: SpecificationExecutor<T>?
 
     /**
      * Return list of [EntityJoinHandlers][EntityJoinHandler] to handle the entity joins.

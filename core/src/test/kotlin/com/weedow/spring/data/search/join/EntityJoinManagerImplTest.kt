@@ -7,9 +7,9 @@ import com.querydsl.core.types.dsl.StringPath
 import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
-import com.weedow.spring.data.search.querydsl.querytype.ElementType
-import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
-import com.weedow.spring.data.search.querydsl.querytype.QEntityImpl
+import com.weedow.spring.data.search.query.querytype.ElementType
+import com.weedow.spring.data.search.query.querytype.PropertyInfos
+import com.weedow.spring.data.search.query.querytype.QEntityImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

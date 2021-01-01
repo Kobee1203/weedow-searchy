@@ -19,7 +19,7 @@ class ExpressionParserException(
     companion object {
         private fun format(errors: Collection<SyntaxError>): String {
             return errors.joinToString(separator = ",\n", prefix = "Syntax Errors: [\n", postfix = "\n]") {
-                "line ${it.line}:${it.charPositionInLine} ${it.message} - ${it.offendingSymbol}"
+                "${it.recognizer.grammarFileName}: ${it.exception.javaClass.name} - line ${it.line}:${it.charPositionInLine} ${it.message} - ${it.offendingSymbol}"
             }
         }
     }

@@ -515,6 +515,16 @@ internal class ExpressionParserVisitorImplTest {
         verifyNoMoreInteractions(ctx)
     }
 
+    @Test
+    fun visitBetween_expression() {
+        val ctx = mock<QueryParser.Between_expressionContext>()
+        assertThatThrownBy { expressionParserVisitor.visitBetween_expression(ctx) }
+            .isInstanceOf(NotImplementedError::class.java)
+            .hasMessage("BETWEEN OPERATOR IS NOT YET IMPLEMENTED")
+
+        verifyZeroInteractions(ctx)
+    }
+
     private fun mock(
         fieldPath: String,
         value: String,

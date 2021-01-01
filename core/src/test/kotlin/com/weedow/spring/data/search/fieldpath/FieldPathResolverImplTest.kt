@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 internal class FieldPathResolverImplTest {
 
     @Mock
-    lateinit var aliasResolutionService: AliasResolutionService
+    private lateinit var aliasResolutionService: AliasResolutionService
 
     @InjectMocks
     lateinit var fieldPathResolver: FieldPathResolverImpl

@@ -2,8 +2,8 @@ package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.join.EntityJoin
 import com.weedow.spring.data.search.join.EntityJoins
-import com.weedow.spring.data.search.querydsl.QueryDslBuilder
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
+import com.weedow.spring.data.search.query.QueryBuilder
+import com.weedow.spring.data.search.query.specification.Specification
 
 /**
  * Default [RootExpression] implementation.
@@ -23,8 +23,8 @@ class RootExpressionImpl<T>(
         return expressions.flatMap { it.toFieldExpressions(negated).toList() }
     }
 
-    override fun <T> toQueryDslSpecification(entityJoins: EntityJoins): QueryDslSpecification<T> {
-        var specification = QueryDslSpecification { builder: QueryDslBuilder<T> ->
+    override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
+        var specification = Specification { builder: QueryBuilder<T> ->
             builder.distinct()
 
             val fetchJoins = entityJoins.getJoins(FILTER_FETCH_JOINS)
@@ -32,10 +32,10 @@ class RootExpressionImpl<T>(
                 entityJoins.getQPath(it.fieldPath, builder.qEntityRoot, builder)
             }
 
-            QueryDslSpecification.NO_PREDICATE
+            Specification.NO_PREDICATE
         }
 
-        expressions.forEach { specification = specification.and(it.toQueryDslSpecification(entityJoins)) }
+        expressions.forEach { specification = specification.and(it.toSpecification(entityJoins)) }
 
         return specification
     }

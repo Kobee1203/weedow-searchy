@@ -5,9 +5,9 @@ import com.querydsl.core.JoinType
 import com.querydsl.core.types.Predicate
 import com.weedow.spring.data.search.join.EntityJoin
 import com.weedow.spring.data.search.join.EntityJoins
-import com.weedow.spring.data.search.querydsl.QueryDslBuilder
-import com.weedow.spring.data.search.querydsl.querytype.QEntityRoot
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
+import com.weedow.spring.data.search.query.QueryBuilder
+import com.weedow.spring.data.search.query.querytype.QEntityRoot
+import com.weedow.spring.data.search.query.specification.Specification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -21,18 +21,18 @@ internal class RootExpressionImplTest {
         val entityJoins = mock<EntityJoins>()
         whenever(entityJoins.getJoins(RootExpressionImpl.FILTER_FETCH_JOINS)).thenReturn(emptyMap())
 
-        val queryDslBuilder = mock<QueryDslBuilder<Any>>()
+        val queryBuilder = mock<QueryBuilder<Any>>()
 
         val rootExpression = RootExpressionImpl<Any>()
-        val specification = rootExpression.toQueryDslSpecification<Any>(entityJoins)
+        val specification = rootExpression.toSpecification<Any>(entityJoins)
 
-        val predicate = specification.toPredicate(queryDslBuilder)
+        val predicate = specification.toPredicate(queryBuilder)
 
-        assertThat(predicate).isEqualTo(QueryDslSpecification.NO_PREDICATE)
+        assertThat(predicate).isEqualTo(Specification.NO_PREDICATE)
 
-        verify(entityJoins, never()).getQPath(any(), any(), eq(queryDslBuilder))
-        verify(queryDslBuilder).distinct()
-        verifyNoMoreInteractions(queryDslBuilder)
+        verify(entityJoins, never()).getQPath(any(), any(), eq(queryBuilder))
+        verify(queryBuilder).distinct()
+        verifyNoMoreInteractions(queryBuilder)
     }
 
     @Test
@@ -40,32 +40,32 @@ internal class RootExpressionImplTest {
         val entityJoins = mock<EntityJoins>()
         whenever(entityJoins.getJoins(RootExpressionImpl.FILTER_FETCH_JOINS)).thenReturn(emptyMap())
 
-        val queryDslBuilder = mock<QueryDslBuilder<Any>>()
+        val queryBuilder = mock<QueryBuilder<Any>>()
 
         val expression1 = mock<Expression>()
-        val specification1 = mock<QueryDslSpecification<Any>>()
-        whenever(expression1.toQueryDslSpecification<Any>(entityJoins)).thenReturn(specification1)
+        val specification1 = mock<Specification<Any>>()
+        whenever(expression1.toSpecification<Any>(entityJoins)).thenReturn(specification1)
         val predicate1 = mock<Predicate>()
-        whenever(specification1.toPredicate(queryDslBuilder)).thenReturn(predicate1)
+        whenever(specification1.toPredicate(queryBuilder)).thenReturn(predicate1)
         val expression2 = mock<Expression>()
-        val specification2 = mock<QueryDslSpecification<Any>>()
-        whenever(expression2.toQueryDslSpecification<Any>(entityJoins)).thenReturn(specification2)
+        val specification2 = mock<Specification<Any>>()
+        whenever(expression2.toSpecification<Any>(entityJoins)).thenReturn(specification2)
         val predicate2 = mock<Predicate>()
-        whenever(specification2.toPredicate(queryDslBuilder)).thenReturn(predicate2)
+        whenever(specification2.toPredicate(queryBuilder)).thenReturn(predicate2)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.and(predicate1, predicate2)).thenReturn(predicate)
+        whenever(queryBuilder.and(predicate1, predicate2)).thenReturn(predicate)
 
         val rootExpression = RootExpressionImpl<Any>(expression1, expression2)
-        val specification = rootExpression.toQueryDslSpecification<Any>(entityJoins)
+        val specification = rootExpression.toSpecification<Any>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
 
-        verify(entityJoins, never()).getQPath(any(), any(), eq(queryDslBuilder))
-        verify(queryDslBuilder).distinct()
-        verifyNoMoreInteractions(queryDslBuilder)
+        verify(entityJoins, never()).getQPath(any(), any(), eq(queryBuilder))
+        verify(queryBuilder).distinct()
+        verifyNoMoreInteractions(queryBuilder)
     }
 
     @Test
@@ -80,21 +80,21 @@ internal class RootExpressionImplTest {
         whenever(entityJoins.getJoins(RootExpressionImpl.FILTER_FETCH_JOINS)).thenReturn(fetchJoins)
 
         val qEntityRoot = mock<QEntityRoot<Any>>()
-        val queryDslBuilder = mock<QueryDslBuilder<Any>> {
+        val queryBuilder = mock<QueryBuilder<Any>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
         val rootExpression = RootExpressionImpl<Any>()
-        val specification = rootExpression.toQueryDslSpecification<Any>(entityJoins)
+        val specification = rootExpression.toSpecification<Any>(entityJoins)
 
-        val predicate = specification.toPredicate(queryDslBuilder)
+        val predicate = specification.toPredicate(queryBuilder)
 
-        assertThat(predicate).isEqualTo(QueryDslSpecification.NO_PREDICATE)
+        assertThat(predicate).isEqualTo(Specification.NO_PREDICATE)
 
-        verify(entityJoins).getQPath(fieldPath1, qEntityRoot, queryDslBuilder)
-        verify(entityJoins).getQPath(fieldPath2, qEntityRoot, queryDslBuilder)
-        verify(queryDslBuilder).distinct()
-        verifyNoMoreInteractions(queryDslBuilder)
+        verify(entityJoins).getQPath(fieldPath1, qEntityRoot, queryBuilder)
+        verify(entityJoins).getQPath(fieldPath2, qEntityRoot, queryBuilder)
+        verify(queryBuilder).distinct()
+        verifyNoMoreInteractions(queryBuilder)
     }
 
     @Test

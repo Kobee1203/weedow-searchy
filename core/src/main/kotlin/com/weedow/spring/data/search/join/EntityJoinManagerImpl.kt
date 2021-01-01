@@ -4,7 +4,7 @@ import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.join.handler.DefaultEntityJoinHandler
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
-import com.weedow.spring.data.search.querydsl.querytype.ElementType
+import com.weedow.spring.data.search.query.querytype.ElementType
 import com.weedow.spring.data.search.utils.klogger
 import java.util.*
 

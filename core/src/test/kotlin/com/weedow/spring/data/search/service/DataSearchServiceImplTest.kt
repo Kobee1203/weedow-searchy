@@ -5,6 +5,7 @@ import com.weedow.spring.data.search.common.dto.PersonDto
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
+import com.weedow.spring.data.search.dto.DtoConverterService
 import com.weedow.spring.data.search.example.PersonDtoMapper
 import com.weedow.spring.data.search.exception.SearchDescriptorNotFound
 import com.weedow.spring.data.search.exception.ValidationException
@@ -27,19 +28,22 @@ import org.springframework.util.LinkedMultiValueMap
 internal class DataSearchServiceImplTest {
 
     @Mock
-    lateinit var searchDescriptorService: SearchDescriptorService
+    private lateinit var searchDescriptorService: SearchDescriptorService
 
     @Mock
-    lateinit var expressionMapper: ExpressionMapper
+    private lateinit var expressionMapper: ExpressionMapper
 
     @Mock
-    lateinit var dataSearchValidationService: DataSearchValidationService
+    private lateinit var dataSearchValidationService: DataSearchValidationService
 
     @Mock
-    lateinit var entitySearchService: EntitySearchService
+    private lateinit var entitySearchService: EntitySearchService
+
+    @Mock
+    private lateinit var dtoConverterService: DtoConverterService<Person, *>
 
     @InjectMocks
-    lateinit var dataSearchService: DataSearchServiceImpl
+    lateinit var dataSearchService: DataSearchServiceImpl<*, *>
 
     @Test
     fun findAll() {
@@ -52,7 +56,6 @@ internal class DataSearchServiceImplTest {
 
         val searchDescriptor = mock<SearchDescriptor<Person>> {
             on { this.entityClass }.doReturn(rootClass)
-            on { this.dtoMapper }.thenCallRealMethod()
         }
         whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
 
@@ -63,42 +66,15 @@ internal class DataSearchServiceImplTest {
         whenever(rootExpression.toFieldExpressions(false)).thenReturn(fieldExpressions)
 
         val person = Person("John", "Doe")
-        whenever(entitySearchService.findAll(rootExpression, searchDescriptor)).thenReturn(listOf(person))
+        val entities = listOf(person)
+        whenever(entitySearchService.findAll(rootExpression, searchDescriptor)).thenReturn(entities)
+
+        val dtos = listOf<Any>(mock())
+        whenever(dtoConverterService.convert(entities, searchDescriptor)).thenReturn(dtos)
 
         val result = dataSearchService.search(searchDescriptorId, params)
 
-        assertThat(result).containsExactly(person)
-
-        verify(dataSearchValidationService).validate(fieldExpressions, searchDescriptor)
-    }
-
-    @Test
-    fun findAll_with_custom_dto() {
-        val searchDescriptorId = "person"
-        val params = mutableMapOf(
-            "firstName" to listOf("John")
-        )
-
-        val rootClass = Person::class.java
-
-        val searchDescriptor = mock<SearchDescriptor<Person>> {
-            on { this.entityClass }.doReturn(rootClass)
-            on { this.dtoMapper }.doReturn(PersonDtoMapper())
-        }
-        whenever(searchDescriptorService.getSearchDescriptor(searchDescriptorId)).thenReturn(searchDescriptor)
-
-        val rootExpression = mock<RootExpression<Person>>()
-        whenever(expressionMapper.toExpression(params, rootClass)).thenReturn(rootExpression)
-
-        val fieldExpressions = mock<Collection<FieldExpression>>()
-        whenever(rootExpression.toFieldExpressions(false)).thenReturn(fieldExpressions)
-
-        val person = Person("John", "Doe")
-        whenever(entitySearchService.findAll(rootExpression, searchDescriptor)).thenReturn(listOf(person))
-
-        val result = dataSearchService.search(searchDescriptorId, params)
-
-        assertThat(result).containsExactly(PersonDto.Builder().firstName("John").lastName("Doe").build())
+        assertThat(result).isSameAs(dtos)
 
         verify(dataSearchValidationService).validate(fieldExpressions, searchDescriptor)
     }

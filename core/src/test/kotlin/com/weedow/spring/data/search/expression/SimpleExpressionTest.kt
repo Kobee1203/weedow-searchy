@@ -6,9 +6,9 @@ import com.querydsl.core.types.Path
 import com.querydsl.core.types.Predicate
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.join.EntityJoins
-import com.weedow.spring.data.search.querydsl.QueryDslBuilder
-import com.weedow.spring.data.search.querydsl.querytype.QEntityRoot
-import com.weedow.spring.data.search.querydsl.querytype.QPath
+import com.weedow.spring.data.search.query.QueryBuilder
+import com.weedow.spring.data.search.query.querytype.QEntityRoot
+import com.weedow.spring.data.search.query.querytype.QPath
 import com.weedow.spring.data.search.utils.NullValue
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.groups.Tuple
@@ -30,7 +30,7 @@ internal class SimpleExpressionTest {
         val entityJoins = mock<EntityJoins>()
 
         val qEntityRoot = mock<QEntityRoot<Person>>()
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
@@ -38,15 +38,15 @@ internal class SimpleExpressionTest {
         val qPath = mock<QPath<*>> {
             on { this.path }.thenReturn(path)
         }
-        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryDslBuilder)).thenReturn(qPath)
+        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryBuilder)).thenReturn(qPath)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.equal(path, fieldValue)).thenReturn(predicate)
+        whenever(queryBuilder.equal(path, fieldValue)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue)
-        val specification = expression.toQueryDslSpecification<Person>(entityJoins)
+        val specification = expression.toSpecification<Person>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }
@@ -60,7 +60,7 @@ internal class SimpleExpressionTest {
         val entityJoins = mock<EntityJoins>()
 
         val qEntityRoot = mock<QEntityRoot<Person>>()
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
@@ -68,15 +68,15 @@ internal class SimpleExpressionTest {
         val qPath = mock<QPath<*>> {
             on { this.path }.thenReturn(path)
         }
-        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryDslBuilder)).thenReturn(qPath)
+        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryBuilder)).thenReturn(qPath)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.isNull(path)).thenReturn(predicate)
+        whenever(queryBuilder.isNull(path)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue)
-        val specification = expression.toQueryDslSpecification<Person>(entityJoins)
+        val specification = expression.toSpecification<Person>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }
@@ -90,7 +90,7 @@ internal class SimpleExpressionTest {
         val entityJoins = mock<EntityJoins>()
 
         val qEntityRoot = mock<QEntityRoot<Person>>()
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
@@ -98,15 +98,15 @@ internal class SimpleExpressionTest {
         val qPath = mock<QPath<*>> {
             on { this.path }.thenReturn(path)
         }
-        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryDslBuilder)).thenReturn(qPath)
+        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryBuilder)).thenReturn(qPath)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.like(path, fieldValue)).thenReturn(predicate)
+        whenever(queryBuilder.like(path, fieldValue)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.MATCHES, fieldInfo, fieldValue)
-        val specification = expression.toQueryDslSpecification<Person>(entityJoins)
+        val specification = expression.toSpecification<Person>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }
@@ -120,7 +120,7 @@ internal class SimpleExpressionTest {
         val entityJoins = mock<EntityJoins>()
 
         val qEntityRoot = mock<QEntityRoot<Person>>()
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
@@ -128,15 +128,15 @@ internal class SimpleExpressionTest {
         val qPath = mock<QPath<String>> {
             on { this.path }.thenReturn(path)
         }
-        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryDslBuilder)).thenReturn(qPath)
+        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryBuilder)).thenReturn(qPath)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.ilike(path, fieldValue)).thenReturn(predicate)
+        whenever(queryBuilder.ilike(path, fieldValue)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.IMATCHES, fieldInfo, fieldValue)
-        val specification = expression.toQueryDslSpecification<Person>(entityJoins)
+        val specification = expression.toSpecification<Person>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }
@@ -150,7 +150,7 @@ internal class SimpleExpressionTest {
         val entityJoins = mock<EntityJoins>()
 
         val qEntityRoot = mock<QEntityRoot<Person>>()
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
@@ -158,15 +158,15 @@ internal class SimpleExpressionTest {
         val qPath = mock<QPath<*>> {
             on { this.path }.thenReturn(path)
         }
-        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryDslBuilder)).thenReturn(qPath)
+        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryBuilder)).thenReturn(qPath)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.lessThan(path, fieldValue)).thenReturn(predicate)
+        whenever(queryBuilder.lessThan(path, fieldValue)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.LESS_THAN, fieldInfo, fieldValue)
-        val specification = expression.toQueryDslSpecification<Person>(entityJoins)
+        val specification = expression.toSpecification<Person>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }
@@ -180,7 +180,7 @@ internal class SimpleExpressionTest {
         val entityJoins = mock<EntityJoins>()
 
         val qEntityRoot = mock<QEntityRoot<Person>>()
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
@@ -188,15 +188,15 @@ internal class SimpleExpressionTest {
         val qPath = mock<QPath<*>> {
             on { this.path }.thenReturn(path)
         }
-        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryDslBuilder)).thenReturn(qPath)
+        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryBuilder)).thenReturn(qPath)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.lessThanOrEquals(path, fieldValue)).thenReturn(predicate)
+        whenever(queryBuilder.lessThanOrEquals(path, fieldValue)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.LESS_THAN_OR_EQUALS, fieldInfo, fieldValue)
-        val specification = expression.toQueryDslSpecification<Person>(entityJoins)
+        val specification = expression.toSpecification<Person>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }
@@ -210,7 +210,7 @@ internal class SimpleExpressionTest {
         val entityJoins = mock<EntityJoins>()
 
         val qEntityRoot = mock<QEntityRoot<Person>>()
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
@@ -218,15 +218,15 @@ internal class SimpleExpressionTest {
         val qPath = mock<QPath<*>> {
             on { this.path }.thenReturn(path)
         }
-        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryDslBuilder)).thenReturn(qPath)
+        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryBuilder)).thenReturn(qPath)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.greaterThan(path, fieldValue)).thenReturn(predicate)
+        whenever(queryBuilder.greaterThan(path, fieldValue)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.GREATER_THAN, fieldInfo, fieldValue)
-        val specification = expression.toQueryDslSpecification<Person>(entityJoins)
+        val specification = expression.toSpecification<Person>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }
@@ -240,7 +240,7 @@ internal class SimpleExpressionTest {
         val entityJoins = mock<EntityJoins>()
 
         val qEntityRoot = mock<QEntityRoot<Person>>()
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
@@ -248,15 +248,15 @@ internal class SimpleExpressionTest {
         val qPath = mock<QPath<*>> {
             on { this.path }.thenReturn(path)
         }
-        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryDslBuilder)).thenReturn(qPath)
+        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryBuilder)).thenReturn(qPath)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.greaterThanOrEquals(path, fieldValue)).thenReturn(predicate)
+        whenever(queryBuilder.greaterThanOrEquals(path, fieldValue)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.GREATER_THAN_OR_EQUALS, fieldInfo, fieldValue)
-        val specification = expression.toQueryDslSpecification<Person>(entityJoins)
+        val specification = expression.toSpecification<Person>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }
@@ -272,7 +272,7 @@ internal class SimpleExpressionTest {
         val entityJoins = mock<EntityJoins>()
 
         val qEntityRoot = mock<QEntityRoot<Person>>()
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             on { this.qEntityRoot }.thenReturn(qEntityRoot)
         }
 
@@ -280,15 +280,15 @@ internal class SimpleExpressionTest {
         val qPath = mock<QPath<*>> {
             on { this.path }.thenReturn(path)
         }
-        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryDslBuilder)).thenReturn(qPath)
+        whenever(entityJoins.getQPath(fieldInfo.fieldPath, qEntityRoot, queryBuilder)).thenReturn(qPath)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.`in`(path, fieldValues)).thenReturn(predicate)
+        whenever(queryBuilder.`in`(path, fieldValues)).thenReturn(predicate)
 
         val expression = SimpleExpression(Operator.IN, fieldInfo, fieldValues)
-        val specification = expression.toQueryDslSpecification<Person>(entityJoins)
+        val specification = expression.toSpecification<Person>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }

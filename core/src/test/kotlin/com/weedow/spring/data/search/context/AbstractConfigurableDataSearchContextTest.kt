@@ -3,9 +3,9 @@ package com.weedow.spring.data.search.context
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.querydsl.core.types.dsl.*
-import com.weedow.spring.data.search.querydsl.querytype.ElementType
-import com.weedow.spring.data.search.querydsl.querytype.QEntity
-import com.weedow.spring.data.search.querydsl.querytype.QEntityImpl
+import com.weedow.spring.data.search.query.querytype.ElementType
+import com.weedow.spring.data.search.query.querytype.QEntity
+import com.weedow.spring.data.search.query.querytype.QEntityImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.groups.Tuple
@@ -25,7 +25,7 @@ internal class AbstractConfigurableDataSearchContextTest {
         val qEntity = dataSearchContext.add(Person::class.java)
         assertThat(dataSearchContext.get(Person::class.java)).isSameAs(qEntity)
 
-        // This calls does not add two times the same entity class -> return the same QEntity
+        // This call does not add two times the same entity class -> return the same QEntity
         val qEntity1 = dataSearchContext.add(Person::class.java)
         assertThat(qEntity1).isSameAs(qEntity)
         assertThat(dataSearchContext.get(Person::class.java)).isSameAs(qEntity)

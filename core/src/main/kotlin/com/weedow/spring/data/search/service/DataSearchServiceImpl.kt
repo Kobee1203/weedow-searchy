@@ -2,13 +2,13 @@ package com.weedow.spring.data.search.service
 
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
+import com.weedow.spring.data.search.dto.DtoConverterService
 import com.weedow.spring.data.search.exception.SearchDescriptorNotFound
 import com.weedow.spring.data.search.exception.ValidationException
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.utils.klogger
 import com.weedow.spring.data.search.validation.DataSearchValidationService
 import org.springframework.transaction.annotation.Transactional
-import java.util.stream.Collectors
 
 /**
  * Default [DataSearchService] implementation.
@@ -29,11 +29,12 @@ import java.util.stream.Collectors
  * @param entitySearchService [EntitySearchService]
  */
 @Transactional(readOnly = true)
-class DataSearchServiceImpl(
+class DataSearchServiceImpl<T, DTO>(
     private val searchDescriptorService: SearchDescriptorService,
     private val expressionMapper: ExpressionMapper,
     private val dataSearchValidationService: DataSearchValidationService,
-    private val entitySearchService: EntitySearchService
+    private val entitySearchService: EntitySearchService,
+    private val dtoConverterService: DtoConverterService<T, DTO>
 ) : DataSearchService {
 
     companion object {
@@ -54,10 +55,10 @@ class DataSearchServiceImpl(
         val searchDescriptor = searchDescriptorService.getSearchDescriptor(searchDescriptorId)
             ?: throw SearchDescriptorNotFound(searchDescriptorId)
 
-        return doSearch(params, searchDescriptor)
+        return doSearch(params, searchDescriptor as SearchDescriptor<T>)
     }
 
-    private fun <T> doSearch(params: Map<String, List<String>>, searchDescriptor: SearchDescriptor<T>): List<*> {
+    private fun doSearch(params: Map<String, List<String>>, searchDescriptor: SearchDescriptor<T>): List<*> {
         // Mapping the given parameters to the associated expressions
         val rootExpression = expressionMapper.toExpression(params, searchDescriptor.entityClass)
 
@@ -68,15 +69,7 @@ class DataSearchServiceImpl(
         val entities = entitySearchService.findAll(rootExpression, searchDescriptor)
 
         // Convert found entities to DTOs
-        return convertToDto(entities, searchDescriptor)
-    }
-
-    private fun <T> convertToDto(entities: List<T>, searchDescriptor: SearchDescriptor<T>): List<*> {
-        val dtoMapper = searchDescriptor.dtoMapper
-
-        return entities.stream()
-            .map { entity -> dtoMapper.map(entity) }
-            .collect(Collectors.toList())
+        return dtoConverterService.convert(entities, searchDescriptor)
     }
 
 }

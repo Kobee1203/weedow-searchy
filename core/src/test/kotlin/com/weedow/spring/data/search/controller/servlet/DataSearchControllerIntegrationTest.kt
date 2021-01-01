@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 internal class DataSearchControllerIntegrationTest {
 
     @Mock
-    lateinit var dataSearchService: DataSearchService
+    private lateinit var dataSearchService: DataSearchService
 
     @Spy
     private val searchProperties: SearchProperties = SearchProperties()
