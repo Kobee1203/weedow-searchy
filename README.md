@@ -50,8 +50,9 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
 ### Built with:
 * [Kotlin](https://kotlinlang.org/)
 * [Spring Boot](https://spring.io/projects/spring-boot)
-* [Maven](https://maven.apache.org/)
+* [Querydsl](http://www.querydsl.com/)  
 * [ANTLR](https://www.antlr.org/)
+* [Maven](https://maven.apache.org/)
 
 ## Getting Started
 
@@ -904,6 +905,18 @@ This option allows adding `EntityJoinHandler` implementations to specify join ty
 
 You can add several `EntityJoinHandler` implementations. The first implementation that matches from the `support(...)` method will be used to specify the join type for the given field.
 
+```java
+@Configuration
+public class SearchDescriptorConfiguration {
+  @Bean
+  public SearchDescriptor<Person> personSearchDescriptor(DataSearchContext dataSearchContext) {
+    return new SearchDescriptorBuilder<>(Person.class)
+            .entityJoinHandlers(new MyEntityJoinHandler(), new JpaFetchingEagerEntityJoinHandler(dataSearchContext))
+            .build();
+  }
+}
+```
+
 Spring Data Search provides the following default implementations:
 * `FetchingAllEntityJoinHandler`: This implementation allows to query an entity by fetching all data related to this entity, i.e. all fields related to another Entity recursively.\
   _Example:_\
@@ -923,12 +936,12 @@ Just implement the `com.weedow.spring.data.search.join.handler.EntityJoinHandler
 public class MyEntityJoinHandler implements EntityJoinHandler {
 
   @Override
-  public boolean supports(@NotNull PropertyInfos propertyInfos) {
+  public boolean supports(PropertyInfos propertyInfos) {
     return propertyInfos.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ElementCollection);
   }
 
   @Override
-  public JoinInfo handle(@NotNull PropertyInfos propertyInfos) {
+  public JoinInfo handle(PropertyInfos propertyInfos) {
     return new JoinInfo(JoinType.LEFTJOIN, true);
   }
 }
@@ -1187,8 +1200,11 @@ This changes the Base Path to `/api`. Example: `/api/person`
 
 ---
 
+## Migration
+* [Migrating from 1.x to 2.x](./docs/migration/migrating-from-1.x-to-2.x.md)
+
 ## Issues
-[![Issues](https://img.shields.io/github/issues/Kobee1203/spring-data-search)]()
+[![Issues](https://img.shields.io/github/issues/Kobee1203/spring-data-search)](https://github.com/Kobee1203/spring-data-search/issues)
 
 ## Contributing
 
