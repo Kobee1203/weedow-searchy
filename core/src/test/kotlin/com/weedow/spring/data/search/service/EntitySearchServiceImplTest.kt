@@ -7,10 +7,10 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.expression.RootExpression
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutor
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationService
+import com.weedow.spring.data.search.query.specification.Specification
+import com.weedow.spring.data.search.query.specification.SpecificationExecutor
+import com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory
+import com.weedow.spring.data.search.query.specification.SpecificationService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -22,10 +22,10 @@ import org.mockito.junit.jupiter.MockitoExtension
 internal class EntitySearchServiceImplTest {
 
     @Mock
-    lateinit var queryDslSpecificationService: QueryDslSpecificationService
+    private lateinit var specificationService: SpecificationService
 
     @Mock
-    lateinit var queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory
+    private lateinit var specificationExecutorFactory: SpecificationExecutorFactory
 
     @InjectMocks
     lateinit var entitySearchService: EntitySearchServiceImpl
@@ -34,27 +34,27 @@ internal class EntitySearchServiceImplTest {
     fun find_all() {
         val rootExpression = mock<RootExpression<Person>>()
 
-        val queryDslSpecificationExecutor = mock<QueryDslSpecificationExecutor<Person>>()
+        val specificationExecutor = mock<SpecificationExecutor<Person>>()
 
         val searchDescriptor = mock<SearchDescriptor<Person>> {
-            on { this.queryDslSpecificationExecutor }.doReturn(queryDslSpecificationExecutor)
+            on { this.specificationExecutor }.doReturn(specificationExecutor)
         }
 
-        val specification = mock<QueryDslSpecification<Person>>()
-        whenever(queryDslSpecificationService.createSpecification(rootExpression, searchDescriptor)).thenReturn(specification)
+        val specification = mock<Specification<Person>>()
+        whenever(specificationService.createSpecification(rootExpression, searchDescriptor)).thenReturn(specification)
 
         val person = Person("John", "Doe")
-        whenever(queryDslSpecificationExecutor.findAll(specification)).thenReturn(listOf(person))
+        whenever(specificationExecutor.findAll(specification)).thenReturn(listOf(person))
 
         val result = entitySearchService.findAll(rootExpression, searchDescriptor)
 
         assertThat(result).containsExactly(person)
 
-        verifyZeroInteractions(queryDslSpecificationExecutorFactory)
+        verifyZeroInteractions(specificationExecutorFactory)
     }
 
     @Test
-    fun find_all_when_queryDslSpecificationExecutor_is_null() {
+    fun find_all_when_specificationExecutor_is_null() {
         val entityClass = Person::class.java
 
         val rootExpression = mock<RootExpression<Person>>()
@@ -63,15 +63,15 @@ internal class EntitySearchServiceImplTest {
             on { this.entityClass }.thenReturn(entityClass)
         }
 
-        val specification = mock<QueryDslSpecification<Person>>()
-        whenever(queryDslSpecificationService.createSpecification(rootExpression, searchDescriptor)).thenReturn(specification)
+        val specification = mock<Specification<Person>>()
+        whenever(specificationService.createSpecification(rootExpression, searchDescriptor)).thenReturn(specification)
 
-        val queryDslSpecificationExecutor = mock<QueryDslSpecificationExecutor<Person>>()
+        val specificationExecutor = mock<SpecificationExecutor<Person>>()
 
-        whenever(queryDslSpecificationExecutorFactory.getQueryDslSpecificationExecutor(entityClass)).thenReturn(queryDslSpecificationExecutor)
+        whenever(specificationExecutorFactory.getSpecificationExecutor(entityClass)).thenReturn(specificationExecutor)
 
         val person = Person("John", "Doe")
-        whenever(queryDslSpecificationExecutor.findAll(specification)).thenReturn(listOf(person))
+        whenever(specificationExecutor.findAll(specification)).thenReturn(listOf(person))
 
         val result = entitySearchService.findAll(rootExpression, searchDescriptor)
 

@@ -2,19 +2,19 @@ package com.weedow.spring.data.search.service
 
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.expression.RootExpression
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationService
+import com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory
+import com.weedow.spring.data.search.query.specification.SpecificationService
 import com.weedow.spring.data.search.utils.klogger
 
 /**
  * Default [EntitySearchService] implementation.
  *
- * @param queryDslSpecificationService [QueryDslSpecificationService]
- * @param queryDslSpecificationExecutorFactory [QueryDslSpecificationExecutorFactory]
+ * @param specificationService [SpecificationService]
+ * @param specificationExecutorFactory [SpecificationExecutorFactory]
  */
 class EntitySearchServiceImpl(
-    private val queryDslSpecificationService: QueryDslSpecificationService,
-    private val queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory
+    private val specificationService: SpecificationService,
+    private val specificationExecutorFactory: SpecificationExecutorFactory
 ) : EntitySearchService {
 
     companion object {
@@ -26,12 +26,12 @@ class EntitySearchServiceImpl(
     }
 
     override fun <T> findAll(rootExpression: RootExpression<T>, searchDescriptor: SearchDescriptor<T>): List<T> {
-        val specification = queryDslSpecificationService.createSpecification(rootExpression, searchDescriptor)
+        val specification = specificationService.createSpecification(rootExpression, searchDescriptor)
 
-        val queryDslSpecificationExecutor = searchDescriptor.queryDslSpecificationExecutor
-            ?: queryDslSpecificationExecutorFactory.getQueryDslSpecificationExecutor(searchDescriptor.entityClass)
+        val specificationExecutor = searchDescriptor.specificationExecutor
+            ?: specificationExecutorFactory.getSpecificationExecutor(searchDescriptor.entityClass)
 
-        return queryDslSpecificationExecutor.findAll(specification)
+        return specificationExecutor.findAll(specification)
     }
 
 }

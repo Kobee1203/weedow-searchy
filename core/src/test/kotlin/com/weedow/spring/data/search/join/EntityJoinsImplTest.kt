@@ -8,8 +8,8 @@ import com.querydsl.core.types.Path
 import com.weedow.spring.data.search.common.model.Address
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.common.model.Vehicle
-import com.weedow.spring.data.search.querydsl.QueryDslBuilder
-import com.weedow.spring.data.search.querydsl.querytype.*
+import com.weedow.spring.data.search.query.QueryBuilder
+import com.weedow.spring.data.search.query.querytype.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,7 +34,7 @@ internal class EntityJoinsImplTest {
     fun check_already_processed_when_property_infos_matches_entity_join() {
         val entityJoins = EntityJoinsImpl(Person::class.java)
 
-        val entityJoin = EntityJoin("addressEntities", "addressEntities", Address::class.java.canonicalName)
+        val entityJoin = EntityJoin("addressEntities", Address::class.java.canonicalName)
         entityJoins.add(entityJoin)
 
         // Join already added
@@ -74,12 +74,12 @@ internal class EntityJoinsImplTest {
             on { this.get("firstName") }.thenReturn(qPath)
         }
 
-        val queryDslBuilder = mock<QueryDslBuilder<Person>>()
+        val queryBuilder = mock<QueryBuilder<Person>>()
 
-        val result = entityJoins.getQPath("firstName", qEntityRoot, queryDslBuilder)
+        val result = entityJoins.getQPath("firstName", qEntityRoot, queryBuilder)
 
         assertThat(result).isSameAs(qPath)
-        verifyNoMoreInteractions(queryDslBuilder)
+        verifyNoMoreInteractions(queryBuilder)
     }
 
     @Test
@@ -107,17 +107,17 @@ internal class EntityJoinsImplTest {
         val qEntityRoot = mock<QEntityRoot<Person>> {
             on { get("addressEntities") }.thenReturn(qPathParent)
         }
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             val join = mock<QEntityJoin<*>> {
                 on { get("city") }.thenReturn(qPath)
             }
             on { this.join(qPathParent, JoinType.LEFTJOIN, false) }.thenReturn(join)
         }
 
-        val result = entityJoins.getQPath("addressEntities.city", qEntityRoot, queryDslBuilder)
+        val result = entityJoins.getQPath("addressEntities.city", qEntityRoot, queryBuilder)
 
         assertThat(result).isSameAs(qPath)
-        verifyNoMoreInteractions(queryDslBuilder)
+        verifyNoMoreInteractions(queryBuilder)
     }
 
     @Test
@@ -131,9 +131,9 @@ internal class EntityJoinsImplTest {
         val joinType2 = JoinType.INNERJOIN
         val fetched2 = true
 
-        val entityJoin1 = EntityJoin("addressEntities", "addressEntities", qName1, joinType1, fetched1)
+        val entityJoin1 = EntityJoin("addressEntities", qName1, joinType1, fetched1)
         entityJoins.add(entityJoin1)
-        val entityJoin2 = EntityJoin("addressEntities.city", "city", qName2, joinType2, fetched2)
+        val entityJoin2 = EntityJoin("addressEntities.city", qName2, joinType2, fetched2)
         entityJoins.add(entityJoin2)
 
         val qPath = mock<QPath<*>> {
@@ -153,18 +153,18 @@ internal class EntityJoinsImplTest {
         val qEntityRoot = mock<QEntityRoot<Person>> {
             on { get("addressEntities") }.thenReturn(qPathParent)
         }
-        val queryDslBuilder = mock<QueryDslBuilder<Person>> {
+        val queryBuilder = mock<QueryBuilder<Person>> {
             val join = mock<QEntityJoin<*>> {
                 on { get("city") }.thenReturn(qPath)
             }
             on { this.join(qPathParent, joinType1, fetched1) }.thenReturn(join)
         }
 
-        val result = entityJoins.getQPath("addressEntities.city", qEntityRoot, queryDslBuilder)
+        val result = entityJoins.getQPath("addressEntities.city", qEntityRoot, queryBuilder)
 
         assertThat(result).isSameAs(qPath)
-        verify(queryDslBuilder).join(qPath, joinType2, fetched2)
-        verifyNoMoreInteractions(queryDslBuilder)
+        verify(queryBuilder).join(qPath, joinType2, fetched2)
+        verifyNoMoreInteractions(queryBuilder)
         verifyNoMoreInteractions(qPathParent)
     }
 }

@@ -25,13 +25,13 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 internal class DataSearchControllerTest {
 
     @Mock
-    lateinit var dataSearchService: DataSearchService
+    private lateinit var dataSearchService: DataSearchService
 
     @Spy
     private val searchProperties: SearchProperties = SearchProperties()
 
     @Mock
-    lateinit var requestMappingHandlerMapping: RequestMappingHandlerMapping
+    private lateinit var requestMappingHandlerMapping: RequestMappingHandlerMapping
 
     @InjectMocks
     lateinit var dataSearchController: DataSearchController

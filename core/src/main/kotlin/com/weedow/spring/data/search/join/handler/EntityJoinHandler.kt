@@ -1,7 +1,7 @@
 package com.weedow.spring.data.search.join.handler
 
 import com.weedow.spring.data.search.join.JoinInfo
-import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
+import com.weedow.spring.data.search.query.querytype.PropertyInfos
 
 /**
  * Interface to specify join types for any fields having _join annotation_:
@@ -15,18 +15,18 @@ import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
  *  **/
  * class MyEntityJoinHandler : EntityJoinHandler {
  *
- *   override fun supports(entityClass: Class<*>, propertyInfos: PropertyInfos): Boolean {
+ *   override fun supports(propertyInfos: PropertyInfos): Boolean {
  *     return propertyInfos.annotations.any { it is ElementCollection }
  *   }
  *
- *   override fun handle(entityClass: Class<*>, propertyInfos: PropertyInfos): JoinInfo {
+ *   override fun handle(propertyInfos: PropertyInfos): JoinInfo {
  *     return new JoinInfo(JoinType.LEFT, true);
  *   }
  * }
  * ```
  *
+ * @see DefaultEntityJoinHandler
  * @see FetchingAllEntityJoinHandler
- * @see JpaFetchingEagerEntityJoinHandler
  */
 interface EntityJoinHandler {
 

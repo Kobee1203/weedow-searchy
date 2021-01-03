@@ -11,19 +11,28 @@ internal class ExpressionParserExceptionTest {
 
     @Test
     fun test_ExpressionParserException() {
-        val recognizer1 = mock<Recognizer<*, *>>(name = "recognizer1")
+
+        val grammarFileName1 = "Query.g4"
+        val recognizer1 = mock<Recognizer<*, *>>(name = "recognizer1") {
+            on {this.grammarFileName}.thenReturn(grammarFileName1)
+        }
         val offendingSymbol1 = "[@1,6:10='BBBBB',<19>,1:6]"
         val line1 = 1
         val charPositionInLine1 = 6
         val msg1 = "no viable alternative at input 'AAAAABBBBB'"
         val e1 = RecognitionException(recognizer1, mock(), mock())
+        val exceptionName1 = RecognitionException::class.java.name
 
-        val recognizer2 = mock<Recognizer<*, *>>(name = "recognizer2")
+        val grammarFileName2 = "Query.g4"
+        val recognizer2 = mock<Recognizer<*, *>>(name = "recognizer2") {
+            on {this.grammarFileName}.thenReturn(grammarFileName2)
+        }
         val offendingSymbol2 = "[@10,15:10='XXXXXX',<19>,10:15]"
         val line2 = 10
         val charPositionInLine2 = 15
         val msg2 = "no viable alternative at input 'XXXXXX'"
         val e2 = RecognitionException(recognizer1, mock(), mock())
+        val exceptionName2 = RecognitionException::class.java.name
 
         val syntaxError1 = SyntaxError(recognizer1, offendingSymbol1, line1, charPositionInLine1, msg1, e1)
         val syntaxError2 = SyntaxError(recognizer2, offendingSymbol2, line2, charPositionInLine2, msg2, e2)
@@ -34,14 +43,14 @@ internal class ExpressionParserExceptionTest {
         assertThat(exception.status).isEqualTo(HttpStatus.BAD_REQUEST)
         assertThat(exception.reason).isEqualTo(
             "Syntax Errors: [\n" +
-                    "line $line1:$charPositionInLine1 $msg1 - $offendingSymbol1,\n" +
-                    "line $line2:$charPositionInLine2 $msg2 - $offendingSymbol2" +
+                    "$grammarFileName1: $exceptionName1 - line $line1:$charPositionInLine1 $msg1 - $offendingSymbol1,\n" +
+                    "$grammarFileName2: $exceptionName2 - line $line2:$charPositionInLine2 $msg2 - $offendingSymbol2" +
                     "\n]"
         )
         assertThat(exception.message).isEqualTo(
             "${HttpStatus.BAD_REQUEST} \"Syntax Errors: [\n" +
-                    "line $line1:$charPositionInLine1 $msg1 - $offendingSymbol1,\n" +
-                    "line $line2:$charPositionInLine2 $msg2 - $offendingSymbol2" +
+                    "$grammarFileName1: $exceptionName1 - line $line1:$charPositionInLine1 $msg1 - $offendingSymbol1,\n" +
+                    "$grammarFileName2: $exceptionName2 - line $line2:$charPositionInLine2 $msg2 - $offendingSymbol2" +
                     "\n]\""
         )
     }

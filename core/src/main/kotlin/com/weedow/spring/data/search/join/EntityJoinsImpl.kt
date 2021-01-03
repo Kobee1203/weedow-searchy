@@ -1,7 +1,7 @@
 package com.weedow.spring.data.search.join
 
-import com.weedow.spring.data.search.querydsl.QueryDslBuilder
-import com.weedow.spring.data.search.querydsl.querytype.*
+import com.weedow.spring.data.search.query.QueryBuilder
+import com.weedow.spring.data.search.query.querytype.*
 import com.weedow.spring.data.search.utils.FIELD_PATH_SEPARATOR
 import com.weedow.spring.data.search.utils.klogger
 
@@ -51,7 +51,7 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
         joins[entityJoin.joinName] = entityJoin
     }
 
-    override fun <T> getQPath(fieldPath: String, qEntityRoot: QEntityRoot<T>, queryDslBuilder: QueryDslBuilder<T>): QPath<*> {
+    override fun <T> getQPath(fieldPath: String, qEntityRoot: QEntityRoot<T>, queryBuilder: QueryBuilder<T>): QPath<*> {
         val parts = fieldPath.split(FIELD_PATH_SEPARATOR)
         val fieldName = parts[parts.size - 1]
         val parents = parts.subList(0, parts.size - 1)
@@ -61,16 +61,16 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
             val qPath = join.get(parent)
             val qName = qPath.propertyInfos.qName
             val entityJoin = joins.getOrElse(qName) {
-                EntityJoin(qPath.path.toString(), parent, qName)
+                EntityJoin(qPath.path.toString(), qName)
             }
-            join = queryDslBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
+            join = queryBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
         }
 
         val qPath = join.get(fieldName)
         val qName = qPath.propertyInfos.qName
         val entityJoin = joins[qName]
         if (entityJoin != null) {
-            queryDslBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
+            queryBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
         }
         return qPath
     }

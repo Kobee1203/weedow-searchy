@@ -7,9 +7,9 @@ import com.querydsl.core.types.dsl.StringPath
 import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
-import com.weedow.spring.data.search.querydsl.querytype.ElementType
-import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
-import com.weedow.spring.data.search.querydsl.querytype.QEntityImpl
+import com.weedow.spring.data.search.query.querytype.ElementType
+import com.weedow.spring.data.search.query.querytype.PropertyInfos
+import com.weedow.spring.data.search.query.querytype.QEntityImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -122,7 +122,7 @@ internal class EntityJoinManagerImplTest {
 
         assertThat(entityJoins.getJoins().values)
             .containsExactly(
-                EntityJoin("myJoin", "myJoin", joinName)
+                EntityJoin("myJoin", joinName)
             )
 
         verify(dataSearchContext, times(2)).isJoinAnnotation(Column::class.java)
@@ -194,8 +194,8 @@ internal class EntityJoinManagerImplTest {
 
         assertThat(entityJoins.getJoins().values)
             .containsExactlyInAnyOrder(
-                EntityJoin("myJoin1", "myJoin1", joinName1),
-                EntityJoin("myJoin1.myJoin2", "myJoin2", joinName2, JoinType.LEFTJOIN, true)
+                EntityJoin("myJoin1", joinName1),
+                EntityJoin("myJoin1.myJoin2", joinName2, JoinType.LEFTJOIN, true)
             )
 
         verify(dataSearchContext, times(2)).isJoinAnnotation(Column::class.java)
@@ -283,8 +283,8 @@ internal class EntityJoinManagerImplTest {
 
         assertThat(entityJoins.getJoins().values)
             .containsExactlyInAnyOrder(
-                EntityJoin("myJoin1", "myJoin1", joinName1),
-                EntityJoin("myJoin2", "myJoin2", joinName2)
+                EntityJoin("myJoin1", joinName1),
+                EntityJoin("myJoin2", joinName2)
             )
 
         verify(dataSearchContext, times(3)).isJoinAnnotation(Column::class.java)

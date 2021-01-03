@@ -23,6 +23,11 @@
             <artifactId>spring-data-search-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.weedow</groupId>
+            <artifactId>spring-data-search-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

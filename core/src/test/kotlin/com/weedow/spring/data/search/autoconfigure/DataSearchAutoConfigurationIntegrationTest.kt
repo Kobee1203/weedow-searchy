@@ -8,7 +8,8 @@ import com.weedow.spring.data.search.common.model.VehicleType
 import com.weedow.spring.data.search.descriptor.DefaultSearchDescriptorService
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutor
+import com.weedow.spring.data.search.dto.DtoMapper
+import com.weedow.spring.data.search.query.specification.SpecificationExecutor
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -83,12 +84,10 @@ internal class DataSearchAutoConfigurationIntegrationTest {
 
 @Component
 class MySearchDescriptor : SearchDescriptor<Person> {
-    override val id: String
-        get() = "my_descriptor_id"
-    override val entityClass: Class<Person>
-        get() = Person::class.java
-    override val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<Person>?
-        get() = null
+    override val id: String = "my_descriptor_id"
+    override val entityClass: Class<Person> = Person::class.java
+    override val dtoMapper: DtoMapper<Person, *>? = null
+    override val specificationExecutor: SpecificationExecutor<Person>? = null
 }
 
 @Component

@@ -4,7 +4,7 @@ import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.join.handler.DefaultEntityJoinHandler
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
-import com.weedow.spring.data.search.querydsl.querytype.ElementType
+import com.weedow.spring.data.search.query.querytype.ElementType
 import com.weedow.spring.data.search.utils.klogger
 import java.util.*
 
@@ -64,7 +64,7 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
                     if (entityJoinHandler.supports(propertyInfos)) {
                         val joinInfo = entityJoinHandler.handle(propertyInfos)
 
-                        val entityJoin = EntityJoin(fieldPath, propertyInfos.fieldName, propertyInfos.qName, joinInfo.joinType, joinInfo.fetched)
+                        val entityJoin = EntityJoin(fieldPath, propertyInfos.qName, joinInfo.joinType, joinInfo.fetched)
                         entityJoins.add(entityJoin)
 
                         // Recursive loop to handle nested Entity joins

@@ -1,10 +1,10 @@
 package com.weedow.spring.data.search.context
 
 import com.querydsl.core.types.dsl.SimpleExpression
-import com.weedow.spring.data.search.querydsl.querytype.ElementType
-import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
-import com.weedow.spring.data.search.querydsl.querytype.QEntity
-import com.weedow.spring.data.search.querydsl.querytype.QEntityImpl
+import com.weedow.spring.data.search.query.querytype.ElementType
+import com.weedow.spring.data.search.query.querytype.PropertyInfos
+import com.weedow.spring.data.search.query.querytype.QEntity
+import com.weedow.spring.data.search.query.querytype.QEntityImpl
 import com.weedow.spring.data.search.utils.EntityUtils
 import org.apache.commons.lang3.reflect.FieldUtils
 import java.lang.reflect.Field

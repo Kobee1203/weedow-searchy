@@ -5,8 +5,8 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import com.querydsl.core.types.Predicate
 import com.weedow.spring.data.search.join.EntityJoins
-import com.weedow.spring.data.search.querydsl.QueryDslBuilder
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
+import com.weedow.spring.data.search.query.QueryBuilder
+import com.weedow.spring.data.search.query.specification.Specification
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -19,22 +19,22 @@ internal class NotExpressionTest {
     fun to_specification() {
         val entityJoins = mock<EntityJoins>()
 
-        val queryDslBuilder = mock<QueryDslBuilder<Any>>()
+        val queryBuilder = mock<QueryBuilder<Any>>()
 
         val mockExpression = mock<Expression>()
-        val mockSpecification = mock<QueryDslSpecification<Any>>()
-        whenever(mockExpression.toQueryDslSpecification<Any>(entityJoins)).thenReturn(mockSpecification)
+        val mockSpecification = mock<Specification<Any>>()
+        whenever(mockExpression.toSpecification<Any>(entityJoins)).thenReturn(mockSpecification)
 
         val mockPredicate = mock<Predicate>()
-        whenever(mockSpecification.toPredicate(queryDslBuilder)).thenReturn(mockPredicate)
+        whenever(mockSpecification.toPredicate(queryBuilder)).thenReturn(mockPredicate)
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.not(mockPredicate)).thenReturn(predicate)
+        whenever(queryBuilder.not(mockPredicate)).thenReturn(predicate)
 
         val expression = NotExpression(mockExpression)
-        val specification = expression.toQueryDslSpecification<Any>(entityJoins)
+        val specification = expression.toSpecification<Any>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         Assertions.assertThat(result).isEqualTo(predicate)
     }

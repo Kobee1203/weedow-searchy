@@ -4,8 +4,8 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import com.querydsl.core.types.Predicate
 import com.weedow.spring.data.search.join.EntityJoins
-import com.weedow.spring.data.search.querydsl.QueryDslBuilder
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecification
+import com.weedow.spring.data.search.query.QueryBuilder
+import com.weedow.spring.data.search.query.specification.Specification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,7 +20,7 @@ internal class LogicalExpressionTest {
 
     private lateinit var entityJoins: EntityJoins
 
-    private lateinit var queryDslBuilder: QueryDslBuilder<Any>
+    private lateinit var queryBuilder: QueryBuilder<Any>
 
     private lateinit var mockPredicate1: Predicate
     private lateinit var mockPredicate2: Predicate
@@ -34,17 +34,17 @@ internal class LogicalExpressionTest {
     private fun setUpSpecification() {
         entityJoins = mock()
 
-        queryDslBuilder = mock()
+        queryBuilder = mock()
 
-        val mockSpecification1 = mock<QueryDslSpecification<Any>>()
-        whenever(mockExpression1.toQueryDslSpecification<Any>(entityJoins)).thenReturn(mockSpecification1)
+        val mockSpecification1 = mock<Specification<Any>>()
+        whenever(mockExpression1.toSpecification<Any>(entityJoins)).thenReturn(mockSpecification1)
         mockPredicate1 = mock(name = "mockPredicate1")
-        whenever(mockSpecification1.toPredicate(queryDslBuilder)).thenReturn(mockPredicate1)
+        whenever(mockSpecification1.toPredicate(queryBuilder)).thenReturn(mockPredicate1)
 
-        val mockSpecification2 = mock<QueryDslSpecification<Any>>()
-        whenever(mockExpression2.toQueryDslSpecification<Any>(entityJoins)).thenReturn(mockSpecification2)
+        val mockSpecification2 = mock<Specification<Any>>()
+        whenever(mockExpression2.toSpecification<Any>(entityJoins)).thenReturn(mockSpecification2)
         mockPredicate2 = mock(name = "mockPredicate2")
-        whenever(mockSpecification2.toPredicate(queryDslBuilder)).thenReturn(mockPredicate2)
+        whenever(mockSpecification2.toPredicate(queryBuilder)).thenReturn(mockPredicate2)
     }
 
     @Test
@@ -52,12 +52,12 @@ internal class LogicalExpressionTest {
         setUpSpecification()
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.or(mockPredicate1, mockPredicate2)).thenReturn(predicate)
+        whenever(queryBuilder.or(mockPredicate1, mockPredicate2)).thenReturn(predicate)
 
         val expression = LogicalExpression(LogicalOperator.OR, listOf(mockExpression1, mockExpression2))
-        val specification = expression.toQueryDslSpecification<Any>(entityJoins)
+        val specification = expression.toSpecification<Any>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }
@@ -67,12 +67,12 @@ internal class LogicalExpressionTest {
         setUpSpecification()
 
         val predicate = mock<Predicate>()
-        whenever(queryDslBuilder.and(mockPredicate1, mockPredicate2)).thenReturn(predicate)
+        whenever(queryBuilder.and(mockPredicate1, mockPredicate2)).thenReturn(predicate)
 
         val expression = LogicalExpression(LogicalOperator.AND, listOf(mockExpression1, mockExpression2))
-        val specification = expression.toQueryDslSpecification<Any>(entityJoins)
+        val specification = expression.toSpecification<Any>(entityJoins)
 
-        val result = specification.toPredicate(queryDslBuilder)
+        val result = specification.toPredicate(queryBuilder)
 
         assertThat(result).isEqualTo(predicate)
     }

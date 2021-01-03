@@ -1,6 +1,6 @@
 package com.weedow.spring.data.search.sample
 
-import com.weedow.spring.data.search.sample.repository.DataSearchJpaRepositoryFactoryBean
+import com.weedow.spring.data.search.jpa.repository.DataSearchJpaRepositoryFactoryBean
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication

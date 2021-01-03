@@ -1,7 +1,7 @@
 package com.weedow.spring.data.search.join.handler
 
 import com.weedow.spring.data.search.join.JoinInfo
-import com.weedow.spring.data.search.querydsl.querytype.PropertyInfos
+import com.weedow.spring.data.search.query.querytype.PropertyInfos
 
 /**
  * Default [EntityJoinHandler] implementation.

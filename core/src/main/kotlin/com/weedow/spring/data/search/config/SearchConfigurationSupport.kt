@@ -6,6 +6,10 @@ import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.converter.StringToDateConverter
 import com.weedow.spring.data.search.converter.StringToOffsetDateTimeConverter
 import com.weedow.spring.data.search.descriptor.*
+import com.weedow.spring.data.search.dto.DefaultDtoConverterServiceImpl
+import com.weedow.spring.data.search.dto.DefaultDtoMapper
+import com.weedow.spring.data.search.dto.DtoConverterService
+import com.weedow.spring.data.search.dto.DtoMapper
 import com.weedow.spring.data.search.expression.ExpressionMapper
 import com.weedow.spring.data.search.expression.ExpressionMapperImpl
 import com.weedow.spring.data.search.expression.ExpressionResolver
@@ -18,9 +22,9 @@ import com.weedow.spring.data.search.fieldpath.FieldPathResolver
 import com.weedow.spring.data.search.fieldpath.FieldPathResolverImpl
 import com.weedow.spring.data.search.join.EntityJoinManager
 import com.weedow.spring.data.search.join.EntityJoinManagerImpl
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationService
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationServiceImpl
+import com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory
+import com.weedow.spring.data.search.query.specification.SpecificationService
+import com.weedow.spring.data.search.query.specification.SpecificationServiceImpl
 import com.weedow.spring.data.search.service.DataSearchService
 import com.weedow.spring.data.search.service.DataSearchServiceImpl
 import com.weedow.spring.data.search.service.EntitySearchService
@@ -31,7 +35,6 @@ import com.weedow.spring.data.search.validation.DataSearchValidationService
 import com.weedow.spring.data.search.validation.DataSearchValidationServiceImpl
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.domain.EntityScanner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.event.ContextRefreshedEvent
@@ -95,13 +98,14 @@ open class SearchConfigurationSupport {
 
     @Bean
     @ConditionalOnMissingBean
-    open fun dataSearchService(
+    open fun <T, DTO> dataSearchService(
         searchDescriptorService: SearchDescriptorService,
         expressionMapper: ExpressionMapper,
         dataSearchValidationService: DataSearchValidationService,
         entitySearchService: EntitySearchService,
+        dtoConverterService: DtoConverterService<T, DTO>
     ): DataSearchService {
-        return DataSearchServiceImpl(searchDescriptorService, expressionMapper, dataSearchValidationService, entitySearchService)
+        return DataSearchServiceImpl(searchDescriptorService, expressionMapper, dataSearchValidationService, entitySearchService, dtoConverterService)
     }
 
     @Bean
@@ -119,16 +123,30 @@ open class SearchConfigurationSupport {
     @Bean
     @ConditionalOnMissingBean
     open fun entitySearchService(
-        queryDslSpecificationService: QueryDslSpecificationService,
-        queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory,
+        specificationService: SpecificationService,
+        specificationExecutorFactory: SpecificationExecutorFactory
     ): EntitySearchService {
-        return EntitySearchServiceImpl(queryDslSpecificationService, queryDslSpecificationExecutorFactory)
+        return EntitySearchServiceImpl(specificationService, specificationExecutorFactory)
     }
 
     @Bean
     @ConditionalOnMissingBean
-    open fun queryDslSpecificationService(entityJoinManager: EntityJoinManager): QueryDslSpecificationService {
-        return QueryDslSpecificationServiceImpl(entityJoinManager)
+    open fun <T> defaultDtoMapper(): DtoMapper<T, T> {
+        return DefaultDtoMapper()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun <T, DTO> dtoConverterService(
+        defaultDtoMapper: DtoMapper<T, DTO>
+    ): DtoConverterService<T, DTO> {
+        return DefaultDtoConverterServiceImpl(defaultDtoMapper)
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    open fun specificationService(entityJoinManager: EntityJoinManager): SpecificationService {
+        return SpecificationServiceImpl(entityJoinManager)
     }
 
     @Bean

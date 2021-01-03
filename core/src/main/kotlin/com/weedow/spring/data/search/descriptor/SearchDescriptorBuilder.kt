@@ -1,9 +1,8 @@
 package com.weedow.spring.data.search.descriptor
 
-import com.weedow.spring.data.search.dto.DefaultDtoMapper
 import com.weedow.spring.data.search.dto.DtoMapper
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutor
+import com.weedow.spring.data.search.query.specification.SpecificationExecutor
 import com.weedow.spring.data.search.utils.TypeReference
 import com.weedow.spring.data.search.validation.DataSearchValidator
 import java.lang.reflect.ParameterizedType
@@ -19,8 +18,8 @@ class SearchDescriptorBuilder<T>(
 
     private var id: String = this.entityClass.simpleName.decapitalize()
     private var validators: MutableList<DataSearchValidator> = mutableListOf()
-    private var dtoMapper: DtoMapper<T, *> = DefaultDtoMapper()
-    private var queryDslSpecificationExecutor: QueryDslSpecificationExecutor<T>? = null
+    private var dtoMapper: DtoMapper<T, *>? = null
+    private var specificationExecutor: SpecificationExecutor<T>? = null
     private var entityJoinHandlers: MutableList<EntityJoinHandler> = mutableListOf()
 
     companion object {
@@ -53,14 +52,14 @@ class SearchDescriptorBuilder<T>(
     fun dtoMapper(dtoMapper: DtoMapper<T, *>) = apply { this.dtoMapper = dtoMapper }
 
     /**
-     * Set a specific [QueryDslSpecificationExecutor] to be used to search for entities.
-     * If this method is not called, a default implementation of [QueryDslSpecificationExecutor] is retrieved from instance of
-     * [QueryDslSpecificationExecutorFactory][com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory].
+     * Set a specific [SpecificationExecutor] to be used to search for entities.
+     * If this method is not called, a default implementation of [SpecificationExecutor] is retrieved from instance of
+     * [SpecificationExecutorFactory][com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory].
      *
-     * @see com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory
+     * @see com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory
      */
-    fun queryDslSpecificationExecutor(queryDslSpecificationExecutor: QueryDslSpecificationExecutor<T>) =
-        apply { this.queryDslSpecificationExecutor = queryDslSpecificationExecutor }
+    fun specificationExecutor(specificationExecutor: SpecificationExecutor<T>) =
+        apply { this.specificationExecutor = specificationExecutor }
 
     /**
      * Set the [Entity Join Handlers][EntityJoinHandler] to specify join types for any fields
@@ -76,7 +75,7 @@ class SearchDescriptorBuilder<T>(
             entityClass,
             validators,
             dtoMapper,
-            queryDslSpecificationExecutor,
+            specificationExecutor,
             entityJoinHandlers
         )
     }
@@ -88,8 +87,8 @@ class SearchDescriptorBuilder<T>(
         override val id: String,
         override val entityClass: Class<T>,
         override val validators: List<DataSearchValidator>,
-        override val dtoMapper: DtoMapper<T, *>,
-        override val queryDslSpecificationExecutor: QueryDslSpecificationExecutor<T>?,
+        override val dtoMapper: DtoMapper<T, *>?,
+        override val specificationExecutor: SpecificationExecutor<T>?,
         override val entityJoinHandlers: List<EntityJoinHandler>,
     ) : SearchDescriptor<T>
 }

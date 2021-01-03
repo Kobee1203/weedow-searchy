@@ -8,8 +8,8 @@ import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder
 import com.weedow.spring.data.search.descriptor.SearchDescriptorRegistry
 import com.weedow.spring.data.search.join.handler.FetchingAllEntityJoinHandler
-import com.weedow.spring.data.search.join.handler.JpaFetchingEagerEntityJoinHandler
-import com.weedow.spring.data.search.querydsl.specification.QueryDslSpecificationExecutorFactory
+import com.weedow.spring.data.search.jpa.join.handler.JpaFetchingEagerEntityJoinHandler
+import com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory
 import com.weedow.spring.data.search.sample.dto.PersonDtoMapper
 import com.weedow.spring.data.search.sample.repository.PersonRepository
 import com.weedow.spring.data.search.validation.validator.EmailValidator
@@ -33,7 +33,7 @@ class SampleAppConfiguration : SearchConfigurer {
             .id("person2")
             .validators(NotEmptyValidator(), EmailValidator("email"))
             .dtoMapper(PersonDtoMapper())
-            .queryDslSpecificationExecutor(personRepository)
+            .specificationExecutor(personRepository)
             .entityJoinHandlers(JpaFetchingEagerEntityJoinHandler(dataSearchContext))
             .build()
 
@@ -46,11 +46,11 @@ class SampleAppConfiguration : SearchConfigurer {
     fun addressSearchDescriptor(): SearchDescriptor<Address> = SearchDescriptorBuilder.builder<Address>().build()
 
     @Bean
-    fun address3SearchDescriptor(queryDslSpecificationExecutorFactory: QueryDslSpecificationExecutorFactory): SearchDescriptor<Address> =
+    fun address3SearchDescriptor(specificationExecutorFactory: SpecificationExecutorFactory): SearchDescriptor<Address> =
         SearchDescriptorBuilder.builder<Address>()
             .id("address2")
             .entityJoinHandlers(FetchingAllEntityJoinHandler())
-            .queryDslSpecificationExecutor(queryDslSpecificationExecutorFactory.getQueryDslSpecificationExecutor(Address::class.java))
+            .specificationExecutor(specificationExecutorFactory.getSpecificationExecutor(Address::class.java))
             .build()
 
 }
