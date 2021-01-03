@@ -21,7 +21,7 @@ import javax.persistence.EntityManager
  *
  * ```
  * @SpringBootApplication
- * @EnableJpaRepositories("com.sample.repository", repositoryFactoryBeanClass = DataSearchJpaRepositoryFactoryBean::class)
+ * @EnableJpaRepositories(value = ["com.sample.repository"], repositoryFactoryBeanClass = DataSearchJpaRepositoryFactoryBean::class)
  * class SampleApplication
  *
  * fun main(args: Array<String>) {

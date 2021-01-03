@@ -23,7 +23,7 @@ internal class JpaDataSearchAutoConfigurationTest {
                 )
             )
             .run { context ->
-                Assertions.assertThat(context).hasBean("jpaQueryDslSpecificationExecutorFactory")
+                Assertions.assertThat(context).hasBean("jpaSpecificationExecutorFactory")
                 Assertions.assertThat(context).hasBean("jpaDataSearchContext")
             }
     }
@@ -39,9 +39,9 @@ internal class JpaDataSearchAutoConfigurationTest {
             )
             .withUserConfiguration(TestCustomJpaConfiguration::class.java)
             .run { context ->
-                Assertions.assertThat(context).doesNotHaveBean("jpaQueryDslSpecificationExecutorFactory")
+                Assertions.assertThat(context).doesNotHaveBean("jpaSpecificationExecutorFactory")
                 Assertions.assertThat(context).doesNotHaveBean("jpaDataSearchContext")
-                Assertions.assertThat(context).hasBean("customJpaQueryDslSpecificationExecutorFactory")
+                Assertions.assertThat(context).hasBean("customJpaSpecificationExecutorFactory")
                 Assertions.assertThat(context).hasBean("customJpaDataSearchContext")
             }
     }
@@ -58,7 +58,7 @@ internal class JpaDataSearchAutoConfigurationTest {
     class TestCustomJpaConfiguration {
 
         @Bean
-        fun customJpaQueryDslSpecificationExecutorFactory(): SpecificationExecutorFactory = mock()
+        fun customJpaSpecificationExecutorFactory(): SpecificationExecutorFactory = mock()
 
         @Bean
         fun customJpaDataSearchContext(): DataSearchContext = mock()

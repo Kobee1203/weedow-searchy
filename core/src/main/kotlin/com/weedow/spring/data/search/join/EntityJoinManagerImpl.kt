@@ -64,7 +64,7 @@ class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : 
                     if (entityJoinHandler.supports(propertyInfos)) {
                         val joinInfo = entityJoinHandler.handle(propertyInfos)
 
-                        val entityJoin = EntityJoin(fieldPath, propertyInfos.fieldName, propertyInfos.qName, joinInfo.joinType, joinInfo.fetched)
+                        val entityJoin = EntityJoin(fieldPath, propertyInfos.qName, joinInfo.joinType, joinInfo.fetched)
                         entityJoins.add(entityJoin)
 
                         // Recursive loop to handle nested Entity joins

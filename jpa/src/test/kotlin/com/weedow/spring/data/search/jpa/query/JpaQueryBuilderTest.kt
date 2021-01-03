@@ -37,16 +37,16 @@ internal class JpaQueryBuilderTest {
     private lateinit var qEntityRoot: QEntityRoot<Any>
 
     @InjectMocks
-    private lateinit var queryDslBuilder: JpaQueryBuilder<Any>
+    private lateinit var jpaQueryBuilder: JpaQueryBuilder<Any>
 
     @Test
     fun getQEntityRoot() {
-        assertThat(queryDslBuilder.qEntityRoot).isSameAs(qEntityRoot)
+        assertThat(jpaQueryBuilder.qEntityRoot).isSameAs(qEntityRoot)
     }
 
     @Test
     fun distinct() {
-        queryDslBuilder.distinct()
+        jpaQueryBuilder.distinct()
 
         verify(query).distinct()
         verifyNoMoreInteractions(query)
@@ -75,7 +75,7 @@ internal class JpaQueryBuilderTest {
 
         whenever(dataSearchContext.getAllPropertyInfos(entityClass)).thenReturn(emptyList())
 
-        val join = queryDslBuilder.join(qPath, JoinType.DEFAULT, false)
+        val join = jpaQueryBuilder.join(qPath, JoinType.DEFAULT, false)
 
         assertThat(join).isInstanceOf(QEntityJoinImpl::class.java)
         assertThat(join).extracting("propertyInfos").isSameAs(propertyInfos)
@@ -124,7 +124,7 @@ internal class JpaQueryBuilderTest {
 
         addConditions(joinExpression)
 
-        val join = queryDslBuilder.join(qPath, JoinType.DEFAULT, fetched)
+        val join = jpaQueryBuilder.join(qPath, JoinType.DEFAULT, fetched)
 
         assertThat(join)
             .isInstanceOf(QEntityJoinImpl::class.java)
@@ -169,7 +169,7 @@ internal class JpaQueryBuilderTest {
         val qEntityAlias = mock<QEntity<T>>()
         whenever(dataSearchContext.get(eq(entityClass), any())).thenReturn(qEntityAlias)
 
-        val join = queryDslBuilder.join(qPath, joinType, fetched)
+        val join = jpaQueryBuilder.join(qPath, joinType, fetched)
 
         assertThat(join).isInstanceOf(QEntityJoinImpl::class.java)
         assertThat(join).extracting("propertyInfos").isSameAs(propertyInfos)
@@ -208,7 +208,7 @@ internal class JpaQueryBuilderTest {
         }
         whenever(query.metadata).thenReturn(metadata)
 
-        assertThatThrownBy { queryDslBuilder.join(qPath, JoinType.DEFAULT, false) }
+        assertThatThrownBy { jpaQueryBuilder.join(qPath, JoinType.DEFAULT, false) }
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessage("Could not identify the alias type for the QPath of type '$elementType': $qPath")
 
@@ -240,7 +240,7 @@ internal class JpaQueryBuilderTest {
         val qEntityAlias = mock<QEntity<Any>>()
         whenever(dataSearchContext.get(eq(entityClass), any())).thenReturn(qEntityAlias)
 
-        assertThatThrownBy { queryDslBuilder.join(qPath, JoinType.FULLJOIN, false) }
+        assertThatThrownBy { jpaQueryBuilder.join(qPath, JoinType.FULLJOIN, false) }
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessage("full join in JPA is not allowed: element type=$elementType, path=$path, alias=$qEntityAlias")
 
@@ -252,7 +252,7 @@ internal class JpaQueryBuilderTest {
     fun and_with_expressions() {
         val expr1 = mock<Expression<Boolean>>()
         val expr2 = mock<Expression<Boolean>>()
-        val predicate = queryDslBuilder.and(expr1, expr2)
+        val predicate = jpaQueryBuilder.and(expr1, expr2)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -265,7 +265,7 @@ internal class JpaQueryBuilderTest {
     fun and_with_predicates() {
         val predicate1 = mock<Predicate>()
         val predicate2 = mock<Predicate>()
-        val predicate = queryDslBuilder.and(predicate1, predicate2)
+        val predicate = jpaQueryBuilder.and(predicate1, predicate2)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -276,7 +276,7 @@ internal class JpaQueryBuilderTest {
 
     @Test
     fun or_with_no_predicates() {
-        val predicate = queryDslBuilder.or()
+        val predicate = jpaQueryBuilder.or()
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -289,7 +289,7 @@ internal class JpaQueryBuilderTest {
     fun or_with_expressions() {
         val expr1 = mock<Expression<Boolean>>()
         val expr2 = mock<Expression<Boolean>>()
-        val predicate = queryDslBuilder.or(expr1, expr2)
+        val predicate = jpaQueryBuilder.or(expr1, expr2)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -302,7 +302,7 @@ internal class JpaQueryBuilderTest {
     fun or_with_predicates() {
         val predicate1 = mock<Predicate>()
         val predicate2 = mock<Predicate>()
-        val predicate = queryDslBuilder.or(predicate1, predicate2)
+        val predicate = jpaQueryBuilder.or(predicate1, predicate2)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -313,7 +313,7 @@ internal class JpaQueryBuilderTest {
 
     @Test
     fun and_with_no_predicates() {
-        val predicate = queryDslBuilder.and()
+        val predicate = jpaQueryBuilder.and()
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -325,7 +325,7 @@ internal class JpaQueryBuilderTest {
     @Test
     operator fun not() {
         val expr = mock<Expression<Boolean>>()
-        val predicate = queryDslBuilder.not(expr)
+        val predicate = jpaQueryBuilder.not(expr)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -340,7 +340,7 @@ internal class JpaQueryBuilderTest {
             on { this.type }.thenReturn(Any::class.java)
         }
         val value = "myvalue"
-        val predicate = queryDslBuilder.equal(expr, value)
+        val predicate = jpaQueryBuilder.equal(expr, value)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -357,7 +357,7 @@ internal class JpaQueryBuilderTest {
             on { this.type }.thenReturn(Any::class.java)
         }
         val value = "CURRENT_DATE"
-        val predicate = queryDslBuilder.equal(expr, value)
+        val predicate = jpaQueryBuilder.equal(expr, value)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -375,7 +375,7 @@ internal class JpaQueryBuilderTest {
             on { this.type }.thenReturn(Any::class.java)
         }
         val value = "CURRENT_TIME"
-        val predicate = queryDslBuilder.equal(expr, value)
+        val predicate = jpaQueryBuilder.equal(expr, value)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -393,7 +393,7 @@ internal class JpaQueryBuilderTest {
             on { this.type }.thenReturn(Any::class.java)
         }
         val value = "CURRENT_DATE_TIME"
-        val predicate = queryDslBuilder.equal(expr, value)
+        val predicate = jpaQueryBuilder.equal(expr, value)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -411,7 +411,7 @@ internal class JpaQueryBuilderTest {
             on { this.type }.thenReturn(Collection::class.java)
         }
         val values = listOf("myvalue1", "myvalue2")
-        val predicate = queryDslBuilder.equal(expr, values)
+        val predicate = jpaQueryBuilder.equal(expr, values)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -428,7 +428,7 @@ internal class JpaQueryBuilderTest {
             on { this.type }.thenReturn(Any::class.java)
         }
 
-        val predicate = queryDslBuilder.isNull(expr)
+        val predicate = jpaQueryBuilder.isNull(expr)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -444,7 +444,7 @@ internal class JpaQueryBuilderTest {
             on { this.type }.thenReturn(Collection::class.java)
         }
 
-        val predicate = queryDslBuilder.isNull(expr)
+        val predicate = jpaQueryBuilder.isNull(expr)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -460,7 +460,7 @@ internal class JpaQueryBuilderTest {
             on { this.type }.thenReturn(Map::class.java)
         }
 
-        val predicate = queryDslBuilder.isNull(expr)
+        val predicate = jpaQueryBuilder.isNull(expr)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -474,7 +474,7 @@ internal class JpaQueryBuilderTest {
     fun like() {
         val expr = mock<Expression<String>>()
         val value = "MYVALUE*"
-        val predicate = queryDslBuilder.like(expr, value)
+        val predicate = jpaQueryBuilder.like(expr, value)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -489,7 +489,7 @@ internal class JpaQueryBuilderTest {
     fun ilike() {
         val expr = mock<Expression<String>>()
         val value = "MYVALUE*"
-        val predicate = queryDslBuilder.ilike(expr, value)
+        val predicate = jpaQueryBuilder.ilike(expr, value)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -504,7 +504,7 @@ internal class JpaQueryBuilderTest {
     fun lessThan() {
         val expr = mock<Expression<*>>()
         val value = 123
-        val predicate = queryDslBuilder.lessThan(expr, value)
+        val predicate = jpaQueryBuilder.lessThan(expr, value)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -519,7 +519,7 @@ internal class JpaQueryBuilderTest {
     fun lessThanOrEquals() {
         val expr = mock<Expression<*>>()
         val value = 123
-        val predicate = queryDslBuilder.lessThanOrEquals(expr, value)
+        val predicate = jpaQueryBuilder.lessThanOrEquals(expr, value)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -534,7 +534,7 @@ internal class JpaQueryBuilderTest {
     fun greaterThan() {
         val expr = mock<Expression<*>>()
         val value = 123
-        val predicate = queryDslBuilder.greaterThan(expr, value)
+        val predicate = jpaQueryBuilder.greaterThan(expr, value)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -549,7 +549,7 @@ internal class JpaQueryBuilderTest {
     fun greaterThanOrEquals() {
         val expr = mock<Expression<*>>()
         val value = 123
-        val predicate = queryDslBuilder.greaterThanOrEquals(expr, value)
+        val predicate = jpaQueryBuilder.greaterThanOrEquals(expr, value)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -567,7 +567,7 @@ internal class JpaQueryBuilderTest {
         }
         val v = "myvalue"
         val values = listOf(v)
-        val predicate = queryDslBuilder.`in`(expr, values)
+        val predicate = jpaQueryBuilder.`in`(expr, values)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
@@ -582,7 +582,7 @@ internal class JpaQueryBuilderTest {
     fun in_with_multiple_values() {
         val expr = mock<Expression<*>>()
         val values = listOf("myvalue1", "myvalue2")
-        val predicate = queryDslBuilder.`in`(expr, values)
+        val predicate = jpaQueryBuilder.`in`(expr, values)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 

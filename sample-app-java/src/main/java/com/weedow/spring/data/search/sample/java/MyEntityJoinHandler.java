@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.ElementCollection;
 
+/**
+ * Fetch all fields annotated with @ElementCollection
+ */
 public class MyEntityJoinHandler implements EntityJoinHandler {
 
     @Override
@@ -15,7 +18,6 @@ public class MyEntityJoinHandler implements EntityJoinHandler {
         return propertyInfos.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ElementCollection);
     }
 
-    @NotNull
     @Override
     public JoinInfo handle(@NotNull PropertyInfos propertyInfos) {
         return new JoinInfo(JoinType.LEFTJOIN, true);

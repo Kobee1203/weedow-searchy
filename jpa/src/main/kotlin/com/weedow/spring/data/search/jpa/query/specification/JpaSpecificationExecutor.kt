@@ -74,7 +74,7 @@ open class JpaSpecificationExecutor<T>(
         var query: AbstractJPAQuery<T, *> = querydsl.createQuery(path) as AbstractJPAQuery<T, *>
 
         if (specification != null) {
-            val predicate = specification.toPredicate(createQueryDslBuilder(query))
+            val predicate = specification.toPredicate(createQueryBuilder(query))
             if (predicate != Specification.NO_PREDICATE) {
                 query = query.where(predicate) as AbstractJPAQuery<T, *>
             }
@@ -83,7 +83,7 @@ open class JpaSpecificationExecutor<T>(
         return query
     }
 
-    private fun createQueryDslBuilder(query: AbstractJPAQuery<T, *>) =
+    private fun createQueryBuilder(query: AbstractJPAQuery<T, *>) =
         JpaQueryBuilder(dataSearchContext, query, QEntityRootImpl(dataSearchContext.get(path.type)))
 
     private fun getRepositoryMethodMetadata() = metadata

@@ -61,7 +61,7 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
             val qPath = join.get(parent)
             val qName = qPath.propertyInfos.qName
             val entityJoin = joins.getOrElse(qName) {
-                EntityJoin(qPath.path.toString(), parent, qName)
+                EntityJoin(qPath.path.toString(), qName)
             }
             join = queryBuilder.join(qPath, entityJoin.joinType, entityJoin.fetched)
         }

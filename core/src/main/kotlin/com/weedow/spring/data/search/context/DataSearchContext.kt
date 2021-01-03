@@ -4,7 +4,7 @@ import com.weedow.spring.data.search.query.querytype.PropertyInfos
 import com.weedow.spring.data.search.query.querytype.QEntity
 
 /**
- * Class representing the Data Search Context used to create the queries according to the backend (JPA, MongoDB, ...).
+ * Class representing the Data Search Context used to create the queries according to the data access layer (JPA, MongoDB, ...).
  */
 interface DataSearchContext {
 

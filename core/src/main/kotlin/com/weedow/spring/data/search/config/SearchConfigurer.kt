@@ -12,7 +12,7 @@ import org.springframework.core.convert.converter.ConverterRegistry
 interface SearchConfigurer {
 
     /**
-     * Adds [com.weedow.spring.data.search.descriptor.SearchDescriptor]s to expose automatically search endpoints for JPA Entities.
+     * Adds [com.weedow.spring.data.search.descriptor.SearchDescriptor]s to expose automatically search endpoints for Entities.
      */
     @JvmDefault
     fun addSearchDescriptors(registry: SearchDescriptorRegistry) {

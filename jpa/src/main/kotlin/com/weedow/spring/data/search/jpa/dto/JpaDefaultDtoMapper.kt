@@ -7,7 +7,7 @@ import org.hibernate.internal.util.collections.IdentitySet
 
 
 /**
- * Default [DtoMapper] implementation.
+ * Default JPA [DtoMapper] implementation.
  *
  * There is no conversion to a specific DTO.
  *

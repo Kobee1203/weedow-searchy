@@ -25,11 +25,11 @@ internal class JpaSpecificationExecutorFactoryTest {
     private lateinit var dataSearchContext: DataSearchContext
 
     @InjectMocks
-    private lateinit var jpaQueryDslSpecificationExecutorFactory: JpaSpecificationExecutorFactory
+    private lateinit var jpaSpecificationExecutorFactory: JpaSpecificationExecutorFactory
 
     @ParameterizedTest
     @ValueSource(classes = [EntityWithIdClass::class, EntityWithEmbeddedId::class, EntityWithId::class, EntityWithSpringId::class, EntityWithIdField::class, EntityWithUnknownId::class])
-    fun getQueryDslSpecificationExecutor(entityClass: Class<*>) {
+    fun get_specification_executor(entityClass: Class<*>) {
         verify(entityClass)
     }
 
@@ -43,7 +43,7 @@ internal class JpaSpecificationExecutorFactoryTest {
         }
         whenever(entityManager.metamodel).thenReturn(metamodel)
 
-        val specificationExecutor = jpaQueryDslSpecificationExecutorFactory.getSpecificationExecutor(entityClass)
+        val specificationExecutor = jpaSpecificationExecutorFactory.getSpecificationExecutor(entityClass)
 
         assertThat(specificationExecutor)
             .isInstanceOf(JpaSpecificationExecutor::class.java)

@@ -6,7 +6,7 @@ import com.weedow.spring.data.search.query.specification.SpecificationExecutor
 import com.weedow.spring.data.search.validation.DataSearchValidator
 
 /**
- * Search Descriptor allows exposing automatically a search endpoint for a JPA Entity.
+ * Search Descriptor allows exposing automatically a search endpoint for an Entity.
  *
  * The new endpoint is mapped to `/search/{searchDescriptorId}` where `searchDescriptorId` is the [id] specified in the `SearchDescriptor`.
  *
@@ -36,7 +36,7 @@ import com.weedow.spring.data.search.validation.DataSearchValidator
  *   @Bean
  *   SearchDescriptor<Person> personSearchDescriptor(PersonRepository personRepository) {
  *     return new SearchDescriptorBuilder<Person>(Person.class)
- *                      .jpaSpecificationExecutor(personRepository)
+ *                      .specificationExecutor(personRepository)
  *                      .build();
  *   }
  * }

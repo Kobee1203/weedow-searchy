@@ -80,9 +80,8 @@ internal class JpaSpecificationExecutorTest {
         }
         val metadata = null
 
-        val jpaQueryDslSpecificationExecutor =
-            JpaSpecificationExecutor(dataSearchContext, entityInformation, entityManager, resolver, metadata)
-        val result = jpaQueryDslSpecificationExecutor.findAll(specification)
+        val jpaSpecificationExecutor = JpaSpecificationExecutor(dataSearchContext, entityInformation, entityManager, resolver, metadata)
+        val result = jpaSpecificationExecutor.findAll(specification)
 
         assertThat(result).isSameAs(resultList)
         verifyNoMoreInteractions(query)
@@ -98,9 +97,8 @@ internal class JpaSpecificationExecutorTest {
         }
         val metadata = mock<CrudMethodMetadata>()
 
-        val jpaQueryDslSpecificationExecutor =
-            JpaSpecificationExecutor(dataSearchContext, entityInformation, entityManager, resolver, metadata)
-        val result = jpaQueryDslSpecificationExecutor.findAll(specification)
+        val jpaSpecificationExecutor = JpaSpecificationExecutor(dataSearchContext, entityInformation, entityManager, resolver, metadata)
+        val result = jpaSpecificationExecutor.findAll(specification)
 
         assertThat(result).isSameAs(resultList)
         verifyNoMoreInteractions(query)
@@ -111,9 +109,8 @@ internal class JpaSpecificationExecutorTest {
         val specification = null
         val metadata = null
 
-        val jpaQueryDslSpecificationExecutor =
-            JpaSpecificationExecutor(dataSearchContext, entityInformation, entityManager, resolver, metadata)
-        val result = jpaQueryDslSpecificationExecutor.findAll(specification)
+        val jpaSpecificationExecutor = JpaSpecificationExecutor(dataSearchContext, entityInformation, entityManager, resolver, metadata)
+        val result = jpaSpecificationExecutor.findAll(specification)
 
         assertThat(result).isSameAs(resultList)
 
@@ -131,9 +128,8 @@ internal class JpaSpecificationExecutorTest {
         }
         val metadata = mock<CrudMethodMetadata>()
 
-        val jpaQueryDslSpecificationExecutor =
-            JpaSpecificationExecutor(dataSearchContext, entityInformation, entityManager, resolver, metadata)
-        val result = jpaQueryDslSpecificationExecutor.findAll(specification)
+        val jpaSpecificationExecutor = JpaSpecificationExecutor(dataSearchContext, entityInformation, entityManager, resolver, metadata)
+        val result = jpaSpecificationExecutor.findAll(specification)
 
         assertThat(result).isSameAs(resultList)
         verifyNoMoreInteractions(query)
@@ -153,9 +149,8 @@ internal class JpaSpecificationExecutorTest {
             on { this.lockModeType }.thenReturn(lockModeType)
         }
 
-        val jpaQueryDslSpecificationExecutor =
-            JpaSpecificationExecutor(dataSearchContext, entityInformation, entityManager, resolver, metadata)
-        val result = jpaQueryDslSpecificationExecutor.findAll(specification)
+        val jpaSpecificationExecutor = JpaSpecificationExecutor(dataSearchContext, entityInformation, entityManager, resolver, metadata)
+        val result = jpaSpecificationExecutor.findAll(specification)
 
         assertThat(result).isSameAs(resultList)
 

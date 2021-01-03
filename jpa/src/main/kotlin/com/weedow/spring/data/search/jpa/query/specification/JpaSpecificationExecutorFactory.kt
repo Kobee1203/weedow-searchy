@@ -15,7 +15,7 @@ import javax.persistence.Id
 import javax.persistence.IdClass
 
 /**
- * JPA [QueryDslSpecificationExecutorFactory][com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory] implementation.
+ * JPA [SpecificationExecutorFactory][com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory] implementation.
  *
  * @param entityManager [EntityManager]
  * @param dataSearchContext [DataSearchContext]

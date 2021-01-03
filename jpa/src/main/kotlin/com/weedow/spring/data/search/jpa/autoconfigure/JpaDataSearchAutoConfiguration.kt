@@ -11,12 +11,10 @@ import com.weedow.spring.data.search.jpa.query.specification.JpaSpecificationExe
 import com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory
 import com.weedow.spring.data.search.query.specification.SpecificationExecutorFactoryCachingDecorator
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
-import org.springframework.boot.autoconfigure.AutoConfigureOrder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.Ordered
 import javax.persistence.EntityManager
 
 /**
@@ -37,7 +35,7 @@ class JpaDataSearchAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnClass(EntityManager::class)
-    fun jpaQueryDslSpecificationExecutorFactory(
+    fun jpaSpecificationExecutorFactory(
         entityManager: EntityManager,
         dataSearchContext: DataSearchContext
     ): SpecificationExecutorFactory {

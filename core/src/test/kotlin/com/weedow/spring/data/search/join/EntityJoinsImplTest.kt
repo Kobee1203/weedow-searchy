@@ -34,7 +34,7 @@ internal class EntityJoinsImplTest {
     fun check_already_processed_when_property_infos_matches_entity_join() {
         val entityJoins = EntityJoinsImpl(Person::class.java)
 
-        val entityJoin = EntityJoin("addressEntities", "addressEntities", Address::class.java.canonicalName)
+        val entityJoin = EntityJoin("addressEntities", Address::class.java.canonicalName)
         entityJoins.add(entityJoin)
 
         // Join already added
@@ -131,9 +131,9 @@ internal class EntityJoinsImplTest {
         val joinType2 = JoinType.INNERJOIN
         val fetched2 = true
 
-        val entityJoin1 = EntityJoin("addressEntities", "addressEntities", qName1, joinType1, fetched1)
+        val entityJoin1 = EntityJoin("addressEntities", qName1, joinType1, fetched1)
         entityJoins.add(entityJoin1)
-        val entityJoin2 = EntityJoin("addressEntities.city", "city", qName2, joinType2, fetched2)
+        val entityJoin2 = EntityJoin("addressEntities.city", qName2, joinType2, fetched2)
         entityJoins.add(entityJoin2)
 
         val qPath = mock<QPath<*>> {
