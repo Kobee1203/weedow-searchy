@@ -33,6 +33,7 @@ public class Task extends JpaPersistable<Long> {
         return this;
     }
 
+    // Override toString() method to get a JSON representation used by the HTTP response
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);

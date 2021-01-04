@@ -7,9 +7,9 @@
 </p>
 
 ## About
-Spring Data Search allows to automatically expose endpoints in order to search for data related to JPA entities.
+Spring Data Search allows to automatically expose endpoints in order to search for data related to Entities.
 
-Spring Data Search provides an advanced search engine that does not require the creation of JPA repositories with custom methods needed to search on different fields of JPA entities.
+Spring Data Search provides an advanced search engine that does not require the creation of Repositories with custom methods needed to search on different fields of Entities.
 
 We can search on any field, combine multiple criteria to refine the search, and even search on nested fields. 
 
@@ -18,12 +18,12 @@ We can search on any field, combine multiple criteria to refine the search, and 
 ## Why use Spring Data Search?
 [Spring Data Rest](https://spring.io/projects/spring-data-rest) builds on top of the Spring Data repositories and automatically exports those as REST resources. 
 
-However, when we want to search for JPA entities according to different criteria, we need to define several methods in the Repositories to perform different searches.
+However, when we want to search for Entities according to different criteria, we need to define several methods in the Repositories to perform different searches.
 
-Moreover, by default REST endpoints return JPA Entities content directly to the client, without mapping with a dedicated DTO class.\
+Moreover, by default REST endpoints return Entities content directly to the client, without mapping with a dedicated DTO class.\
 We can use Projections on Repositories, but this means that from the architecture level, we strongly associate the infrastructure layer with the application layer.
 
-Spring Data Search allows to easily expose an endpoint for a JPA entity and thus be able to search on any fields of this entity, to combine several criteria and even search on fields belonging to sub-entities.
+Spring Data Search allows to easily expose an endpoint for a Entity and thus be able to search on any fields of this entity, to combine several criteria and even search on fields belonging to sub-entities.
 
 Let's say you manage Persons associated with Addresses, Vehicles and a Job.\
 You want to allow customers to search for them, regardless of the search criteria:
@@ -262,7 +262,7 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
     * From your IDE: Run the Main Class `com.example.sampleappjava.SampleAppJavaApplication`
 * Open your browser and go to the URL `http://localhost:8080/search/person`
 ![find-all-persons](./docs/images/find-all-persons.png)
-* You can filter the results by adding query parameters representing the JPA Entity fields:\
+* You can filter the results by adding query parameters representing the Entity fields:\
   Here is an example where the results are filtered by the first name:
 ![find-person-by-firstname](./docs/images/find-person-by-firstname.png)
 
@@ -321,7 +321,16 @@ public class Person {
     @Column(name = "value")
     private Map<String, String> characteristics;
 
-    // Getters/Setters
+    @ElementCollection
+    @CollectionTable(
+            name = "person_tasks",
+            joinColumns = {@JoinColumn(name = "person_id", referencedColumnName = "id")})
+    @MapKeyJoinColumn(name = "task_id")
+    @Column(name = "task_date")
+    private Map<Task, LocalDateTime> tasks;
+
+
+  // Getters/Setters
 }
 
 @Entity
@@ -408,6 +417,28 @@ public class Vehicle {
 }
 
 @Entity
+public class Task {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+      
+    @Column(nullable = false)
+    private String name;
+  
+    @Column
+    private String description;
+  
+    // Getters/Setters
+  
+    // Override toString() method to get a JSON representation used by the HTTP response
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
+    }
+}
+
+@Entity
 public class Feature {
 
     @Id
@@ -436,6 +467,29 @@ public enum VehicleType {
     CAR, MOTORBIKE, SCOOTER, VAN, TRUCK
 }
 ```
+
+### Query
+There are two methods to search for entities: [Standard Query](#standard-query) and [Advanced Query](#advanced-query)
+
+All search methods use the same operation described below.
+
+To search for all the Database rows of an entity type, you must concatenate the [Base Path](#changing-the-base-path) (default is `/search`) and the [Search Descriptor ID](#changing-the-base-path) (default is the Entity name in lower case).\
+_Example: Search all `Person` Entities_\
+`/search/person`
+
+To search on nested fields, you must concatenate the deep fields separated by the dot '`.`'.\
+_Example: The `Person` Entity contains a property of the `Address` Entity that is named `addressEntities`, and we search for Persons who live in 'Paris'_:\
+/search/person?`addressEntities.city=Paris`
+
+To search on fields with a `Map` type, you have to use the special keys `key` or `value` to query the keys or values respectively.\
+_Example 1: The `Person` Entity contains a property of type `Map` that is named `characteristics`, and we search for Persons who have 'blue eyes':_\
+/search/person?`characteristics.key=eyes&characteristics.value=blue`
+
+_Example 2: The `Person` Entity contains a property of type `Map` that is named `tasks`, and we search for Persons who have a task whose name is 'shopping':_\
+/search/person?`tasks.key.name=shopping`
+
+_Example 3: The `Vehicle` Entity contains a property of type `Map` that is named `features`, and we search for Persons who have vehicles with the 'GPS' feature:_\
+/search/person?`vehicles.features.value.name=gps`
 
 ### Standard Query
 You can search for entities by adding query parameters representing entity fields to the search URL.
@@ -470,7 +524,7 @@ Each field criteria is limited to the use of the `EQUALS` operator and the `IN` 
 ### Advanced Query
 You can search for entities by using the query string `query`.
 
-`query` supports a powerful query language to perform advanced searches for the JPA Entities.
+`query` supports a powerful query language to perform advanced searches for the Entities.
 
 You can combine logical operators and operators to create complex queries.
 
@@ -481,6 +535,8 @@ The value types are the following:
   _Example: `height=174`, `height=175.2`_
 * `Boolean`: could be true or false and is case-insensitive
   _Example: `active=true`, `active=FALSE`_
+* `Date`: must be surrounded by single quotes or double quotes, or use special keywords `CURRENT_DATE`, `CURRENT_TIME`, `CURRENT_DATE_TIME`.\
+  _Example: `birthday='1981-03-12T10:36:00'`, `job.hireDate='2019-09-01T09:00:00Z'`, `birthday=CURRENT_DATE_TIME`_
 
 > Note: The examples use the unencoded 'query' parameter, where **firstName = 'John'** is encoded as **firstName+%3d+%27John%27**.
 >
@@ -664,7 +720,7 @@ _Example: The `Person` Entity contains a property of the `Address` Entity that i
 [![javadoc](https://javadoc.io/badge2/com.weedow/spring-data-search-core/javadoc.svg)](https://javadoc.io/doc/com.weedow/spring-data-search-core)
 
 ### Search Descriptor
-The Search Descriptors allow exposing automatically search endpoints for JPA Entities.\
+The Search Descriptors allow exposing automatically search endpoints for Entities.\
 The new endpoints are mapped to `/search/{searchDescriptorId}` where `searchDescriptorId` is the [ID](#search-descriptor-id) defined for the `SearchDescriptor`.
 
 _Note: You can change the default base path `/search`. See [Changing the Base Path](#changing-the-base-path)._ 
@@ -672,7 +728,7 @@ _Note: You can change the default base path `/search`. See [Changing the Base Pa
 The easiest way to create a Search Descriptor is to use the `com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder` which provides every options available to configure a `SearchDescriptor`.
 
 #### Configure a new Search Descriptor
-You have to add the `SearchDescriptor`s to the Spring Data Search Configuration to expose the JPA Entity endpoint:
+You have to add the `SearchDescriptor`s to the Spring Data Search Configuration to expose the Entity endpoint:
 * Implement the `com.weedow.spring.data.search.config.SearchConfigurer` interface and override the `addSearchDescriptors` method:
     ```java
     @Configuration
@@ -704,7 +760,7 @@ You have to add the `SearchDescriptor`s to the Spring Data Search Configuration 
 This is the Search Descriptor Identifier. Each identifier must be unique.\
 Spring Data Search uses this identifier in the search endpoint URL which is mapped to `/search/{searchDescriptorId}`: `searchDescriptorId` is the Search Descriptor Identifier.
 
-If the Search Descriptor ID is not set, Spring Data Search uses the JPA Entity Name in lowercase as Search Descriptor ID.\
+If the Search Descriptor ID is not set, Spring Data Search uses the Entity Name in lowercase as Search Descriptor ID.\
 _If the Entity is `Person.java`, the Search Descriptor ID is `person`_
 
 Example with a custom Search Descriptor ID:
@@ -771,7 +827,7 @@ public class SearchDescriptorConfiguration implements SearchConfigurer {
 If this option is not set, a default DTO Mapper is used. This default DTO Mapper may be different according to the database implementation used.
 The `Core` provides a default DTO Mapper `com.weedow.spring.data.search.dto.DefaultDtoMapper` that does not convert the entity, and the HTTP response returns it directly.
 
-#### Validators
+##### Validators
 Spring Data Search provides a validation service to validate the Field Expressions.
 
 A `Field Expression` is a representation of a query parameter which evaluates an Entity field.\

@@ -15,6 +15,7 @@ class Task(
 
 ) : JpaPersistable<Long>() {
 
+    // Override toString() method to get a JSON representation used by the HTTP response
     override fun toString(): String {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE)
     }
