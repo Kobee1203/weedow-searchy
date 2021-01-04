@@ -7,9 +7,9 @@
 </p>
 
 ## About
-Spring Data Search allows to automatically expose endpoints in order to search for data related to JPA entities.
+Spring Data Search allows to automatically expose endpoints in order to search for data related to Entities.
 
-Spring Data Search provides an advanced search engine that does not require the creation of JPA repositories with custom methods needed to search on different fields of JPA entities.
+Spring Data Search provides an advanced search engine that does not require the creation of Repositories with custom methods needed to search on different fields of Entities.
 
 We can search on any field, combine multiple criteria to refine the search, and even search on nested fields. 
 
@@ -18,12 +18,12 @@ We can search on any field, combine multiple criteria to refine the search, and 
 ## Why use Spring Data Search?
 [Spring Data Rest](https://spring.io/projects/spring-data-rest) builds on top of the Spring Data repositories and automatically exports those as REST resources. 
 
-However, when we want to search for JPA entities according to different criteria, we need to define several methods in the Repositories to perform different searches.
+However, when we want to search for Entities according to different criteria, we need to define several methods in the Repositories to perform different searches.
 
-Moreover, by default REST endpoints return JPA Entities content directly to the client, without mapping with a dedicated DTO class.\
+Moreover, by default REST endpoints return Entities content directly to the client, without mapping with a dedicated DTO class.\
 We can use Projections on Repositories, but this means that from the architecture level, we strongly associate the infrastructure layer with the application layer.
 
-Spring Data Search allows to easily expose an endpoint for a JPA entity and thus be able to search on any fields of this entity, to combine several criteria and even search on fields belonging to sub-entities.
+Spring Data Search allows to easily expose an endpoint for a Entity and thus be able to search on any fields of this entity, to combine several criteria and even search on fields belonging to sub-entities.
 
 Let's say you manage Persons associated with Addresses, Vehicles and a Job.\
 You want to allow customers to search for them, regardless of the search criteria:
@@ -50,8 +50,9 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
 ### Built with:
 * [Kotlin](https://kotlinlang.org/)
 * [Spring Boot](https://spring.io/projects/spring-boot)
-* [Maven](https://maven.apache.org/)
+* [Querydsl](http://www.querydsl.com/)  
 * [ANTLR](https://www.antlr.org/)
+* [Maven](https://maven.apache.org/)
 
 ## Getting Started
 
@@ -69,13 +70,13 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
   ```xml
   <dependency>
       <groupId>com.weedow</groupId>
-      <artifactId>spring-data-search</artifactId>
-      <version>1.0.1</version>
+      <artifactId>spring-data-search-jpa</artifactId>
+      <version>2.0.0</version>
   </dependency>
   ```
 * If you have a [Gradle](https://gradle.org/) project, you can add the following dependency in your `build.gradle` file:
   ```groovy
-  implementation "com.weedow:spring-data-search:1.0.1"
+  implementation "com.weedow:spring-data-search-jpa:2.0.0"
   ```
 
 ### Getting Started in 5 minutes
@@ -91,13 +92,13 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
     ```xml
     <dependency>
       <groupId>com.weedow</groupId>
-      <artifactId>spring-data-search</artifactId>
-      <version>1.0.1</version>
+      <artifactId>spring-data-search-jpa</artifactId>
+      <version>2.0.0</version>
     </dependency>
     ```
     * For [Gradle](https://gradle.org/) project, add the dependency in the `build.gradle` file:
     ```groovy
-    implementation "com.weedow:spring-data-search:1.0.1"
+    implementation "com.weedow:spring-data-search-jpa:2.0.0"
     ```
 * Create a new file `Person.java` to add a new JPA Entity `Person` with the following content:
     ```java
@@ -261,7 +262,7 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
     * From your IDE: Run the Main Class `com.example.sampleappjava.SampleAppJavaApplication`
 * Open your browser and go to the URL `http://localhost:8080/search/person`
 ![find-all-persons](./docs/images/find-all-persons.png)
-* You can filter the results by adding query parameters representing the JPA Entity fields:\
+* You can filter the results by adding query parameters representing the Entity fields:\
   Here is an example where the results are filtered by the first name:
 ![find-person-by-firstname](./docs/images/find-person-by-firstname.png)
 
@@ -320,7 +321,16 @@ public class Person {
     @Column(name = "value")
     private Map<String, String> characteristics;
 
-    // Getters/Setters
+    @ElementCollection
+    @CollectionTable(
+            name = "person_tasks",
+            joinColumns = {@JoinColumn(name = "person_id", referencedColumnName = "id")})
+    @MapKeyJoinColumn(name = "task_id")
+    @Column(name = "task_date")
+    private Map<Task, LocalDateTime> tasks;
+
+
+  // Getters/Setters
 }
 
 @Entity
@@ -407,6 +417,28 @@ public class Vehicle {
 }
 
 @Entity
+public class Task {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+      
+    @Column(nullable = false)
+    private String name;
+  
+    @Column
+    private String description;
+  
+    // Getters/Setters
+  
+    // Override toString() method to get a JSON representation used by the HTTP response
+    @Override
+    public String toString() {
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
+    }
+}
+
+@Entity
 public class Feature {
 
     @Id
@@ -436,6 +468,29 @@ public enum VehicleType {
 }
 ```
 
+### Query
+There are two methods to search for entities: [Standard Query](#standard-query) and [Advanced Query](#advanced-query)
+
+All search methods use the same operation described below.
+
+To search for all the Database rows of an entity type, you must concatenate the [Base Path](#changing-the-base-path) (default is `/search`) and the [Search Descriptor ID](#changing-the-base-path) (default is the Entity name in lower case).\
+_Example: Search all `Person` Entities_\
+`/search/person`
+
+To search on nested fields, you must concatenate the deep fields separated by the dot '`.`'.\
+_Example: The `Person` Entity contains a property of the `Address` Entity that is named `addressEntities`, and we search for Persons who live in 'Paris'_:\
+/search/person?`addressEntities.city=Paris`
+
+To search on fields with a `Map` type, you have to use the special keys `key` or `value` to query the keys or values respectively.\
+_Example 1: The `Person` Entity contains a property of type `Map` that is named `characteristics`, and we search for Persons who have 'blue eyes':_\
+/search/person?`characteristics.key=eyes&characteristics.value=blue`
+
+_Example 2: The `Person` Entity contains a property of type `Map` that is named `tasks`, and we search for Persons who have a task whose name is 'shopping':_\
+/search/person?`tasks.key.name=shopping`
+
+_Example 3: The `Vehicle` Entity contains a property of type `Map` that is named `features`, and we search for Persons who have vehicles with the 'GPS' feature:_\
+/search/person?`vehicles.features.value.name=gps`
+
 ### Standard Query
 You can search for entities by adding query parameters representing entity fields to the search URL.
 
@@ -462,11 +517,14 @@ Each field criteria is limited to the use of the `EQUALS` operator and the `IN` 
 | Persons with the birthday is _'null'_                                                                                    | `/search?birthday=null`                                                                |
 | Persons who don't have jobs                                                                                              | `/search?jobEntity=null`                                                               |
 | Persons who have a vehicle without defined feature in database                                                           | `/search?vehicles.features=null`                                                       |
+| Persons who were born at current date                                                                                    | `/search?birthday=CURRENT_DATE`                                                        |
+| Persons who were born at current time                                                                                    | `/search?birthday=CURRENT_TIME`                                                        |
+| Persons who were born at current datetime                                                                                | `/search?birthday=CURRENT_DATE_TIME`                                                   |
 
 ### Advanced Query
 You can search for entities by using the query string `query`.
 
-`query` supports a powerful query language to perform advanced searches for the JPA Entities.
+`query` supports a powerful query language to perform advanced searches for the Entities.
 
 You can combine logical operators and operators to create complex queries.
 
@@ -477,6 +535,8 @@ The value types are the following:
   _Example: `height=174`, `height=175.2`_
 * `Boolean`: could be true or false and is case-insensitive
   _Example: `active=true`, `active=FALSE`_
+* `Date`: must be surrounded by single quotes or double quotes, or use special keywords `CURRENT_DATE`, `CURRENT_TIME`, `CURRENT_DATE_TIME`.\
+  _Example: `birthday='1981-03-12T10:36:00'`, `job.hireDate='2019-09-01T09:00:00Z'`, `birthday=CURRENT_DATE_TIME`_
 
 > Note: The examples use the unencoded 'query' parameter, where **firstName = 'John'** is encoded as **firstName+%3d+%27John%27**.
 >
@@ -489,6 +549,7 @@ The value types are the following:
 | Persons with the first name 'John'                                  | /person?query=`firstName='John'`                                         |
 | Persons with the birthday equals to the given `LocalDateTime`       | /person?query=`birthday='1981-03-12T10:36:00'`                           |
 | Persons with the hire date equals to the given `OffsetDateTime`     | /person?query=`job.hireDate='2019-09-01T09:00:00Z'`                      |
+| Persons with the birthday equals to the current `LocalDateTime`     | /person?query=`birthday=CURRENT_DATE_TIME`                               |
 | Persons who own a car (VehicleType is an Enum)                      | /person?query=`vehicle.vehicleType='CAR'`                                |
 | Persons who are 1,74 m tall                                         | /person?query=`height=174`                                               |
 | Persons who are actively employed                                   | /person?query=`job.active=true`                                          |
@@ -500,6 +561,7 @@ The value types are the following:
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | Persons who are not named 'John'                                    | /person?query=`firstName!='John'`                     |
 | Persons with the birthday not equals to the given `LocalDateTime`   | /person?query=`birthday!='1981-03-12T10:36:00'`       |
+| Persons with the birthday not equals to the current `LocalDateTime` | /person?query=`birthday=CURRENT_DATE_TIME`            |
 | Persons with the hire date not equals to the given `OffsetDateTime` | /person?query=`job.hireDate!='2019-09-01T09:00:00Z'`  |
 | Persons who don't own a car (VehicleType is an Enum)                | /person?query=`vehicle.vehicleType!='CAR'`            |
 | Persons who are not 1,74 m tall                                     | /person?query=`height!=174`                           |
@@ -511,6 +573,7 @@ The value types are the following:
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | Persons who were born before the given `LocalDateTime`              | /person?query=`birthday<'1981-03-12T10:36:00'`        |
 | Persons who are hired before the given `OffsetDateTime`             | /person?query=`job.hireDate<'2019-09-01T09:00:00Z'`   |
+| Persons who are hired before current datetime                       | /person?query=`job.hireDate<CURRENT_DATE_TIME`        |
 | Persons who are smaller than 1,74 m                                 | /person?query=`height<174`                            |
 
 1. <a name="less-than-or-equals-operator"></a> Less than or equals operator `<=`
@@ -519,6 +582,7 @@ The value types are the following:
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | Persons who were born before or on the given `LocalDateTime`        | /person?query=`birthday<='1981-03-12T10:36:00'`       |
 | Persons who are hired before or on the given `OffsetDateTime`       | /person?query=`job.hireDate<='2019-09-01T09:00:00Z'`  |
+| Persons who are hired before or on current datetime                 | /person?query=`job.hireDate<=CURRENT_DATE_TIME`       |
 | Persons who are smaller than or equal to 1,74 m                     | /person?query=`height<=174`                           |
 
 1. <a name="greater-than-operator"></a> Greater than operator `>`
@@ -527,6 +591,7 @@ The value types are the following:
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | Persons who were born after the given `LocalDateTime`               | /person?query=`birthday>'1981-03-12T10:36:00'`        |
 | Persons who are hired after the given `OffsetDateTime`              | /person?query=`job.hireDate>'2019-09-01T09:00:00Z'`   |
+| Persons who are hired after the current datetime                    | /person?query=`job.hireDate>CURRENT_DATE_TIME`        |
 | Persons who are taller than 1,74 m                                  | /person?query=`height>174`                            |
 
 1. <a name="greater-than-or-equals-operator"></a> Greater than or equals operator `>=`
@@ -535,6 +600,7 @@ The value types are the following:
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
 | Persons who were born after or on the given `LocalDateTime`         | /person?query=`birthday>='1981-03-12T10:36:00'`       |
 | Persons who are hired after or on the given `OffsetDateTime`        | /person?query=`job.hireDate>='2019-09-01T09:00:00Z'`  |
+| Persons who are hired after or on current datetime                  | /person?query=`job.hireDate>=CURRENT_DATE_TIME`       |
 | Persons who are taller than or equal to 1,74 m                      | /person?query=`height>=174`                           |
 
 1. <a name="matches-operator"></a> Matches operator `MATCHES`
@@ -569,6 +635,29 @@ _Use the wildcard character `*` to match any string with zero or more characters
 | Persons with the height is one the given values                         | /person?query=`height IN (168, 174, 185)`                            |
 | Persons who own one of the given vehicle types (VehicleType is an Enum) | /person?query=`vehicle.vehicleType IN ('CAR', 'MOTORBIKE', 'TRUCK')` |
 | Persons who are not named 'John' or 'Jane'                              | /person?query=`firstName NOT IN ('John', 'Jane')`                    |
+
+1. <a name="date-comparison"></a> Date comparison
+
+The fields representing a date, time, or datetime can be compared with a string having a valid format according to the type of the field.
+
+| What you want to query                                          | Example                                             |
+| --------------------------------------------------------------- | --------------------------------------------------- |
+| Persons with the birthday equals to the given `LocalDateTime`   | /person?query=`birthday='1981-03-12T10:36:00'`      |
+| Persons with the hire date equals to the given `OffsetDateTime` | /person?query=`job.hireDate='2019-09-01T09:00:00Z'` |
+
+Also, the fields representing a date, time, or datetime can be compared with the following keywords:
+* `CURRENT_DATE`: keyword representing the current date
+* `CURRENT_TIME`: keyword representing the current time
+* `CURRENT_DATE_TIME`: keyword representing the current date and time
+
+| What you want to query                                      | Example                                     |
+| ----------------------------------------------------------- | ------------------------------------------- |
+| Persons with the birthday is at current datetime            | /person?query=`birthday=CURRENT_DATE_TIME`  |
+| Persons with the birthday is not at current datetime        | /person?query=`birthday!=CURRENT_DATE_TIME` |
+| Persons with the birthday is after current datetime         | /person?query=`birthday>CURRENT_DATE_TIME`  |
+| Persons with the birthday is after or at current datetime   | /person?query=`birthday>=CURRENT_DATE_TIME` |
+| Persons with the birthday is before current datetime        | /person?query=`birthday<CURRENT_DATE_TIME`  |
+| Persons with the birthday is before or at current datetime  | /person?query=`birthday<=CURRENT_DATE_TIME` |
 
 1. <a name="null-comparison"></a> `NULL` comparison
 
@@ -631,7 +720,7 @@ _Example: The `Person` Entity contains a property of the `Address` Entity that i
 [![javadoc](https://javadoc.io/badge2/com.weedow/spring-data-search-core/javadoc.svg)](https://javadoc.io/doc/com.weedow/spring-data-search-core)
 
 ### Search Descriptor
-The Search Descriptors allow exposing automatically search endpoints for JPA Entities.\
+The Search Descriptors allow exposing automatically search endpoints for Entities.\
 The new endpoints are mapped to `/search/{searchDescriptorId}` where `searchDescriptorId` is the [ID](#search-descriptor-id) defined for the `SearchDescriptor`.
 
 _Note: You can change the default base path `/search`. See [Changing the Base Path](#changing-the-base-path)._ 
@@ -639,7 +728,7 @@ _Note: You can change the default base path `/search`. See [Changing the Base Pa
 The easiest way to create a Search Descriptor is to use the `com.weedow.spring.data.search.descriptor.SearchDescriptorBuilder` which provides every options available to configure a `SearchDescriptor`.
 
 #### Configure a new Search Descriptor
-You have to add the `SearchDescriptor`s to the Spring Data Search Configuration to expose the JPA Entity endpoint:
+You have to add the `SearchDescriptor`s to the Spring Data Search Configuration to expose the Entity endpoint:
 * Implement the `com.weedow.spring.data.search.config.SearchConfigurer` interface and override the `addSearchDescriptors` method:
     ```java
     @Configuration
@@ -660,22 +749,8 @@ You have to add the `SearchDescriptor`s to the Spring Data Search Configuration 
         @Bean
         SearchDescriptor<Person> personSearchDescriptor(PersonRepository personRepository) {
             return new SearchDescriptorBuilder<Person>(Person.class)
-                       .jpaSpecificationExecutor(personRepository)
+                       .specificationExecutor(personRepository)
                        .build();
-        }
-    }
-    ```
-
-* If the `SearchDescriptor` Bean is declared without a specific [JpaSpecificationExecutor](#jpa-specification-executor),
-  an exception may be thrown if the `SearchDescriptor` Bean is initialized before `JpaSpecificationExecutorFactory`.
-  In this case, [@DependsOn](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/DependsOn.html) must be used to prevent the exception:
-    ```java
-    @Configuration
-    public class SearchDescriptorConfiguration {
-        @Bean
-        @DependsOn("jpaSpecificationExecutorFactory")
-        SearchDescriptor<Person> personSearchDescriptor() {
-            return new SearchDescriptorBuilder<Person>(Person.class).build();
         }
     }
     ```
@@ -685,7 +760,7 @@ You have to add the `SearchDescriptor`s to the Spring Data Search Configuration 
 This is the Search Descriptor Identifier. Each identifier must be unique.\
 Spring Data Search uses this identifier in the search endpoint URL which is mapped to `/search/{searchDescriptorId}`: `searchDescriptorId` is the Search Descriptor Identifier.
 
-If the Search Descriptor ID is not set, Spring Data Search uses the JPA Entity Name in lowercase as Search Descriptor ID.\
+If the Search Descriptor ID is not set, Spring Data Search uses the Entity Name in lowercase as Search Descriptor ID.\
 _If the Entity is `Person.java`, the Search Descriptor ID is `person`_
 
 Example with a custom Search Descriptor ID:
@@ -749,9 +824,10 @@ public class SearchDescriptorConfiguration implements SearchConfigurer {
 }
 ```
 
-If this option is not set, the entity is not converted and the HTTP response returns it directly.
+If this option is not set, a default DTO Mapper is used. This default DTO Mapper may be different according to the database implementation used.
+The `Core` provides a default DTO Mapper `com.weedow.spring.data.search.dto.DefaultDtoMapper` that does not convert the entity, and the HTTP response returns it directly.
 
-#### Validators
+##### Validators
 Spring Data Search provides a validation service to validate the Field Expressions.
 
 A `Field Expression` is a representation of a query parameter which evaluates an Entity field.\
@@ -819,43 +895,90 @@ Spring Data Search provides the following `DataSearchValidator` implementations:
 * `com.weedow.spring.data.search.validation.validator.MinValidator`: Checks if the field expression value is greater or equals to the specified `minValue`.
 * `com.weedow.spring.data.search.validation.validator.RangeValidator`: Checks if the field expression value is between the specified `minValue` and `maxValue`.
 
-##### JPA Specification Executor
-Spring Data Search uses the [Spring Data JPA Specifications](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#specifications) to aggregate all expressions in query parameters and query the JPA Entities in the Database.
+##### Specification Executor
+Spring Data Search defines the class `com.weedow.spring.data.search.query.specification.Specification`, inspired by [Spring Data JPA Specifications](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#specifications).
+It is used to aggregate all expressions in query parameters and query the Entities in the Database.
 
-The base interface to use the Spring Data JPA Specifications is [JpaSpecificationExecutor](https://docs.spring.io/spring-data/jpa/docs/current/api/org/springframework/data/jpa/repository/JpaSpecificationExecutor.html).
-
-Spring Data Search uses the following method of this interface:
+Spring Data Search defines the following interface to allow execution of `Specifications`:
 ```java
-public interface JpaSpecificationExecutor<T> {
+public interface SpecificationExecutor<T> {
     //...//
     List<T> findAll(Specification<T> spec);
     //...//
 }
 ```
 
-If this option is not set, Spring Data Search instantiates a default implementation of `JpaSpecificationExecutor` according to the JPA Entity.\
-This is normally sufficient for the majority of needs, but you can set this option with your own `JpaSpecificationExecutor` implementation if you need a specific implementation.
+This interface is already implemented for each Database implementation (JPA, MongoDB ...).
+This is normally sufficient for the majority of needs, but you can set this option with your own `SpecificationExecutor` implementation if you need a specific implementation.
+
+To ease integration with Spring Repositories, there is the `com.weedow.spring.data.search.repository.DataSearchBaseRepository` interface.
+
+* Extending an annotated `@Repository` interface with the `DataSearchBaseRepository` interface
+  ```java
+  @Repository
+  public interface PersonRepository extends DataSearchBaseRepository {
+  }
+  ```
+* Set the `SearchDescriptor` with the previous interface
+  ```java
+  @Configuration
+  public class SearchDescriptorConfiguration {
+      @Bean
+      SearchDescriptor<Person> personSearchDescriptor(PersonRepository personRepository) {
+          return new SearchDescriptorBuilder<Person>(Person.class)
+                     .specificationExecutor(personRepository)
+                     .build();
+      }
+  }
+  ```
+* If the annotated @Repository interface has a specific implementation, implement the `List<T> findAll(Specification<T> specification)` method
+  ```java
+  public class PersonRepositoryImpl implements PersonRepository {
+    public List<Person> findAll(Specification<Person> specification) {
+      // ...
+    }
+  }
+  ```
+* If the annotated @Repository interface does not have a specific implementation, it means that it uses a default Spring implementation that will not support the `List<T> findAll(Specification<T> specification)` method.
+  It is therefore necessary to override this behavior by specifying another [FactoryBean](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/FactoryBean.html) class to be used for each repository instance.
+  For example, if it's a JPA Repository, you have to specify that the `repositoryFactoryBeanClass` is `com.weedow.spring.data.search.jpa.repository.DataSearchJpaRepositoryFactoryBean`:
+  ```java
+  @SpringBootApplication
+  @EnableJpaRepositories(value = {"com.sample.repository"}, repositoryFactoryBeanClass = DataSearchJpaRepositoryFactoryBean::class)
+  public class SampleAppJavaApplication {
+ 
+     public static void main(String[] args) {
+         SpringApplication.run(SampleAppJavaApplication.class, args);
+     }
+ 
+  }
+  ```
 
 ##### Entity Join Handlers
 It is sometimes useful to optimize the number of SQL queries by specifying the data that you want to fetch during the first SQL query with the criteria.
 
-This option allows to add `EntityJoinHandler` implementations to specify join types for any fields having _join annotation_.
-
-The _join annotations_ detected by Spring Data Search are the following:
-* javax.persistence.OneToOne
-* javax.persistence.OneToMany
-* javax.persistence.ManyToMany
-* javax.persistence.ElementCollection
-* javax.persistence.ManyToOne
+This option allows adding `EntityJoinHandler` implementations to specify join types for any fields having _join annotation_.
 
 You can add several `EntityJoinHandler` implementations. The first implementation that matches from the `support(...)` method will be used to specify the join type for the given field.
+
+```java
+@Configuration
+public class SearchDescriptorConfiguration {
+  @Bean
+  public SearchDescriptor<Person> personSearchDescriptor(DataSearchContext dataSearchContext) {
+    return new SearchDescriptorBuilder<>(Person.class)
+            .entityJoinHandlers(new MyEntityJoinHandler(), new JpaFetchingEagerEntityJoinHandler(dataSearchContext))
+            .build();
+  }
+}
+```
 
 Spring Data Search provides the following default implementations:
 * `FetchingAllEntityJoinHandler`: This implementation allows to query an entity by fetching all data related to this entity, i.e. all fields related to another Entity recursively.\
   _Example:_\
   _`A` has a relationship with `B` and `B` has a relationship with `C`._\
   _When we search for `A`, we retrieve `A` with data from `B` and `C`._
-* `FetchingEagerEntityJoinHandler`: This implementation allows to query an entity by fetching all fields having a Join Annotation with the Fetch type defined as `EAGER`.\
+* `JpaFetchingEagerEntityJoinHandler`: This specific JPA implementation allows to query an entity by fetching all fields having a Join Annotation with the Fetch type defined as `EAGER`.\
   _Example:_\
   _`A` has a relationship with `B` using `@OneToMany` annotation and `FetchType.EAGER`, and `A` has a relationship with `C` using `@OneToMany` annotation and `FetchType.LAZY`._\
   _When we search for `A`, we retrieve `A` with just data from `B`, but not `C`._
@@ -865,17 +988,18 @@ Just implement the `com.weedow.spring.data.search.join.handler.EntityJoinHandler
 ```java
 /**
  * Fetch all fields annotated with @ElementCollection
- **/
-public class MyEntityJoinHandler implements com.weedow.spring.data.search.join.handler.EntityJoinHandler {
-    @Override
-    public boolean supports(Class<?> entityClass, Class<?> fieldClass, String fieldName, Annotation joinAnnotation) {
-        return joinAnnotation instanceof ElementCollection;
-    }
+ */
+public class MyEntityJoinHandler implements EntityJoinHandler {
 
-    @Override
-    public JoinInfo handle(Class<?> entityClass, Class<?> fieldClass, String fieldName, Annotation joinAnnotation) {
-        return new JoinInfo(JoinType.LEFT, true);
-    }
+  @Override
+  public boolean supports(PropertyInfos propertyInfos) {
+    return propertyInfos.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ElementCollection);
+  }
+
+  @Override
+  public JoinInfo handle(PropertyInfos propertyInfos) {
+    return new JoinInfo(JoinType.LEFTJOIN, true);
+  }
 }
 ```
 
@@ -952,7 +1076,7 @@ public class Job {
 }
 ```
 
-You want to search for the persons whose the vehicle brand is _Renault_, and the job company is _Acme_:
+You want to search for the persons who's the vehicle brand is _Renault_, and the job company is _Acme_:
 ```
 /search/person?vehicles.brand=Renault&jobEntity.company=Acme
 ```
@@ -1132,8 +1256,11 @@ This changes the Base Path to `/api`. Example: `/api/person`
 
 ---
 
+## Migration
+* [Migrating from 1.x to 2.x](./docs/migration/migrating-from-1.x-to-2.x.md)
+
 ## Issues
-[![Issues](https://img.shields.io/github/issues/Kobee1203/spring-data-search)]()
+[![Issues](https://img.shields.io/github/issues/Kobee1203/spring-data-search)](https://github.com/Kobee1203/spring-data-search/issues)
 
 ## Contributing
 

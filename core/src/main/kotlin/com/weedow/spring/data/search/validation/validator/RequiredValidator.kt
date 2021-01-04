@@ -7,9 +7,11 @@ import com.weedow.spring.data.search.validation.DataSearchErrors
  * [DataSearchValidator][com.weedow.spring.data.search.validation.DataSearchValidator] implementation to check if all specified required [fieldPaths] are present.
  *
  * The validator iterates over the field expressions and compare the related `fieldPath` with the required [fieldPaths].
+ *
+ * @param fieldPaths Field paths to validate
  */
 class RequiredValidator(
-        vararg fieldPaths: String
+    vararg fieldPaths: String
 ) : AbstractFieldPathValidator(*fieldPaths) {
 
     override fun validate(fieldExpressions: Collection<FieldExpression>, errors: DataSearchErrors) {

@@ -36,7 +36,7 @@ internal class RequiredValidatorTest : BaseValidatorTest() {
             verify(dataSearchErrors).reject(eq("required"), eq("Missing required field: {0}."), capture())
 
             Assertions.assertThat(allValues).containsExactly(
-                    "field3"
+                "field3"
             )
         }
     }
@@ -52,7 +52,7 @@ internal class RequiredValidatorTest : BaseValidatorTest() {
             verify(dataSearchErrors).reject(eq("required"), eq("Missing required fields: {0}."), capture())
 
             Assertions.assertThat(allValues).containsExactly(
-                    arrayOf("field1", "field3")
+                arrayOf("field1", "field3")
             )
         }
     }

@@ -10,4 +10,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  * @param operator Operator not supported
  */
 @ResponseStatus(code = HttpStatus.NOT_IMPLEMENTED, reason = "Not Implemented Operator")
-class UnsupportedOperatorException(operator: String) : Exception("Operator $operator is not supported")
+class UnsupportedOperatorException(operator: String) : RuntimeException("Operator $operator is not supported")

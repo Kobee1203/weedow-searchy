@@ -2,10 +2,8 @@ package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.join.EntityJoin
 import com.weedow.spring.data.search.join.EntityJoins
-import org.springframework.data.jpa.domain.Specification
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Root
+import com.weedow.spring.data.search.query.QueryBuilder
+import com.weedow.spring.data.search.query.specification.Specification
 
 /**
  * Default [RootExpression] implementation.
@@ -13,7 +11,7 @@ import javax.persistence.criteria.Root
  * @param expressions [Expression]s
  */
 class RootExpressionImpl<T>(
-        vararg val expressions: Expression
+    vararg val expressions: Expression
 ) : RootExpression<T> {
 
     companion object {
@@ -26,18 +24,18 @@ class RootExpressionImpl<T>(
     }
 
     override fun <T> toSpecification(entityJoins: EntityJoins): Specification<T> {
-        var specification = Specification { root: Root<T>, query: CriteriaQuery<*>, _: CriteriaBuilder ->
-            query.distinct(true)
+        var specification = Specification { builder: QueryBuilder<T> ->
+            builder.distinct()
 
             val fetchJoins = entityJoins.getJoins(FILTER_FETCH_JOINS)
             fetchJoins.values.forEach {
-                entityJoins.getPath(it.fieldPath, root)
+                entityJoins.getQPath(it.fieldPath, builder.qEntityRoot, builder)
             }
 
-            null
+            Specification.NO_PREDICATE
         }
 
-        expressions.forEach { specification = specification.and(it.toSpecification<T>(entityJoins))!! }
+        expressions.forEach { specification = specification.and(it.toSpecification(entityJoins)) }
 
         return specification
     }

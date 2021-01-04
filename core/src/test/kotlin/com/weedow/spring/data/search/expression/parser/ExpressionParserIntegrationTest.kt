@@ -28,11 +28,17 @@ internal class ExpressionParserIntegrationTest {
         @Suppress("unused")
         private fun equals_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("jobEntity.active=true", "jobEntity.active", "active", Job::class.java, true),
-                    Arguments.of("height=174", "height", "height", Person::class.java, 174.0),
-                    Arguments.of("firstName='John'", "firstName", "firstName", Person::class.java, "John"),
-                    Arguments.of("birthday='1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
-                    Arguments.of("jobEntity.hireDate='2019-09-01T09:00:00Z'", "jobEntity.hireDate", "hireDate", Job::class.java, OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC))
+                Arguments.of("jobEntity.active=true", "jobEntity.active", "active", Job::class.java, true),
+                Arguments.of("height=174", "height", "height", Person::class.java, 174.0),
+                Arguments.of("firstName='John'", "firstName", "firstName", Person::class.java, "John"),
+                Arguments.of("birthday='1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
+                Arguments.of(
+                    "jobEntity.hireDate='2019-09-01T09:00:00Z'",
+                    "jobEntity.hireDate",
+                    "hireDate",
+                    Job::class.java,
+                    OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC)
+                )
             )
         }
 
@@ -40,11 +46,17 @@ internal class ExpressionParserIntegrationTest {
         @Suppress("unused")
         private fun not_equals_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("jobEntity.active!=true", "jobEntity.active", "active", Job::class.java, true),
-                    Arguments.of("height!=174", "height", "height", Person::class.java, 174.0),
-                    Arguments.of("firstName!='John'", "firstName", "firstName", Person::class.java, "John"),
-                    Arguments.of("birthday!='1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
-                    Arguments.of("jobEntity.hireDate!='2019-09-01T09:00:00Z'", "jobEntity.hireDate", "hireDate", Job::class.java, OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC))
+                Arguments.of("jobEntity.active!=true", "jobEntity.active", "active", Job::class.java, true),
+                Arguments.of("height!=174", "height", "height", Person::class.java, 174.0),
+                Arguments.of("firstName!='John'", "firstName", "firstName", Person::class.java, "John"),
+                Arguments.of("birthday!='1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
+                Arguments.of(
+                    "jobEntity.hireDate!='2019-09-01T09:00:00Z'",
+                    "jobEntity.hireDate",
+                    "hireDate",
+                    Job::class.java,
+                    OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC)
+                )
             )
         }
 
@@ -52,9 +64,15 @@ internal class ExpressionParserIntegrationTest {
         @Suppress("unused")
         private fun less_than_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("height<174", "height", "height", Person::class.java, 174.0),
-                    Arguments.of("birthday<'1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
-                    Arguments.of("jobEntity.hireDate<'2019-09-01T09:00:00Z'", "jobEntity.hireDate", "hireDate", Job::class.java, OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC))
+                Arguments.of("height<174", "height", "height", Person::class.java, 174.0),
+                Arguments.of("birthday<'1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
+                Arguments.of(
+                    "jobEntity.hireDate<'2019-09-01T09:00:00Z'",
+                    "jobEntity.hireDate",
+                    "hireDate",
+                    Job::class.java,
+                    OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC)
+                )
             )
         }
 
@@ -62,9 +80,15 @@ internal class ExpressionParserIntegrationTest {
         @Suppress("unused")
         private fun less_than_or_equals_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("height<=174", "height", "height", Person::class.java, 174.0),
-                    Arguments.of("birthday<='1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
-                    Arguments.of("jobEntity.hireDate<='2019-09-01T09:00:00Z'", "jobEntity.hireDate", "hireDate", Job::class.java, OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC))
+                Arguments.of("height<=174", "height", "height", Person::class.java, 174.0),
+                Arguments.of("birthday<='1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
+                Arguments.of(
+                    "jobEntity.hireDate<='2019-09-01T09:00:00Z'",
+                    "jobEntity.hireDate",
+                    "hireDate",
+                    Job::class.java,
+                    OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC)
+                )
             )
         }
 
@@ -72,9 +96,15 @@ internal class ExpressionParserIntegrationTest {
         @Suppress("unused")
         private fun greater_than_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("height>174", "height", "height", Person::class.java, 174.0),
-                    Arguments.of("birthday>'1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
-                    Arguments.of("jobEntity.hireDate>'2019-09-01T09:00:00Z'", "jobEntity.hireDate", "hireDate", Job::class.java, OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC))
+                Arguments.of("height>174", "height", "height", Person::class.java, 174.0),
+                Arguments.of("birthday>'1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
+                Arguments.of(
+                    "jobEntity.hireDate>'2019-09-01T09:00:00Z'",
+                    "jobEntity.hireDate",
+                    "hireDate",
+                    Job::class.java,
+                    OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC)
+                )
             )
         }
 
@@ -82,9 +112,15 @@ internal class ExpressionParserIntegrationTest {
         @Suppress("unused")
         private fun greater_than_or_equals_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("height>=174", "height", "height", Person::class.java, 174.0),
-                    Arguments.of("birthday>='1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
-                    Arguments.of("jobEntity.hireDate>='2019-09-01T09:00:00Z'", "jobEntity.hireDate", "hireDate", Job::class.java, OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC))
+                Arguments.of("height>=174", "height", "height", Person::class.java, 174.0),
+                Arguments.of("birthday>='1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0)),
+                Arguments.of(
+                    "jobEntity.hireDate>='2019-09-01T09:00:00Z'",
+                    "jobEntity.hireDate",
+                    "hireDate",
+                    Job::class.java,
+                    OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC)
+                )
             )
         }
 
@@ -92,11 +128,25 @@ internal class ExpressionParserIntegrationTest {
         @Suppress("unused")
         private fun not_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("NOT (jobEntity.active=true)", "jobEntity.active", "active", Job::class.java, true, Operator.EQUALS),
-                    Arguments.of("NOT birthday<'1981-03-12T10:36:00'", "birthday", "birthday", Person::class.java, LocalDateTime.of(1981, 3, 12, 10, 36, 0), Operator.LESS_THAN),
-                    Arguments.of("NOT jobEntity.hireDate<='2019-09-01T09:00:00Z'", "jobEntity.hireDate", "hireDate", Job::class.java, OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC), Operator.LESS_THAN_OR_EQUALS),
-                    Arguments.of("NOT height>=174", "height", "height", Person::class.java, 174.0, Operator.GREATER_THAN_OR_EQUALS),
-                    Arguments.of("NOT (height>174)", "height", "height", Person::class.java, 174.0, Operator.GREATER_THAN)
+                Arguments.of("NOT (jobEntity.active=true)", "jobEntity.active", "active", Job::class.java, true, Operator.EQUALS),
+                Arguments.of(
+                    "NOT birthday<'1981-03-12T10:36:00'",
+                    "birthday",
+                    "birthday",
+                    Person::class.java,
+                    LocalDateTime.of(1981, 3, 12, 10, 36, 0),
+                    Operator.LESS_THAN
+                ),
+                Arguments.of(
+                    "NOT jobEntity.hireDate<='2019-09-01T09:00:00Z'",
+                    "jobEntity.hireDate",
+                    "hireDate",
+                    Job::class.java,
+                    OffsetDateTime.of(2019, 9, 1, 9, 0, 0, 0, ZoneOffset.UTC),
+                    Operator.LESS_THAN_OR_EQUALS
+                ),
+                Arguments.of("NOT height>=174", "height", "height", Person::class.java, 174.0, Operator.GREATER_THAN_OR_EQUALS),
+                Arguments.of("NOT (height>174)", "height", "height", Person::class.java, 174.0, Operator.GREATER_THAN)
             )
         }
     }
@@ -170,8 +220,8 @@ internal class ExpressionParserIntegrationTest {
 
         assertThat(expression).isInstanceOf(NotExpression::class.java)
         assertThat(expression)
-                .extracting("expression")
-                .isEqualTo(SimpleExpression(operator, FieldInfo(fieldPath, fieldName, parentClass), value))
+            .extracting("expression")
+            .isEqualTo(SimpleExpression(operator, FieldInfo(fieldPath, fieldName, parentClass), value))
     }
 
     @Test
@@ -187,10 +237,10 @@ internal class ExpressionParserIntegrationTest {
 
         assertThat(expression).isInstanceOf(NotExpression::class.java)
         assertThat(expression)
-                .extracting("expression")
-                .isInstanceOf(NotExpression::class.java)
-                .extracting("expression")
-                .isEqualTo(SimpleExpression(Operator.EQUALS, FieldInfo(fieldPath, fieldName, parentClass), fieldValue))
+            .extracting("expression")
+            .isInstanceOf(NotExpression::class.java)
+            .extracting("expression")
+            .isEqualTo(SimpleExpression(Operator.EQUALS, FieldInfo(fieldPath, fieldName, parentClass), fieldValue))
     }
 
     @Test
@@ -212,8 +262,8 @@ internal class ExpressionParserIntegrationTest {
 
         assertThat(expression).isInstanceOf(NotExpression::class.java)
         assertThat(expression)
-                .extracting("expression")
-                .isEqualTo(SimpleExpression(Operator.EQUALS, FieldInfo("firstName", "firstName", rootClass), NullValue))
+            .extracting("expression")
+            .isEqualTo(SimpleExpression(Operator.EQUALS, FieldInfo("firstName", "firstName", rootClass), NullValue))
     }
 
     @Test
@@ -235,8 +285,8 @@ internal class ExpressionParserIntegrationTest {
 
         assertThat(expression).isInstanceOf(NotExpression::class.java)
         assertThat(expression)
-                .extracting("expression")
-                .isEqualTo(SimpleExpression(Operator.IN, FieldInfo("firstName", "firstName", rootClass), listOf("John", "Jane")))
+            .extracting("expression")
+            .isEqualTo(SimpleExpression(Operator.IN, FieldInfo("firstName", "firstName", rootClass), listOf("John", "Jane")))
     }
 
     @Test
@@ -247,7 +297,7 @@ internal class ExpressionParserIntegrationTest {
         val expression = expressionParser.parse(query, rootClass)
 
         assertThat(expression)
-                .isEqualTo(SimpleExpression(Operator.MATCHES, FieldInfo("firstName", "firstName", rootClass), "Jo*"))
+            .isEqualTo(SimpleExpression(Operator.MATCHES, FieldInfo("firstName", "firstName", rootClass), "Jo*"))
     }
 
     @Test
@@ -258,7 +308,7 @@ internal class ExpressionParserIntegrationTest {
         val expression = expressionParser.parse(query, rootClass)
 
         assertThat(expression)
-                .isEqualTo(SimpleExpression(Operator.IMATCHES, FieldInfo("firstName", "firstName", rootClass), "JO*"))
+            .isEqualTo(SimpleExpression(Operator.IMATCHES, FieldInfo("firstName", "firstName", rootClass), "JO*"))
     }
 
     @Test
@@ -271,17 +321,17 @@ internal class ExpressionParserIntegrationTest {
         assertThat(expression).isInstanceOf(LogicalExpression::class.java)
         assertThat(expression).extracting("logicalOperator").isEqualTo(LogicalOperator.AND)
         assertThat(expression)
-                .extracting("expressions")
-                .asList()
-                .containsExactly(
-                        SimpleExpression(Operator.EQUALS, FieldInfo("firstName", "firstName", rootClass), "John"),
-                        LogicalExpression(
-                                LogicalOperator.OR,
-                                listOf(
-                                        SimpleExpression(Operator.EQUALS, FieldInfo("vehicles.brand", "brand", Vehicle::class.java), "Porsche"),
-                                        SimpleExpression(Operator.EQUALS, FieldInfo("vehicles.brand", "brand", Vehicle::class.java), "Ferrari")
-                                )
-                        )
+            .extracting("expressions")
+            .asList()
+            .containsExactly(
+                SimpleExpression(Operator.EQUALS, FieldInfo("firstName", "firstName", rootClass), "John"),
+                LogicalExpression(
+                    LogicalOperator.OR,
+                    listOf(
+                        SimpleExpression(Operator.EQUALS, FieldInfo("vehicles.brand", "brand", Vehicle::class.java), "Porsche"),
+                        SimpleExpression(Operator.EQUALS, FieldInfo("vehicles.brand", "brand", Vehicle::class.java), "Ferrari")
+                    )
                 )
+            )
     }
 }

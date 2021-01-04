@@ -36,16 +36,18 @@ internal class SyntaxErrorListenerImplTest {
         syntaxErrorListener.syntaxError(recognizer2, offendingSymbol2, line2, charPositionInLine2, msg2, e2)
 
         assertThat(syntaxErrorListener.syntaxErrors)
-                .containsExactly(
-                        SyntaxError(recognizer1, offendingSymbol1, line1, charPositionInLine1, msg1, e1),
-                        SyntaxError(recognizer2, offendingSymbol2, line2, charPositionInLine2, msg2, e2)
-                )
+            .containsExactly(
+                SyntaxError(recognizer1, offendingSymbol1, line1, charPositionInLine1, msg1, e1),
+                SyntaxError(recognizer2, offendingSymbol2, line2, charPositionInLine2, msg2, e2)
+            )
 
         assertThat(syntaxErrorListener.toString())
-                .isEqualTo("Syntax Errors: [\n" +
-                        "SyntaxError(recognizer=recognizer1, offendingSymbol=$offendingSymbol1, line=${line1}, charPositionInLine=${charPositionInLine1}, message=${msg1}, exception=$e1),\n"+
-                        "SyntaxError(recognizer=recognizer2, offendingSymbol=$offendingSymbol2, line=${line2}, charPositionInLine=${charPositionInLine2}, message=${msg2}, exception=$e2)"+
-                        "\n]")
+            .isEqualTo(
+                "Syntax Errors: [\n" +
+                        "SyntaxError(recognizer=recognizer1, offendingSymbol=$offendingSymbol1, line=${line1}, charPositionInLine=${charPositionInLine1}, message=${msg1}, exception=$e1),\n" +
+                        "SyntaxError(recognizer=recognizer2, offendingSymbol=$offendingSymbol2, line=${line2}, charPositionInLine=${charPositionInLine2}, message=${msg2}, exception=$e2)" +
+                        "\n]"
+            )
     }
 
 }

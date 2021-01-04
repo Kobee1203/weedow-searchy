@@ -1,20 +1,21 @@
 package com.weedow.spring.data.search.descriptor
 
-import com.weedow.spring.data.search.dto.DefaultDtoMapper
 import com.weedow.spring.data.search.dto.DtoMapper
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
+import com.weedow.spring.data.search.query.specification.SpecificationExecutor
 import com.weedow.spring.data.search.validation.DataSearchValidator
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
 /**
- * Search Descriptor allows exposing automatically a search endpoint for a JPA Entity.
+ * Search Descriptor allows exposing automatically a search endpoint for an Entity.
  *
  * The new endpoint is mapped to `/search/{searchDescriptorId}` where `searchDescriptorId` is the [id] specified in the `SearchDescriptor`.
  *
- * The easiest way to create a Search Descriptor is to use the [SearchDescriptorBuilder] which provides every options available to configure a `SearchDescriptor`.
+ * The easiest way to create a Search Descriptor is to use the [SearchDescriptorBuilder] which provides every options available to configure
+ * a `SearchDescriptor`.
  *
  * To expose the new Entity search endpoint, `SearchDescriptor` must be registered to the Spring Data Search Configuration:
- * * Implement the [SearchConfigurer][com.weedow.spring.data.search.config.SearchConfigurer] interface and override the [addSearchDescriptors][com.weedow.spring.data.search.config.SearchConfigurer.addSearchDescriptors] method:
+ * * Implement the [SearchConfigurer][com.weedow.spring.data.search.config.SearchConfigurer] interface and override the
+ * [addSearchDescriptors][com.weedow.spring.data.search.config.SearchConfigurer.addSearchDescriptors] method:
  * ```java
  * @Configuration
  * public class SearchDescriptorConfiguration implements SearchConfigurer {
@@ -27,29 +28,16 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
  * }
  * ```
  *
- * * Another solution is to add a new [@Bean][org.springframework.context.annotation.Bean]. This solution is useful when you want to create a `SearchDescriptor` which depends on other Beans:
+ * * Another solution is to add a new [@Bean][org.springframework.context.annotation.Bean]. This solution is useful when you want to create
+ * a `SearchDescriptor` which depends on other Beans:
  * ```java
  * @Configuration
  * public class SearchDescriptorConfiguration {
  *   @Bean
  *   SearchDescriptor<Person> personSearchDescriptor(PersonRepository personRepository) {
  *     return new SearchDescriptorBuilder<Person>(Person.class)
- *                      .jpaSpecificationExecutor(personRepository)
+ *                      .specificationExecutor(personRepository)
  *                      .build();
- *   }
- * }
- * ```
- *
- * * If the [SearchDescriptor] Bean is declared without a specific [JpaSpecificationExecutor][org.springframework.data.jpa.repository.JpaSpecificationExecutor],
- *   an exception may be thrown if the [SearchDescriptor] Bean is initialized before [JpaSpecificationExecutorFactory][com.weedow.spring.data.search.config.JpaSpecificationExecutorFactory].
- *   In this case, [@DependsOn][org.springframework.context.annotation.DependsOn] must be used to prevent the exception:
- *```java
- * @Configuration
- * public class SearchDescriptorConfiguration {
- *   @Bean
- *   @DependsOn("jpaSpecificationExecutorFactory")
- *   SearchDescriptor<Person> personSearchDescriptor() {
- *     return new SearchDescriptorBuilder<Person>(Person.class).build();
  *   }
  * }
  * ```
@@ -89,22 +77,24 @@ interface SearchDescriptor<T> {
      * @param <R> represents the DTO type
      * @return DTO Object
      */
-    @JvmDefault
-    val dtoMapper: DtoMapper<T, *>
-        get() = DefaultDtoMapper()
+    val dtoMapper: DtoMapper<T, *>?
 
     /**
-     * Return the [JpaSpecificationExecutor] to search the entities.
+     * Returns the [SpecificationExecutor] to search the entities.
      *
-     * @return JpaSpecificationExecutor
-     * @see JpaSpecificationExecutor
+     * If it's not defined, it will be identified automatically by the instance of
+     * [SpecificationExecutorFactory][com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory].
+     *
+     * @return SpecificationExecutor
+     * @see SpecificationExecutor
+     * @see com.weedow.spring.data.search.query.specification.SpecificationExecutorFactory
      */
-    val jpaSpecificationExecutor: JpaSpecificationExecutor<T>
+    val specificationExecutor: SpecificationExecutor<T>?
 
     /**
      * Return list of [EntityJoinHandlers][EntityJoinHandler] to handle the entity joins.
      */
     @JvmDefault
-    val entityJoinHandlers: List<EntityJoinHandler<T>>
+    val entityJoinHandlers: List<EntityJoinHandler>
         get() = listOf()
 }

@@ -16,8 +16,8 @@ import org.antlr.v4.runtime.ParserRuleContext
  * @param rootClass Root Entity Class
  */
 class ExpressionParserVisitorImpl(
-        private val expressionResolver: ExpressionResolver,
-        private val rootClass: Class<*>
+    private val expressionResolver: ExpressionResolver,
+    private val rootClass: Class<*>
 ) : ExpressionParserVisitor, QueryBaseVisitor<Expression>() {
 
     companion object {
@@ -69,7 +69,7 @@ class ExpressionParserVisitorImpl(
         val operatorInfo = getOperatorInfo(ctx)
 
         val fieldPath = ctx.field_path().text
-        val valueRuleContext = ctx.string_value() ?: ctx.number_value() ?: ctx.boolean_value()
+        val valueRuleContext = ctx.string_value() ?: ctx.number_value() ?: ctx.date_value() ?: ctx.boolean_value()
         val value = cleanValue(valueRuleContext)
         val fieldValues = listOf(value)
 
@@ -91,7 +91,7 @@ class ExpressionParserVisitorImpl(
         val fieldPath = ctx.field_path().text
         val negated = ctx.K_NOT() != null
         val fieldValues = ctx.value().map {
-            val valueRuleContext = it.string_value() ?: it.number_value() ?: it.boolean_value()
+            val valueRuleContext = it.string_value() ?: it.number_value() ?: it.date_value() ?: it.boolean_value()
             cleanValue(valueRuleContext)
         }.toList()
 
@@ -139,10 +139,10 @@ class ExpressionParserVisitorImpl(
 
     private fun cleanValue(valueRuleContext: ParserRuleContext): String {
         return valueRuleContext.text
-                .removeSurrounding(SINGLE_QUOTE)
-                .removeSurrounding(DOUBLE_QUOTE)
-                .replace(ESCAPED_SINGLE_QUOTE, SINGLE_QUOTE)
-                .replace(ESCAPED_DOUBLE_QUOTE, DOUBLE_QUOTE)
+            .removeSurrounding(SINGLE_QUOTE)
+            .removeSurrounding(DOUBLE_QUOTE)
+            .replace(ESCAPED_SINGLE_QUOTE, SINGLE_QUOTE)
+            .replace(ESCAPED_DOUBLE_QUOTE, DOUBLE_QUOTE)
     }
 
     internal data class OperatorInfo(val operator: Operator, val negated: Boolean = false)

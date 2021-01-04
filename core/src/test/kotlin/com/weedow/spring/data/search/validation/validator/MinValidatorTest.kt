@@ -31,11 +31,15 @@ internal class MinValidatorTest : BaseValidatorTest() {
         validator.validate(listOf(fieldExpression), dataSearchErrors)
 
         argumentCaptor<Any> {
-            verify(dataSearchErrors).reject(eq("min"), eq("Invalid number value for expression ''{0}''. Must greater or equals to ''{1}''."), capture())
+            verify(dataSearchErrors).reject(
+                eq("min"),
+                eq("Invalid number value for expression ''{0}''. Must greater or equals to ''{1}''."),
+                capture()
+            )
 
             assertThat(allValues).containsExactly(
-                    "myfield EQUALS 9.6",
-                    minValue
+                "myfield EQUALS 9.6",
+                minValue
             )
         }
     }

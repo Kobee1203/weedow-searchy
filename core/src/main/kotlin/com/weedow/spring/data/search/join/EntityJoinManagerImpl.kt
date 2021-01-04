@@ -1,19 +1,21 @@
 package com.weedow.spring.data.search.join
 
+import com.weedow.spring.data.search.context.DataSearchContext
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.join.handler.DefaultEntityJoinHandler
 import com.weedow.spring.data.search.join.handler.EntityJoinHandler
-import com.weedow.spring.data.search.utils.EntityUtils
+import com.weedow.spring.data.search.query.querytype.ElementType
 import com.weedow.spring.data.search.utils.klogger
-import org.apache.commons.lang3.reflect.FieldUtils
 import java.util.*
 
 /**
  * Default [EntityJoinManager] implementation.
  *
  * This implementation computes the Entity joins for a given [SearchDescriptor], and cache the result.
+ *
+ * @param dataSearchContext [DataSearchContext]
  */
-class EntityJoinManagerImpl : EntityJoinManager {
+class EntityJoinManagerImpl(private val dataSearchContext: DataSearchContext) : EntityJoinManager {
 
     private val joinsBySearchDescriptorId: MutableMap<String, EntityJoins> = HashMap()
 
@@ -22,7 +24,7 @@ class EntityJoinManagerImpl : EntityJoinManager {
     }
 
     init {
-        if (log.isDebugEnabled) log.debug("Initialized EntityJoinManager: {}", this)
+        if (log.isDebugEnabled) log.debug("Initialized EntityJoinManager: {}", this::class.qualifiedName)
     }
 
     override fun <T> computeEntityJoins(searchDescriptor: SearchDescriptor<T>): EntityJoins {
@@ -39,28 +41,44 @@ class EntityJoinManagerImpl : EntityJoinManager {
         return entityJoins
     }
 
-    private fun doInitEntityJoins(entityClass: Class<*>, parentPath: String, entityJoins: EntityJoinsImpl, entityJoinHandlers: List<EntityJoinHandler<*>>) {
-        for (field in FieldUtils.getAllFieldsList(entityClass)) {
-            val joinAnnotation: Annotation? = EntityUtils.getJoinAnnotationClass(field)?.let { field.getAnnotation(it) }
+    private fun doInitEntityJoins(
+        entityClass: Class<*>,
+        parentPath: String,
+        entityJoins: EntityJoinsImpl,
+        entityJoinHandlers: List<EntityJoinHandler>
+    ) {
+        val allPropertyInfos = dataSearchContext.getAllPropertyInfos(entityClass)
+        for (propertyInfos in allPropertyInfos) {
+            val hasJoinAnnotation = propertyInfos.annotations.any { dataSearchContext.isJoinAnnotation(it.annotationClass.java) }
 
             // Ignore joins for a field without a Join Annotation
-            if (joinAnnotation != null) {
+            if (hasJoinAnnotation) {
+                val fieldPath = EntityJoinUtils.getFieldPath(parentPath, propertyInfos.fieldName)
+
                 // Ignore joins for a field having the same class as the root class or an entity already processed
-                if (entityJoins.alreadyProcessed(entityClass, field)) {
+                if (entityJoins.alreadyProcessed(propertyInfos)) {
                     continue
                 }
 
-                val fieldClass = EntityUtils.getFieldClass(field)
-
                 for (entityJoinHandler in entityJoinHandlers) {
-                    if (entityJoinHandler.supports(entityClass, fieldClass, field.name, joinAnnotation)) {
-                        val joinInfo = entityJoinHandler.handle(entityClass, fieldClass, field.name, joinAnnotation)
+                    if (entityJoinHandler.supports(propertyInfos)) {
+                        val joinInfo = entityJoinHandler.handle(propertyInfos)
 
-                        val entityJoin = EntityJoin(entityClass, parentPath, field, joinInfo.joinType, joinInfo.fetched)
+                        val entityJoin = EntityJoin(fieldPath, propertyInfos.qName, joinInfo.joinType, joinInfo.fetched)
                         entityJoins.add(entityJoin)
 
-                        // Recursive loop to handle nested joins, except ElementCollection fields
-                        if (!EntityUtils.isElementCollection(field)) {
+                        // Recursive loop to handle nested Entity joins
+                        val fieldClass = when (propertyInfos.elementType) {
+                            ElementType.SET,
+                            ElementType.LIST,
+                            ElementType.COLLECTION,
+                            -> {
+                                propertyInfos.parameterizedTypes[0]
+                            }
+                            ElementType.MAP -> propertyInfos.parameterizedTypes[1]
+                            else -> propertyInfos.type
+                        }
+                        if (dataSearchContext.isEntity(fieldClass)) {
                             doInitEntityJoins(fieldClass, entityJoin.fieldPath, entityJoins, entityJoinHandlers)
                         }
 

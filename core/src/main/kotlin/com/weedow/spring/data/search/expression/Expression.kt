@@ -1,7 +1,7 @@
 package com.weedow.spring.data.search.expression
 
 import com.weedow.spring.data.search.join.EntityJoins
-import org.springframework.data.jpa.domain.Specification
+import com.weedow.spring.data.search.query.specification.Specification
 
 /**
  * Interface to represent a query Expression.
@@ -19,7 +19,7 @@ interface Expression {
     /**
      * Converts this Expression to a [Specification].
      *
-     * @param entityJoins
+     * @param entityJoins [EntityJoins] instance
      * @return [Specification] instance
      */
     fun <T> toSpecification(entityJoins: EntityJoins): Specification<T>

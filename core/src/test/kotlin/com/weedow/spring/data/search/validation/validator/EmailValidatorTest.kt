@@ -34,9 +34,9 @@ internal class EmailValidatorTest : BaseValidatorTest() {
             verify(dataSearchErrors, times(3)).reject(eq("email"), eq("Invalid email value for expression ''{0}''."), capture())
 
             assertThat(allValues).containsExactly(
-                    "email EQUALS invalid-email-1",
-                    "otherEmails IN [john.doe@example.com, invalid-email-2]",
-                    "job.email EQUALS invalid-email-3"
+                "email EQUALS invalid-email-1",
+                "otherEmails IN [john.doe@example.com, invalid-email-2]",
+                "job.email EQUALS invalid-email-3"
             )
         }
     }

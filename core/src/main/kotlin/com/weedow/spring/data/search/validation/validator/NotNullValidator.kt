@@ -9,9 +9,11 @@ import com.weedow.spring.data.search.validation.DataSearchErrors
  * [DataSearchValidator][com.weedow.spring.data.search.validation.DataSearchValidator] implementation to check if the field expression value is not `null`.
  *
  * The comparison is made with the [NullValue] object or [NullValue.NULL_VALUE] constant.
+ *
+ * @param fieldPaths Field paths to validate
  */
 class NotNullValidator(
-        vararg fieldPaths: String
+    vararg fieldPaths: String
 ) : AbstractFieldPathValidator(*fieldPaths) {
 
     override fun validateSingle(value: Any, fieldExpression: FieldExpression, errors: DataSearchErrors) {

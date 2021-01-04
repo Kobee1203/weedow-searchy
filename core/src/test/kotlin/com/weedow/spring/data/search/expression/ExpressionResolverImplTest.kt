@@ -41,7 +41,7 @@ internal class ExpressionResolverImplTest {
         val operator = Operator.EQUALS
 
         whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
-                .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
+            .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
 
         val expression = expressionResolver.resolveExpression(rootClass, fieldPath, listOf(fieldValue), operator, false)
 
@@ -60,9 +60,26 @@ internal class ExpressionResolverImplTest {
         val fieldClass = String::class.java
 
         whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
-                .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
+            .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
         whenever(conversionService.convert(fieldValue, fieldClass))
-                .thenReturn(fieldValue)
+            .thenReturn(fieldValue)
+
+        val expression = expressionResolver.resolveExpression(rootClass, fieldPath, listOf(fieldValue), operator, false)
+
+        val fieldInfo = FieldInfo(fieldPath, fieldName, rootClass)
+        assertThat(expression).isEqualTo(SimpleExpression(operator, fieldInfo, fieldValue))
+    }
+
+    @ParameterizedTest
+    @MethodSource("single_date_value_with_operator_parameters")
+    fun resolve_expression_with_single_date_value(field: String, fieldValue: String, operator: Operator) {
+        val rootClass = Person::class.java
+        val fieldPath = field
+        val fieldName = field
+        val fieldClass = String::class.java
+
+        whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
+            .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
 
         val expression = expressionResolver.resolveExpression(rootClass, fieldPath, listOf(fieldValue), operator, false)
 
@@ -81,11 +98,11 @@ internal class ExpressionResolverImplTest {
         val operator = Operator.IN
 
         whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
-                .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
+            .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
         whenever(conversionService.convert(fieldValue1, fieldClass))
-                .thenReturn(fieldValue1)
+            .thenReturn(fieldValue1)
         whenever(conversionService.convert(fieldValue2, fieldClass))
-                .thenReturn(fieldValue2)
+            .thenReturn(fieldValue2)
 
         val expression = expressionResolver.resolveExpression(rootClass, fieldPath, listOf(fieldValue1, fieldValue2), operator, false)
 
@@ -104,7 +121,7 @@ internal class ExpressionResolverImplTest {
         val negated = true
 
         whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
-                .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
+            .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
 
         val expression = expressionResolver.resolveExpression(rootClass, fieldPath, listOf(fieldValue), operator, negated)
 
@@ -124,9 +141,27 @@ internal class ExpressionResolverImplTest {
         val negated = true
 
         whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
-                .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
+            .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
         whenever(conversionService.convert(fieldValue, fieldClass))
-                .thenReturn(fieldValue)
+            .thenReturn(fieldValue)
+
+        val expression = expressionResolver.resolveExpression(rootClass, fieldPath, listOf(fieldValue), operator, negated)
+
+        val fieldInfo = FieldInfo(fieldPath, fieldName, rootClass)
+        assertThat(expression).isEqualTo(NotExpression(SimpleExpression(operator, fieldInfo, fieldValue)))
+    }
+
+    @ParameterizedTest
+    @MethodSource("single_date_value_with_operator_parameters")
+    fun resolve_expression_with_single_date_value_and_negative_operator(field: String, fieldValue: String, operator: Operator) {
+        val rootClass = Person::class.java
+        val fieldPath = field
+        val fieldName = field
+        val fieldClass = String::class.java
+        val negated = true
+
+        whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
+            .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
 
         val expression = expressionResolver.resolveExpression(rootClass, fieldPath, listOf(fieldValue), operator, negated)
 
@@ -146,11 +181,11 @@ internal class ExpressionResolverImplTest {
         val negated = true
 
         whenever(fieldPathResolver.resolveFieldPath(rootClass, fieldPath))
-                .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
+            .thenReturn(FieldPathInfo(fieldPath, fieldName, fieldClass, rootClass))
         whenever(conversionService.convert(fieldValue1, fieldClass))
-                .thenReturn(fieldValue1)
+            .thenReturn(fieldValue1)
         whenever(conversionService.convert(fieldValue2, fieldClass))
-                .thenReturn(fieldValue2)
+            .thenReturn(fieldValue2)
 
         val expression = expressionResolver.resolveExpression(rootClass, fieldPath, listOf(fieldValue1, fieldValue2), operator, negated)
 
@@ -163,13 +198,35 @@ internal class ExpressionResolverImplTest {
         @Suppress("unused")
         private fun single_value_with_operator_parameters(): Stream<Arguments> {
             return Stream.of(
-                    Arguments.of("firstName", "John", Operator.EQUALS),
-                    Arguments.of("firstName", "Jo*", Operator.MATCHES),
-                    Arguments.of("firstName", "JO*", Operator.IMATCHES),
-                    Arguments.of("height", "174", Operator.LESS_THAN),
-                    Arguments.of("height", "174", Operator.LESS_THAN_OR_EQUALS),
-                    Arguments.of("height", "180", Operator.GREATER_THAN),
-                    Arguments.of("height", "180", Operator.GREATER_THAN_OR_EQUALS)
+                Arguments.of("firstName", "John", Operator.EQUALS),
+                Arguments.of("firstName", "Jo*", Operator.MATCHES),
+                Arguments.of("firstName", "JO*", Operator.IMATCHES),
+                Arguments.of("height", "174", Operator.LESS_THAN),
+                Arguments.of("height", "174", Operator.LESS_THAN_OR_EQUALS),
+                Arguments.of("height", "180", Operator.GREATER_THAN),
+                Arguments.of("height", "180", Operator.GREATER_THAN_OR_EQUALS)
+            )
+        }
+
+        @JvmStatic
+        @Suppress("unused")
+        private fun single_date_value_with_operator_parameters(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of("birthday", "CURRENT_DATE", Operator.EQUALS),
+                Arguments.of("birthday", "CURRENT_DATE", Operator.LESS_THAN),
+                Arguments.of("birthday", "CURRENT_DATE", Operator.LESS_THAN_OR_EQUALS),
+                Arguments.of("birthday", "CURRENT_DATE", Operator.GREATER_THAN),
+                Arguments.of("birthday", "CURRENT_DATE", Operator.GREATER_THAN_OR_EQUALS),
+                Arguments.of("birthday", "CURRENT_TIME", Operator.EQUALS),
+                Arguments.of("birthday", "CURRENT_TIME", Operator.LESS_THAN),
+                Arguments.of("birthday", "CURRENT_TIME", Operator.LESS_THAN_OR_EQUALS),
+                Arguments.of("birthday", "CURRENT_TIME", Operator.GREATER_THAN),
+                Arguments.of("birthday", "CURRENT_TIME", Operator.GREATER_THAN_OR_EQUALS),
+                Arguments.of("birthday", "CURRENT_DATE_TIME", Operator.EQUALS),
+                Arguments.of("birthday", "CURRENT_DATE_TIME", Operator.LESS_THAN),
+                Arguments.of("birthday", "CURRENT_DATE_TIME", Operator.LESS_THAN_OR_EQUALS),
+                Arguments.of("birthday", "CURRENT_DATE_TIME", Operator.GREATER_THAN),
+                Arguments.of("birthday", "CURRENT_DATE_TIME", Operator.GREATER_THAN_OR_EQUALS)
             )
         }
     }

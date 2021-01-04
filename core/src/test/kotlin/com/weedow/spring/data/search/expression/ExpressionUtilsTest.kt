@@ -84,7 +84,10 @@ internal class ExpressionUtilsTest {
 
         val expression = ExpressionUtils.between(fieldInfo, fieldValue1, fieldValue2)
 
-        val expectedExpression = LogicalExpression(LogicalOperator.AND, listOf(SimpleExpression(Operator.GREATER_THAN, fieldInfo, fieldValue1), SimpleExpression(Operator.LESS_THAN, fieldInfo, fieldValue2)))
+        val expectedExpression = LogicalExpression(
+            LogicalOperator.AND,
+            listOf(SimpleExpression(Operator.GREATER_THAN, fieldInfo, fieldValue1), SimpleExpression(Operator.LESS_THAN, fieldInfo, fieldValue2))
+        )
         assertThat(expression).isEqualTo(expectedExpression)
     }
 
@@ -117,7 +120,10 @@ internal class ExpressionUtilsTest {
 
         val expression = ExpressionUtils.and(ExpressionUtils.equals(fieldInfo, fieldValue1), ExpressionUtils.equals(fieldInfo, fieldValue2))
 
-        val expectedExpression = LogicalExpression(LogicalOperator.AND, listOf(SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue1), SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue2)))
+        val expectedExpression = LogicalExpression(
+            LogicalOperator.AND,
+            listOf(SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue1), SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue2))
+        )
         assertThat(expression).isEqualTo(expectedExpression)
     }
 
@@ -129,7 +135,10 @@ internal class ExpressionUtilsTest {
 
         val expression = ExpressionUtils.or(ExpressionUtils.equals(fieldInfo, fieldValue1), ExpressionUtils.equals(fieldInfo, fieldValue2))
 
-        val expectedExpression = LogicalExpression(LogicalOperator.OR, listOf(SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue1), SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue2)))
+        val expectedExpression = LogicalExpression(
+            LogicalOperator.OR,
+            listOf(SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue1), SimpleExpression(Operator.EQUALS, fieldInfo, fieldValue2))
+        )
         assertThat(expression).isEqualTo(expectedExpression)
     }
 }

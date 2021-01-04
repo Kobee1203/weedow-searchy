@@ -33,8 +33,8 @@ internal class NotNullValidatorTest : BaseValidatorTest() {
             verify(dataSearchErrors, times(2)).reject(eq("not-null"), eq("Invalid value for expression ''{0}''. Must not be null."), capture())
 
             Assertions.assertThat(allValues).containsExactly(
-                    "field1 EQUALS NullValue",
-                    "field2 IN [null, not null value]"
+                "field1 EQUALS NullValue",
+                "field2 IN [null, not null value]"
             )
         }
     }

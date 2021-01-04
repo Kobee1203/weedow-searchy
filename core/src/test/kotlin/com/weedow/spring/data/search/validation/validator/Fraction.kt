@@ -1,8 +1,8 @@
 package com.weedow.spring.data.search.validation.validator
 
 data class Fraction private constructor(
-        val numerator: Int,
-        val denominator: Int
+    private val numerator: Int,
+    private val denominator: Int
 ) : Number(), Comparable<Fraction> {
 
     override fun toDouble(): Double = numerator.toDouble() / denominator.toDouble()

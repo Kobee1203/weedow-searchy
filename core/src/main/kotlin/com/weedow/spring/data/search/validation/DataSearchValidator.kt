@@ -64,21 +64,21 @@ interface DataSearchValidator {
      *
      * This method can be overridden to change the default behavior.
      *
-     * @see [com.weedow.spring.data.search.validation.validator.NotEmptyValidator]
+     * @see com.weedow.spring.data.search.validation.validator.NotEmptyValidator
      */
     @JvmDefault
     fun validate(fieldExpressions: Collection<FieldExpression>, errors: DataSearchErrors) {
         fieldExpressions
-                .filter { fieldExpression: FieldExpression -> supports(fieldExpression) }
-                .forEach { fieldExpression: FieldExpression ->
-                    val value = fieldExpression.value
-                    if (value is Collection<*>) {
-                        @Suppress("UNCHECKED_CAST")
-                        validateCollection(value as Collection<Any>, fieldExpression, errors)
-                    } else {
-                        validateSingle(value, fieldExpression, errors)
-                    }
+            .filter { fieldExpression: FieldExpression -> supports(fieldExpression) }
+            .forEach { fieldExpression: FieldExpression ->
+                val value = fieldExpression.value
+                if (value is Collection<*>) {
+                    @Suppress("UNCHECKED_CAST")
+                    validateCollection(value as Collection<Any>, fieldExpression, errors)
+                } else {
+                    validateSingle(value, fieldExpression, errors)
                 }
+            }
     }
 
 }

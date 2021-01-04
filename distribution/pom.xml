@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.weedow</groupId>
         <artifactId>spring-data-search-parent</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>spring-data-search-distribution</artifactId>
@@ -21,81 +21,36 @@
         <profile>
             <id>release</id>
 
+            <!-- NOTE: These dependency declarations are only required to sort this project to the end of the line in the multimodule build. -->
             <dependencies>
-                <!-- Core -->
                 <dependency>
                     <groupId>com.weedow</groupId>
                     <artifactId>spring-data-search-core</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+
                 <dependency>
                     <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-core</artifactId>
+                    <artifactId>spring-data-search-jpa</artifactId>
                     <version>${project.version}</version>
-                    <classifier>javadoc</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-core</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>sources</classifier>
                 </dependency>
 
-                <!-- Sample App Kotlin -->
                 <dependency>
                     <groupId>com.weedow</groupId>
                     <artifactId>spring-data-search-sample-app-kotlin</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+
                 <dependency>
                     <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-kotlin</artifactId>
+                    <artifactId>spring-data-search-sample-app-java</artifactId>
                     <version>${project.version}</version>
-                    <classifier>javadoc</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-kotlin</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>sources</classifier>
                 </dependency>
 
-                <!-- Sample App Java -->
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-java</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-java</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>javadoc</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-java</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>sources</classifier>
-                </dependency>
-
-                <!-- Sample App Reactive -->
                 <dependency>
                     <groupId>com.weedow</groupId>
                     <artifactId>spring-data-search-sample-app-reactive</artifactId>
                     <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-reactive</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>javadoc</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-reactive</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>sources</classifier>
                 </dependency>
             </dependencies>
             <build>

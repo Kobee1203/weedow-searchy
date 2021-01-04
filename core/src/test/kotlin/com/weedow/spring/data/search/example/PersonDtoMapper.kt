@@ -8,9 +8,9 @@ class PersonDtoMapper : DtoMapper<Person, PersonDto> {
 
     override fun map(source: Person): PersonDto {
         return PersonDto.Builder()
-                .firstName(source.firstName)
-                .lastName(source.lastName)
-                .build()
+            .firstName(source.firstName)
+            .lastName(source.lastName)
+            .build()
     }
 
 }

@@ -5,10 +5,11 @@ import com.weedow.spring.data.search.alias.AliasResolver
 import com.weedow.spring.data.search.alias.DefaultAliasResolutionService
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.common.model.VehicleType
-import com.weedow.spring.data.search.config.JpaSpecificationExecutorFactory
 import com.weedow.spring.data.search.descriptor.DefaultSearchDescriptorService
 import com.weedow.spring.data.search.descriptor.SearchDescriptor
 import com.weedow.spring.data.search.descriptor.SearchDescriptorService
+import com.weedow.spring.data.search.dto.DtoMapper
+import com.weedow.spring.data.search.query.specification.SpecificationExecutor
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -19,7 +20,6 @@ import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.converter.Converter
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.data.convert.ReadingConverter
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Component
 import java.lang.reflect.Field
 
@@ -43,9 +43,9 @@ internal class DataSearchAutoConfigurationIntegrationTest {
         assertThat(searchDescriptorService).isInstanceOf(DefaultSearchDescriptorService::class.java)
 
         val searchDescriptor = searchDescriptorService.getSearchDescriptor("my_descriptor_id")
-        assertThat(searchDescriptor).isNotNull()
-                .extracting("id", "entityClass")
-                .contains("my_descriptor_id", Person::class.java)
+        assertThat(searchDescriptor).isNotNull
+            .extracting("id", "entityClass")
+            .contains("my_descriptor_id", Person::class.java)
     }
 
     @Test
@@ -63,33 +63,31 @@ internal class DataSearchAutoConfigurationIntegrationTest {
         var vehicleType: VehicleType?
 
         vehicleType = searchConversionService.convert("car", VehicleType::class.java)
-        assertThat(vehicleType).isNotNull().isEqualTo(VehicleType.CAR)
+        assertThat(vehicleType).isNotNull.isEqualTo(VehicleType.CAR)
         vehicleType = searchConversionService.convert("motorbike", VehicleType::class.java)
-        assertThat(vehicleType).isNotNull().isEqualTo(VehicleType.MOTORBIKE)
+        assertThat(vehicleType).isNotNull.isEqualTo(VehicleType.MOTORBIKE)
         vehicleType = searchConversionService.convert("scooter", VehicleType::class.java)
-        assertThat(vehicleType).isNotNull().isEqualTo(VehicleType.SCOOTER)
+        assertThat(vehicleType).isNotNull.isEqualTo(VehicleType.SCOOTER)
         vehicleType = searchConversionService.convert("van", VehicleType::class.java)
-        assertThat(vehicleType).isNotNull().isEqualTo(VehicleType.VAN)
+        assertThat(vehicleType).isNotNull.isEqualTo(VehicleType.VAN)
         vehicleType = searchConversionService.convert("truck", VehicleType::class.java)
-        assertThat(vehicleType).isNotNull().isEqualTo(VehicleType.TRUCK)
+        assertThat(vehicleType).isNotNull.isEqualTo(VehicleType.TRUCK)
 
         assertThatThrownBy { searchConversionService.convert("unknown", VehicleType::class.java) }
-                .isInstanceOf(ConversionException::class.java)
-                .hasMessageContaining("java.lang.IllegalArgumentException: Vehicle type not found: unknown")
-                .hasCauseExactlyInstanceOf(IllegalArgumentException::class.java)
-                .getCause().hasMessage("Vehicle type not found: unknown")
+            .isInstanceOf(ConversionException::class.java)
+            .hasMessageContaining("java.lang.IllegalArgumentException: Vehicle type not found: unknown")
+            .hasCauseExactlyInstanceOf(IllegalArgumentException::class.java)
+            .cause.hasMessage("Vehicle type not found: unknown")
     }
 
 }
 
 @Component
 class MySearchDescriptor : SearchDescriptor<Person> {
-    override val id: String
-        get() = "my_descriptor_id"
-    override val entityClass: Class<Person>
-        get() = Person::class.java
-    override val jpaSpecificationExecutor: JpaSpecificationExecutor<Person>
-        get() = JpaSpecificationExecutorFactory.getJpaSpecificationExecutor(entityClass)
+    override val id: String = "my_descriptor_id"
+    override val entityClass: Class<Person> = Person::class.java
+    override val dtoMapper: DtoMapper<Person, *>? = null
+    override val specificationExecutor: SpecificationExecutor<Person>? = null
 }
 
 @Component

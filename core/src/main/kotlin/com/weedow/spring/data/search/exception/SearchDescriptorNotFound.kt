@@ -9,4 +9,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
  * @param searchDescriptorId Search Descriptor ID
  */
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Not Found")
-class SearchDescriptorNotFound(searchDescriptorId: String) : Exception("Could not found the Search Descriptor with Id $searchDescriptorId")
+class SearchDescriptorNotFound(searchDescriptorId: String) : RuntimeException("Could not found the Search Descriptor with Id $searchDescriptorId")

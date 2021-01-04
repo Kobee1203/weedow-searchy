@@ -4,11 +4,12 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.weedow.spring.data.search.common.model.Person
 import com.weedow.spring.data.search.dto.DefaultDtoMapper
+import com.weedow.spring.data.search.dto.DtoMapper
+import com.weedow.spring.data.search.query.specification.SpecificationExecutor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
 @ExtendWith(MockitoExtension::class)
 internal class DefaultSearchDescriptorServiceTest {
@@ -21,10 +22,12 @@ internal class DefaultSearchDescriptorServiceTest {
         }
 
         val searchDescriptorId2 = "person2"
+        val specificationExecutor2 = mock<SpecificationExecutor<Person>>()
         val searchDescriptor2 = object : SearchDescriptor<Person> {
             override val id = searchDescriptorId2
             override val entityClass = Person::class.java
-            override val jpaSpecificationExecutor = mock<JpaSpecificationExecutor<Person>>()
+            override val dtoMapper: DtoMapper<Person, Person> = DefaultDtoMapper()
+            override val specificationExecutor: SpecificationExecutor<Person> = specificationExecutor2
         }
 
         val searchDescriptorService = DefaultSearchDescriptorService()
@@ -40,6 +43,7 @@ internal class DefaultSearchDescriptorServiceTest {
         assertThat(resultSearchDescriptor2?.validators).isEmpty()
         assertThat(resultSearchDescriptor2?.dtoMapper).isEqualTo(DefaultDtoMapper<Person>())
         assertThat(resultSearchDescriptor2?.dtoMapper).hasSameHashCodeAs(DefaultDtoMapper<Person>())
+        assertThat(resultSearchDescriptor2?.specificationExecutor).isSameAs(specificationExecutor2)
         assertThat(resultSearchDescriptor2?.entityJoinHandlers).isEmpty()
     }
 

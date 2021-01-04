@@ -34,8 +34,8 @@ internal class MaxValidatorTest : BaseValidatorTest() {
             verify(dataSearchErrors).reject(eq("max"), eq("Invalid number value for expression ''{0}''. Must less or equals to ''{1}''."), capture())
 
             assertThat(allValues).containsExactly(
-                    "myfield EQUALS 9.5",
-                    maxValue
+                "myfield EQUALS 9.5",
+                maxValue
             )
         }
     }

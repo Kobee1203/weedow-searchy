@@ -12,7 +12,7 @@ import org.springframework.core.convert.converter.ConverterRegistry
 interface SearchConfigurer {
 
     /**
-     * Adds [com.weedow.spring.data.search.descriptor.SearchDescriptor]s to expose automatically search endpoints for JPA Entities.
+     * Adds [com.weedow.spring.data.search.descriptor.SearchDescriptor]s to expose automatically search endpoints for Entities.
      */
     @JvmDefault
     fun addSearchDescriptors(registry: SearchDescriptorRegistry) {
@@ -20,7 +20,8 @@ interface SearchConfigurer {
     }
 
     /**
-     * Adds [com.weedow.spring.data.search.alias.AliasResolver]s to register alias for any fields and so use these aliases in queries instead of the real field name.
+     * Adds [com.weedow.spring.data.search.alias.AliasResolver]s to register alias for any fields and so use these aliases in queries instead of the
+     * real field name.
      */
     @JvmDefault
     fun addAliasResolvers(registry: AliasResolverRegistry) {
@@ -28,7 +29,8 @@ interface SearchConfigurer {
     }
 
     /**
-     * Adds [org.springframework.core.convert.converter.Converter]s to be used while converting query parameter values from String to the correct type expected by the related field.
+     * Adds [org.springframework.core.convert.converter.Converter]s to be used while converting query parameter values from String to the correct type
+     * expected by the related field.
      */
     @JvmDefault
     fun addConverters(registry: ConverterRegistry) {

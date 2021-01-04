@@ -33,7 +33,7 @@ internal class ExpressionParserImplTest {
             on { this.visit(any<QueryParser.StartContext>()) }.thenReturn(mockExpression)
         }
         whenever(expressionParserVisitorFactory.getExpressionParserVisitor(rootClass))
-                .thenReturn(expressionParserVisitor)
+            .thenReturn(expressionParserVisitor)
 
         val expression = expressionParser.parse(query, rootClass)
 
@@ -46,10 +46,12 @@ internal class ExpressionParserImplTest {
         val rootClass = Person::class.java
 
         assertThatThrownBy { expressionParser.parse(query, rootClass) }
-                .isInstanceOf(ExpressionParserException::class.java)
-                .hasMessage("400 BAD_REQUEST \"Syntax Errors: [\n" +
-                        "line 1:6 no viable alternative at input 'AAAAABBBBB' - [@1,6:10='BBBBB',<25>,1:6]\n" +
-                        "]\"")
+            .isInstanceOf(ExpressionParserException::class.java)
+            .hasMessage(
+                "400 BAD_REQUEST \"Syntax Errors: [\n" +
+                        "Query.g4: org.antlr.v4.runtime.NoViableAltException - line 1:6 no viable alternative at input 'AAAAABBBBB' - [@1,6:10='BBBBB',<29>,1:6]\n" +
+                        "]\""
+            )
 
         verifyZeroInteractions(expressionParserVisitorFactory)
     }
@@ -60,10 +62,12 @@ internal class ExpressionParserImplTest {
         val rootClass = Person::class.java
 
         assertThatThrownBy { expressionParser.parse(query, rootClass) }
-                .isInstanceOf(ExpressionParserException::class.java)
-                .hasMessage("400 BAD_REQUEST \"Syntax Errors: [\n" +
-                        "line 1:0 mismatched input '<EOF>' expecting {'(', K_NOT, FIELD_PATH_PART} - [@0,0:-1='<EOF>',<-1>,1:0]\n" +
-                        "]\"")
+            .isInstanceOf(ExpressionParserException::class.java)
+            .hasMessage(
+                "400 BAD_REQUEST \"Syntax Errors: [\n" +
+                        "Query.g4: org.antlr.v4.runtime.InputMismatchException - line 1:0 mismatched input '<EOF>' expecting {'(', K_NOT, FIELD_PATH_PART} - [@0,0:-1='<EOF>',<-1>,1:0]\n" +
+                        "]\""
+            )
 
         verifyZeroInteractions(expressionParserVisitorFactory)
     }

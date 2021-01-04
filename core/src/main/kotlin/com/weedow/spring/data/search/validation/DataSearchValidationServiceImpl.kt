@@ -7,9 +7,11 @@ import com.weedow.spring.data.search.utils.klogger
 
 /**
  * Default implementation of [DataSearchValidationService].
+ *
+ * @param dataSearchErrorsFactory [DataSearchErrorsFactory]
  */
 class DataSearchValidationServiceImpl(
-        private val dataSearchErrorsFactory: DataSearchErrorsFactory
+    private val dataSearchErrorsFactory: DataSearchErrorsFactory
 ) : DataSearchValidationService {
 
     companion object {

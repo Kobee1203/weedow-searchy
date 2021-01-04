@@ -16,7 +16,7 @@ import kotlin.reflect.full.companionObject
  * }
  * ```
  *
- * * Declare logger in a `object`:
+ * * Declare a logger in an `object`:
  * ```
  * object MyObject {
  *   private val log by klogger()
