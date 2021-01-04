@@ -63,7 +63,7 @@ Alternatively, you can use Spring Data Search which allows you to perform all th
 ### Installation
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Kobee1203/spring-data-search?include_prereleases)](https://github.com/Kobee1203/spring-data-search/releases)
 [![Downloads](https://img.shields.io/github/downloads/Kobee1203/spring-data-search/total)](https://github.com/Kobee1203/spring-data-search/releases)
-[![Maven Central](https://img.shields.io/maven-central/v/com.weedow/spring-data-search-core)]()
+[![Maven Central](https://img.shields.io/maven-central/v/com.weedow/spring-data-search-core)](https://search.maven.org/search?q=g:com.weedow%20AND%20a:spring-data-search-*)
 
 * You can download the [latest release](https://github.com/Kobee1203/spring-data-search/releases).
 * If you have a [Maven](https://maven.apache.org/) project, you can add the following dependency in your `pom.xml` file:
@@ -717,7 +717,10 @@ _Example: The `Person` Entity contains a property of the `Address` Entity that i
 ## Features
 
 ### Javadoc
-[![javadoc](https://javadoc.io/badge2/com.weedow/spring-data-search-core/javadoc.svg)](https://javadoc.io/doc/com.weedow/spring-data-search-core)
+| Module       | Javadoc                                                                                                                                                |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Core         | [![javadoc-core](https://javadoc.io/badge2/com.weedow/spring-data-search-core/javadoc.svg)](https://javadoc.io/doc/com.weedow/spring-data-search-core) |
+| JPA          | [![javadoc-jpa](https://javadoc.io/badge2/com.weedow/spring-data-search-jpa/javadoc.svg)](https://javadoc.io/doc/com.weedow/spring-data-search-jpa)    |
 
 ### Search Descriptor
 The Search Descriptors allow exposing automatically search endpoints for Entities.\
