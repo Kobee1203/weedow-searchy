@@ -33,21 +33,21 @@
         <!-- SAMPLES -->
         <fileSet>
             <outputDirectory>samples/sample-app-java</outputDirectory>
-            <directory>${project.basedir}/../sample-app-java/target</directory>
+            <directory>${project.basedir}/../samples/sample-app-java/target</directory>
             <includes>
                 <include>*-sample-app-java-*.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <outputDirectory>samples/sample-app-kotlin</outputDirectory>
-            <directory>${project.basedir}/../sample-app-kotlin/target</directory>
+            <directory>${project.basedir}/../samples/sample-app-kotlin/target</directory>
             <includes>
                 <include>*-sample-app-kotlin-*.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <outputDirectory>samples/sample-app-reactive</outputDirectory>
-            <directory>${project.basedir}/../sample-app-reactive/target</directory>
+            <directory>${project.basedir}/../samples/sample-app-reactive/target</directory>
             <includes>
                 <include>*-sample-app-reactive-*.jar</include>
             </includes>
