@@ -4,14 +4,14 @@
 
     <parent>
         <groupId>com.weedow</groupId>
-        <artifactId>spring-data-search-parent</artifactId>
-        <version>2.0.1-SNAPSHOT</version>
+        <artifactId>weedow-searchy-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>spring-data-search-sample-app-kotlin</artifactId>
-    <name>spring-data-search-sample-app-kotlin</name>
-    <description>Spring Data Search Sample Application in Kotlin</description>
+    <artifactId>weedow-searchy-sample-app-kotlin</artifactId>
+    <name>weedow-searchy-sample-app-kotlin</name>
+    <description>Searchy Sample Application in Kotlin</description>
 
     <dependencies>
         <dependency>
@@ -29,12 +29,12 @@
 
         <dependency>
             <groupId>com.weedow</groupId>
-            <artifactId>spring-data-search-jpa</artifactId>
+            <artifactId>weedow-searchy-jpa</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.weedow</groupId>
-            <artifactId>spring-data-search-common</artifactId>
+            <artifactId>weedow-searchy-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -54,12 +54,6 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

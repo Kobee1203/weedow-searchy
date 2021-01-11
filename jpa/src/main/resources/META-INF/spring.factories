@@ -1,4 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.weedow.spring.data.search.jpa.autoconfigure.JpaDataSearchAutoConfiguration,\
-com.weedow.spring.data.search.jpa.autoconfigure.DataSearchHibernateSerializationAutoConfiguration
+com.weedow.searchy.jpa.autoconfigure.JpaSearchyAutoConfiguration,\
+com.weedow.searchy.jpa.autoconfigure.SearchyHibernateSerializationAutoConfiguration

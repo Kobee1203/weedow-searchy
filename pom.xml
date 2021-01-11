@@ -5,34 +5,34 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.1.RELEASE</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <version>2.4.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>com.weedow</groupId>
-    <artifactId>spring-data-search-parent</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <artifactId>weedow-searchy-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>spring-data-search-parent</name>
-    <description>Automatically exposes endpoints to search for data using a powerful query language</description>
-    <url>https://github.com/Kobee1203/spring-data-search</url>
+    <name>weedow-searchy-parent</name>
+    <description>Automatically exposes web services over HTTP to search for Entity-related data using a powerful query language</description>
+    <url>https://github.com/Kobee1203/weedow-searchy</url>
 
     <scm>
         <tag>HEAD</tag>
-        <url>https://github.com/Kobee1203/spring-data-search</url>
-        <connection>scm:git:https://github.com/Kobee1203/spring-data-search.git</connection>
-        <developerConnection>scm:git:https://github.com/Kobee1203/spring-data-search.git</developerConnection>
+        <url>https://github.com/Kobee1203/weedow-searchy</url>
+        <connection>scm:git:https://github.com/Kobee1203/weedow-searchy.git</connection>
+        <developerConnection>scm:git:https://github.com/Kobee1203/weedow-searchy.git</developerConnection>
     </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/Kobee1203/spring-data-search/issues</url>
+        <url>https://github.com/Kobee1203/weedow-searchy/issues</url>
     </issueManagement>
 
     <licenses>
         <license>
             <name>The MIT License</name>
-            <url>https://github.com/Kobee1203/spring-data-search/raw/master/LICENSE.txt</url>
+            <url>https://github.com/Kobee1203/weedow-searchy/raw/master/LICENSE.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -42,9 +42,26 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <java.version>1.8</java.version>
-        <kotlin.version>1.4.10</kotlin.version>
-        <dokka.version>1.4.10.2</dokka.version>
+        <java.version>11</java.version>
+        <maven.compiler.release>11</maven.compiler.release>
+        <maven.version>[3.6.0,)</maven.version>
+        <kotlin.version>1.4.21</kotlin.version>
+        <spring-boot.version>2.4.1</spring-boot.version>
+
+        <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+        <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+        <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-jxr-plugin.version>3.0.0</maven-jxr-plugin.version>
+        <maven-release-plugin.version>3.0.0-M1</maven-release-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <dokka-maven-plugin.version>1.4.20</dokka-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+        <versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 
         <!-- Set the default Java character encoding with the same value as ${project.build.sourceEncoding} to prevent encoding errors while running tests -->
         <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
@@ -54,28 +71,29 @@
 
         <!-- Sonar Configuration -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.projectKey>spring-data-search</sonar.projectKey>
+        <sonar.projectKey>weedow-searchy</sonar.projectKey>
         <sonar.organization>kobee1203</sonar.organization>
         <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.exclusions>
             **/generated-sources/**,
-            **/com/weedow/spring/data/search/common/**/*,
-            **/com/weedow/spring/data/search/sample/**/*
+            **/com/weedow/searchy/common/**/*,
+            **/com/weedow/searchy/sample/**/*
         </sonar.exclusions>
         <sonar.coverage.exclusions>
             **/generated-sources/**,
-            **/com/weedow/spring/data/search/common/**/*,
-            **/com/weedow/spring/data/search/sample/**/*
+            **/com/weedow/searchy/common/**/*,
+            **/com/weedow/searchy/sample/**/*
         </sonar.coverage.exclusions>
 
         <skip.unit.tests>false</skip.unit.tests>
         <skip.integration.tests>false</skip.integration.tests>
 
         <!-- Dependencies versions -->
-        <commons-lang3.version>3.9</commons-lang3.version>
+        <antlr4.version>4.9.1</antlr4.version>
+        <commons-lang3.version>3.11</commons-lang3.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
-        <antlr4.version>4.8-1</antlr4.version>
+        <maven-scm-provider-gitexe.version>1.11.2</maven-scm-provider-gitexe.version>
 
         <!-- Testing dependencies versions -->
         <mockito-kotlin.version>2.2.0</mockito-kotlin.version>
@@ -277,6 +295,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
                     <configuration>
                         <groups>IntegrationTest</groups>
                         <includes>
@@ -300,7 +319,7 @@
                 <plugin>
                     <groupId>org.jetbrains.dokka</groupId>
                     <artifactId>dokka-maven-plugin</artifactId>
-                    <version>${dokka.version}</version>
+                    <version>${dokka-maven-plugin.version}</version>
                     <executions>
                         <execution>
                             <phase>prepare-package</phase>
@@ -311,13 +330,14 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <jdkVersion>8</jdkVersion>
+                        <jdkVersion>${java.version}</jdkVersion>
                     </configuration>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
                     <executions>
                         <execution>
                             <id>attach-javadocs</id>
@@ -329,8 +349,9 @@
                 </plugin>
 
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>${maven-assembly-plugin.version}</version>
                     <configuration>
                         <descriptors>
                             <descriptor>src/assembly/assembly.xml</descriptor>
@@ -343,7 +364,28 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>${maven.version}</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <excludedGroups>IntegrationTest</excludedGroups>
                     <skipTests>${skip.unit.tests}</skipTests>
@@ -353,7 +395,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>${maven-deploy-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>default-deploy</id>
@@ -368,7 +410,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>${maven-release-plugin.version}</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagNameFormat>@{project.version}</tagNameFormat>
@@ -378,7 +420,7 @@
                     <dependency>
                         <groupId>org.apache.maven.scm</groupId>
                         <artifactId>maven-scm-provider-gitexe</artifactId>
-                        <version>1.11.2</version>
+                        <version>${maven-scm-provider-gitexe.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -387,7 +429,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
+                <version>${jacoco-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -397,6 +439,16 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Run 'mvn versions:display-plugin-updates' to find the latest plugin or dependency versions -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-maven-plugin.version}</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -405,7 +457,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${maven-jxr-plugin.version}</version>
                 <reportSets>
                     <reportSet>
                         <id>aggregate</id>
@@ -471,7 +523,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
+                        <version>${maven-source-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -486,7 +538,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>${maven-gpg-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -519,7 +571,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.8</version>
+                        <version>${nexus-staging-maven-plugin.version}</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
@@ -546,7 +598,7 @@
                 <repository>
                     <id>github</id>
                     <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/Kobee1203/spring-data-search</url>
+                    <url>https://maven.pkg.github.com/Kobee1203/weedow-searchy</url>
                 </repository>
             </distributionManagement>
         </profile>
