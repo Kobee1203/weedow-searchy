@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
  * Class is based on ideas from
  * [TypeReferenceTest.java](https://github.com/FasterXML/jackson-core/blob/master/src/test/java/com/fasterxml/jackson/core/type/TypeReferenceTest.java)
  */
-// Not much to test, but exercise to prevent code coverage tool from showing all red for package
+// Not much to test, but exercise to prevent code coverage tool from showing red
 internal class TypeReferenceTest {
 
     @Test

@@ -5,7 +5,7 @@ import com.weedow.searchy.validation.SearchyValidator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-// Not much to test, but exercise to prevent code coverage tool from showing red for default methods
+// Not much to test, but exercise to prevent code coverage tool from showing red
 internal class SearchyValidatorTest {
 
     @Test

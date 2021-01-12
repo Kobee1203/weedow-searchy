@@ -24,6 +24,20 @@ internal class RequiredValidatorTest : BaseValidatorTest() {
     }
 
     @Test
+    fun validate_successfully_when_empty_field_paths() {
+        val fieldExpression1 = mockFieldExpression("field1", "field1", Operator.EQUALS, "value 1")
+        val searchyErrors = mockSearchyErrors()
+
+        val validator = RequiredValidator()
+
+        validator.validate(listOf(fieldExpression1), searchyErrors)
+        validator.validate(emptyList(), searchyErrors)
+
+        verifyZeroInteractions(fieldExpression1)
+        verifyZeroInteractions(searchyErrors)
+    }
+
+    @Test
     fun validate_without_success() {
         val fieldExpression1 = mockFieldExpression("field1", "field1", Operator.EQUALS, "value 1")
         val fieldExpression2 = mockFieldExpression("field2", "field2", Operator.EQUALS, "value 2")
@@ -46,7 +60,7 @@ internal class RequiredValidatorTest : BaseValidatorTest() {
         val searchyErrors = mockSearchyErrors()
 
         val validator = RequiredValidator("field1", "field3")
-        validator.validate(listOf(), searchyErrors)
+        validator.validate(emptyList(), searchyErrors)
 
         argumentCaptor<Any> {
             verify(searchyErrors).reject(eq("required"), eq("Missing required fields: {0}."), capture())

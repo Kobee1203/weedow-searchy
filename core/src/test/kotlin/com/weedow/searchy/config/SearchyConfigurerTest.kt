@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.core.convert.converter.ConverterRegistry
 
-// Not much to test, but exercise to prevent code coverage tool from showing red for default methods
+// Not much to test, but exercise to prevent code coverage tool from showing red
 @ExtendWith(MockitoExtension::class)
 internal class SearchyConfigurerTest {
 
