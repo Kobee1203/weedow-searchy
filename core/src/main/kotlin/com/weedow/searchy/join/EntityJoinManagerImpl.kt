@@ -72,6 +72,7 @@ class EntityJoinManagerImpl(private val searchyContext: SearchyContext) : Entity
                             ElementType.SET,
                             ElementType.LIST,
                             ElementType.COLLECTION,
+                            ElementType.ARRAY
                             -> {
                                 propertyInfos.parameterizedTypes[0]
                             }

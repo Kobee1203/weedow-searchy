@@ -59,6 +59,7 @@ class JpaQueryBuilder<T>(
             ElementType.SET,
             ElementType.LIST,
             ElementType.COLLECTION,
+            ElementType.ARRAY
             -> {
                 propertyInfos.parameterizedTypes[0]
             }

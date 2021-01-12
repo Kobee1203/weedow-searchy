@@ -33,6 +33,7 @@ class EntityJoinsImpl(private val rootClass: Class<*>) : EntityJoins {
             ElementType.SET,
             ElementType.LIST,
             ElementType.COLLECTION,
+            ElementType.ARRAY
             -> {
                 propertyInfos.parameterizedTypes[0]
             }

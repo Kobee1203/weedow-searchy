@@ -66,6 +66,7 @@ abstract class AbstractConfigurableSearchyContext : ConfigurableSearchyContext {
             ElementType.SET,
             ElementType.COLLECTION,
             ElementType.MAP,
+            ElementType.ARRAY
             -> {
                 EntityUtils.getParameterizedTypes(field)
             }
@@ -78,6 +79,7 @@ abstract class AbstractConfigurableSearchyContext : ConfigurableSearchyContext {
             ElementType.LIST,
             ElementType.SET,
             ElementType.COLLECTION,
+            ElementType.ARRAY
             -> {
                 ElementType.get(parameterizedTypes[0], this).pathClass
             }
@@ -98,6 +100,7 @@ abstract class AbstractConfigurableSearchyContext : ConfigurableSearchyContext {
             ElementType.SET,
             ElementType.LIST,
             ElementType.COLLECTION,
+            ElementType.ARRAY
             -> {
                 parameterizedTypes[0]
             }
