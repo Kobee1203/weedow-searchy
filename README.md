@@ -74,7 +74,7 @@ The library provides a query language that allows to create queries on any field
 ## Getting Started
 
 ### Prerequisites
-* JDK 8 or more.
+* JDK 11 or more.
 * Spring Boot
 
 ### Installation
@@ -88,12 +88,12 @@ The library provides a query language that allows to create queries on any field
   <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>weedow-searchy-jpa</artifactId>
-      <version>2.0.0</version>
+      <version>0.0.1</version>
   </dependency>
   ```
 * If you have a [Gradle](https://gradle.org/) project, you can add the following dependency in your `build.gradle` file:
   ```groovy
-  implementation "com.weedow:weedow-searchy-jpa:2.0.0"
+  implementation "com.weedow:weedow-searchy-jpa:0.0.1"
   ```
 
 ### Getting Started in 5 minutes
@@ -110,12 +110,12 @@ The library provides a query language that allows to create queries on any field
     <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>weedow-searchy-jpa</artifactId>
-      <version>2.0.0</version>
+      <version>0.0.1</version>
     </dependency>
     ```
     * For [Gradle](https://gradle.org/) project, add the dependency in the `build.gradle` file:
     ```groovy
-    implementation "com.weedow:weedow-searchy-jpa:2.0.0"
+    implementation "com.weedow:weedow-searchy-jpa:0.0.1"
     ```
 * Create a new file `Person.java` to add a new JPA Entity `Person` with the following content:
     ```java
