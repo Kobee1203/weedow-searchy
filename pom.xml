@@ -6,19 +6,19 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.4.1</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>com.weedow</groupId>
     <artifactId>weedow-searchy-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>pom</packaging>
     <name>weedow-searchy-parent</name>
     <description>Automatically exposes web services over HTTP to search for Entity-related data using a powerful query language</description>
     <url>https://github.com/Kobee1203/weedow-searchy</url>
 
     <scm>
-        <tag>HEAD</tag>
+        <tag>0.0.1</tag>
         <url>https://github.com/Kobee1203/weedow-searchy</url>
         <connection>scm:git:https://github.com/Kobee1203/weedow-searchy.git</connection>
         <developerConnection>scm:git:https://github.com/Kobee1203/weedow-searchy.git</developerConnection>
