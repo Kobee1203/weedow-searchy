@@ -4,18 +4,13 @@
 
     <parent>
         <groupId>com.weedow</groupId>
-        <artifactId>spring-data-search-parent</artifactId>
-        <version>2.0.1-SNAPSHOT</version>
+        <artifactId>weedow-searchy-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>spring-data-search-core</artifactId>
-    <name>spring-data-search-core</name>
-    <description>Spring Data Search Core Library</description>
-
-    <properties>
-        <!-- Dependencies versions -->
-        <jakarta.persistence-api.version>2.2.3</jakarta.persistence-api.version>
-    </properties>
+    <artifactId>weedow-searchy-core</artifactId>
+    <name>weedow-searchy-core</name>
+    <description>Searchy Core Library</description>
 
     <dependencies>
         <dependency>
@@ -92,11 +87,6 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <scope>test</scope>
         </dependency>
@@ -115,7 +105,7 @@
 
         <dependency>
             <groupId>com.weedow</groupId>
-            <artifactId>spring-data-search-common</artifactId>
+            <artifactId>weedow-searchy-common</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -151,9 +141,9 @@
                     <arguments>
                         <!-- antlr4-maven-plugin confuses package and outputDirectory: https://github.com/antlr/antlr4/issues/2738 -->
                         <argument>-package</argument>
-                        <argument>com.weedow.spring.data.search.expression.parser</argument>
+                        <argument>com.weedow.searchy.expression.parser</argument>
                         <argument>-o</argument>
-                        <argument>${project.build.directory}/generated-sources/antlr4/com/weedow/spring/data/search/expression/parser</argument>
+                        <argument>${project.build.directory}/generated-sources/antlr4/com/weedow/searchy/expression/parser</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -171,6 +161,7 @@
                     </plugin>
 
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
                             <execution>
