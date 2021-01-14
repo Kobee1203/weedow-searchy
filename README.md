@@ -1289,6 +1289,9 @@ Contributions are what make the open source community such an amazing place to b
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+## How to make a new Release
+Page to describe the process of creating a new release: [Make a new release](./docs/release.md)
+
 ## Contact
 
 Nicolas Dos Santos - [@Kobee1203](https://twitter.com/Kobee1203)
