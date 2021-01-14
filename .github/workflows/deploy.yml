@@ -21,8 +21,11 @@ jobs:
 
       - name: 'Checkout repository on branch: ${{ github.REF }}'
         uses: actions/checkout@v2
+        env:
+          GIT_TRACE: 1
+          GIT_CURL_VERBOSE: 1
         with:
-          ref: ${{ github.HEAD_REF }}
+          ref: ${{ github.REF }}
 
       - name: Set up JDK 11 and Maven Central Repository configuration
         uses: actions/setup-java@v1
