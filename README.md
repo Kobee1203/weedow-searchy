@@ -1305,7 +1305,9 @@ Project Link: <https://github.com/Kobee1203/weedow-searchy>
 [![GitHub stars](https://img.shields.io/github/stars/Kobee1203/weedow-searchy?style=social)]()
 [![GitHub watchers](https://img.shields.io/github/watchers/Kobee1203/weedow-searchy?style=social)]()
 
+[![Join the chat at https://gitter.im/weedow-searchy/community](https://badges.gitter.im/weedow-searchy/community.svg)](https://gitter.im/weedow-searchy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## License
 
-[![MIT License](https://img.shields.io/github/license/Kobee1203/weedow-searchy)](https://github.com/Kobee1203/weedow-searchy/blob/master/LICENSE.txt) [![Join the chat at https://gitter.im/weedow-searchy/community](https://badges.gitter.im/weedow-searchy/community.svg)](https://gitter.im/weedow-searchy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) \
+[![MIT License](https://img.shields.io/github/license/Kobee1203/weedow-searchy)](https://github.com/Kobee1203/weedow-searchy/blob/master/LICENSE.txt) \
 _Copyright (c) 2020 Nicolas Dos Santos and other contributors_

@@ -4,13 +4,13 @@
 
     <parent>
         <groupId>com.weedow</groupId>
-        <artifactId>spring-data-search-parent</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <artifactId>weedow-searchy-parent</artifactId>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>spring-data-search-common</artifactId>
-    <name>spring-data-search-common</name>
-    <description>Spring Data Search Common Library</description>
+    <artifactId>weedow-searchy-common</artifactId>
+    <name>weedow-searchy-common</name>
+    <description>Searchy Common Library</description>
 
     <properties>
         <nv-i18n.version>1.27</nv-i18n.version>

@@ -9,58 +9,48 @@
 
     <includeBaseDirectory>false</includeBaseDirectory>
 
-    <dependencySets>
-        <!-- Core -->
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
+    <fileSets>
+        <!-- CORE -->
+        <fileSet>
             <outputDirectory>core</outputDirectory>
-            <unpack>false</unpack>
+            <directory>${project.basedir}/../core/target</directory>
             <includes>
-                <include>${project.groupId}:*-core:*</include>
+                <include>*-core-*.jar</include>
+                <include>./dependencies/*.jar</include>
             </includes>
-        </dependencySet>
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
-            <outputDirectory>core/dependencies</outputDirectory>
-            <unpack>false</unpack>
-            <excludes>
-                <exclude>${project.groupId}:*:*</exclude>
-            </excludes>
-        </dependencySet>
+        </fileSet>
 
-        <!-- Sample App Kotlin -->
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
-            <outputDirectory>sample-app-kotlin</outputDirectory>
-            <unpack>false</unpack>
+        <!-- JPA implementation -->
+        <fileSet>
+            <outputDirectory>jpa</outputDirectory>
+            <directory>${project.basedir}/../jpa/target</directory>
             <includes>
-                <include>${project.groupId}:*-sample-app-kotlin:jar</include>
+                <include>*-jpa-*.jar</include>
+                <include>./dependencies/*.jar</include>
             </includes>
-        </dependencySet>
+        </fileSet>
 
-        <!-- Sample App Java -->
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
-            <outputDirectory>sample-app-java</outputDirectory>
-            <unpack>false</unpack>
+        <!-- SAMPLES -->
+        <fileSet>
+            <outputDirectory>samples/sample-app-java</outputDirectory>
+            <directory>${project.basedir}/../samples/sample-app-java/target</directory>
             <includes>
-                <include>${project.groupId}:*-sample-app-java:jar</include>
+                <include>*-sample-app-java-*.jar</include>
             </includes>
-        </dependencySet>
-
-        <!-- Sample App Reactive -->
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
-            <outputDirectory>sample-app-reactive</outputDirectory>
-            <unpack>false</unpack>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>samples/sample-app-kotlin</outputDirectory>
+            <directory>${project.basedir}/../samples/sample-app-kotlin/target</directory>
             <includes>
-                <include>${project.groupId}:*-sample-app-reactive:jar</include>
+                <include>*-sample-app-kotlin-*.jar</include>
             </includes>
-        </dependencySet>
-    </dependencySets>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>samples/sample-app-reactive</outputDirectory>
+            <directory>${project.basedir}/../samples/sample-app-reactive/target</directory>
+            <includes>
+                <include>*-sample-app-reactive-*.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
 </assembly>

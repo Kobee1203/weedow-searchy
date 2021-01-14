@@ -1,0 +1,4 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.weedow.searchy.jpa.autoconfigure.JpaSearchyAutoConfiguration,\
+com.weedow.searchy.jpa.autoconfigure.SearchyHibernateSerializationAutoConfiguration

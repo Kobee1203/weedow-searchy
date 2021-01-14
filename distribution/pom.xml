@@ -4,103 +4,61 @@
 
     <parent>
         <groupId>com.weedow</groupId>
-        <artifactId>spring-data-search-parent</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <artifactId>weedow-searchy-parent</artifactId>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>spring-data-search-distribution</artifactId>
+    <artifactId>weedow-searchy-distribution</artifactId>
     <packaging>pom</packaging>
-    <name>spring-data-search-distribution</name>
-    <description>Spring Data Search Distribution</description>
+    <name>weedow-searchy-distribution</name>
+    <description>Searchy Distribution</description>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+
+        <github-release-plugin.version>1.4.0</github-release-plugin.version>
     </properties>
 
     <profiles>
         <profile>
             <id>release</id>
 
+            <!-- NOTE: These dependency declarations are only required to sort this project to the end of the line in the multimodule build. -->
             <dependencies>
-                <!-- Core -->
                 <dependency>
                     <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-core</artifactId>
+                    <artifactId>weedow-searchy-core</artifactId>
                     <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-core</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>javadoc</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-core</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>sources</classifier>
                 </dependency>
 
-                <!-- Sample App Kotlin -->
                 <dependency>
                     <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-kotlin</artifactId>
+                    <artifactId>weedow-searchy-jpa</artifactId>
                     <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-kotlin</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>javadoc</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-kotlin</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>sources</classifier>
                 </dependency>
 
-                <!-- Sample App Java -->
                 <dependency>
                     <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-java</artifactId>
+                    <artifactId>weedow-searchy-sample-app-kotlin</artifactId>
                     <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-java</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>javadoc</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-java</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>sources</classifier>
                 </dependency>
 
-                <!-- Sample App Reactive -->
                 <dependency>
                     <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-reactive</artifactId>
+                    <artifactId>weedow-searchy-sample-app-java</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+
                 <dependency>
                     <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-reactive</artifactId>
+                    <artifactId>weedow-searchy-sample-app-reactive</artifactId>
                     <version>${project.version}</version>
-                    <classifier>javadoc</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>com.weedow</groupId>
-                    <artifactId>spring-data-search-sample-app-reactive</artifactId>
-                    <version>${project.version}</version>
-                    <classifier>sources</classifier>
                 </dependency>
             </dependencies>
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <executions>
                             <execution>
@@ -122,7 +80,7 @@
                     <plugin>
                         <groupId>de.jutzig</groupId>
                         <artifactId>github-release-plugin</artifactId>
-                        <version>1.4.0</version>
+                        <version>${github-release-plugin.version}</version>
                         <executions>
                             <execution>
                                 <phase>deploy</phase>
@@ -132,7 +90,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <description>Release Spring Data Search ${project.version}</description>
+                            <description>Release Weedow Searchy ${project.version}</description>
                             <releaseName>${project.version}</releaseName>
                             <tag>${project.version}</tag>
 

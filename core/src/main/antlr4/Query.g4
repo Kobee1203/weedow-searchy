@@ -28,6 +28,7 @@ field_path
 value
    : boolean_value
    | number_value
+   | date_value
    | string_value
    ;
 
@@ -39,12 +40,10 @@ number_value
     : NUMBER
     ;
 
-/*
 date_value
-    : 'CURRENT_DATE'
+    : CURRENT_DATE
     | STRING
     ;
-*/
 
 string_value
     : STRING
@@ -52,11 +51,12 @@ string_value
 
 comparison_expression
    : field_path boolean_comparison_operator boolean_value
-   | field_path comparison_operator (number_value|string_value)
+   | field_path comparison_operator (number_value|date_value|string_value)
    ;
 
 between_expression
    : field_path K_NOT? K_BETWEEN number_value K_AND number_value
+   | field_path K_NOT? K_BETWEEN date_value K_AND date_value
    | field_path K_NOT? K_BETWEEN string_value K_AND string_value
    ;
 
@@ -99,6 +99,12 @@ NUMBER
     : [+-]? [0-9]+ ('.' [0-9]+)?
     ;
 
+CURRENT_DATE
+    : K_CURRENT_DATE
+    | K_CURRENT_TIME
+    | K_CURRENT_DATE_TIME
+    ;
+
 STRING
     : ('\'' ('\\\'' | ~[\r\n'])* '\'')
     | '"' ('\\"' | ~[\r\n"])* '"'
@@ -110,6 +116,9 @@ CLOSE_PAR : ')';
 // Keywords
 K_AND: A N D;
 K_BETWEEN: B E T W E E N;
+K_CURRENT_DATE: C U R R E N T '_' D A T E;
+K_CURRENT_TIME: C U R R E N T '_' T I M E;
+K_CURRENT_DATE_TIME: C U R R E N T '_' D A T E '_' T I M E;
 K_FALSE: F A L S E;
 K_IMATCHES: I M A T C H E S;
 K_IN: I N;
