@@ -31,7 +31,7 @@ class JpaSearchyRepositoryImpl<T, ID : Serializable>(
     SearchyBaseRepository<T, ID> {
 
     private val factory: SpecificationExecutorFactory = JpaSpecificationExecutorFactory(entityManager, searchyContext)
-    private val specificationExecutor: SpecificationExecutor<T> = factory.getSpecificationExecutor(domainClass)
+    private val specificationExecutor: SpecificationExecutor<T> = factory.getSpecificationExecutor(entityInformation.javaType)
 
     constructor(
         domainClass: Class<T>,
