@@ -53,10 +53,6 @@
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-collections</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
