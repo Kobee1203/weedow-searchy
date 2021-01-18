@@ -1,0 +1,33 @@
+[
+  {
+    "_class": "com.weedow.searchy.sample.mongodb.model.Person",
+    "createdOn": "2020-03-12T10:36:00Z",
+    "updatedOn":  "2020-04-17T12:00:00Z",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@acme.com",
+    "birthday":  "1981-03-12T10:36:00",
+    "height":  174.0,
+    "weight": 70.5,
+    "sex": "MALE"
+  },
+  {
+    "_class": "com.weedow.searchy.sample.mongodb.model.Person",
+    "createdOn": "2020-03-07T10:36:00Z",
+    "updatedOn":  "2020-04-07T12:00:00Z",
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "email": "jane.doe@acme.com",
+    "birthday":  "1981-11-26T12:30:00",
+    "height":  165.0,
+    "weight": 68.0,
+    "sex": "FEMALE"
+  },
+  {
+    "_class": "com.weedow.searchy.sample.mongodb.model.Person",
+    "createdOn": "2020-03-08T10:36:00Z",
+    "updatedOn":  "2020-04-08T12:00:00Z",
+    "firstName": "Bob",
+    "lastName": "Nullos"
+  }
+]

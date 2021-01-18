@@ -103,8 +103,11 @@
         <module>common</module>
         <module>core</module>
         <module>jpa</module>
+        <module>mongodb</module>
+        <!--<module>collections</module>-->
         <module>samples/sample-app-kotlin</module>
         <module>samples/sample-app-java</module>
+        <module>samples/sample-app-mongodb</module>
         <module>samples/sample-app-reactive</module>
         <module>report</module>
         <module>distribution</module>
@@ -227,7 +230,16 @@
                                         <artifactId>spring-boot-configuration-processor</artifactId>
                                         <version>${spring-boot.version}</version>
                                     </annotationProcessorPath>
+                                    <annotationProcessorPath>
+                                        <groupId>com.querydsl</groupId>
+                                        <artifactId>querydsl-apt</artifactId>
+                                        <version>${querydsl.version}</version>
+                                    </annotationProcessorPath>
                                 </annotationProcessorPaths>
+                                <annotationProcessors>
+                                    <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+                                    <processor>org.springframework.data.mongodb.repository.support.MongoAnnotationProcessor</processor>
+                                </annotationProcessors>
                             </configuration>
                         </execution>
                     </executions>
