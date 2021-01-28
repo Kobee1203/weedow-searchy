@@ -3,18 +3,13 @@ package com.weedow.searchy.mongodb.query
 import com.querydsl.core.JoinType
 import com.querydsl.core.types.Expression
 import com.querydsl.core.types.Ops
+import com.querydsl.core.types.Path
 import com.querydsl.core.types.Predicate
-import com.querydsl.core.types.dsl.DateExpression
-import com.querydsl.core.types.dsl.DateTimeExpression
-import com.querydsl.core.types.dsl.Expressions
-import com.querydsl.core.types.dsl.TimeExpression
+import com.querydsl.core.types.dsl.*
 import com.querydsl.mongodb.MongodbOps
 import com.weedow.searchy.context.SearchyContext
 import com.weedow.searchy.query.QueryBuilder
-import com.weedow.searchy.query.querytype.QEntityJoin
-import com.weedow.searchy.query.querytype.QEntityJoinImpl
-import com.weedow.searchy.query.querytype.QEntityRoot
-import com.weedow.searchy.query.querytype.QPath
+import com.weedow.searchy.query.querytype.*
 import com.weedow.searchy.utils.Keyword
 import org.springframework.data.mongodb.repository.support.SpringDataMongodbQuery
 
@@ -39,7 +34,52 @@ class MongoQueryBuilder<T>(
         val propertyInfos = qPath.propertyInfos
         val elementType = propertyInfos.elementType
 
-        return QEntityJoinImpl(qEntityRoot, propertyInfos)
+        val joinAnnotation = propertyInfos.annotations.firstOrNull { searchyContext.isJoinAnnotation(it.annotationClass.java) }
+
+        val aliasType = when (elementType) {
+            ElementType.SET,
+            ElementType.LIST,
+            ElementType.COLLECTION,
+            ElementType.ARRAY
+            -> {
+                propertyInfos.parameterizedTypes[0]
+            }
+            ElementType.MAP -> propertyInfos.parameterizedTypes[1]
+            ElementType.ENTITY -> propertyInfos.type
+            else -> if (joinAnnotation == null) propertyInfos.type else throw IllegalArgumentException("Could not identify the alias type for the QPath of type '$elementType': $qPath")
+        }
+
+        if (joinAnnotation != null) {
+            val alias = createAlias(aliasType, qPath)
+
+            val path = qPath.path
+            val join = join(elementType, path, alias)
+
+            return QEntityJoinImpl(join, propertyInfos)
+        }
+
+        return QEntityJoinImpl(qPath.path as QEntity<*>, propertyInfos)
+    }
+
+    private fun <E> createAlias(aliasType: Class<E>, qPath: QPath<*>): QEntity<E> {
+        return searchyContext.get(aliasType) { entityClazz ->
+            QEntityAliasImpl(entityClazz, qPath.propertyInfos.fieldName)
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <E> join(elementType: ElementType, path: Path<*>, alias: QEntity<E>): QEntity<*> {
+        val join = when (elementType) {
+            ElementType.SET,
+            ElementType.LIST,
+            ElementType.COLLECTION,
+            -> query.join(path as CollectionPathBase<*, E, *>, alias)
+            else -> query.join(path as Path<E>, alias)
+        }
+
+        join.on()
+
+        return alias
     }
 
     override fun and(x: Expression<Boolean>, y: Expression<Boolean>): Predicate {
