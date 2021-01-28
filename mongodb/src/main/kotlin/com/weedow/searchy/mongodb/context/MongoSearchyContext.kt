@@ -1,6 +1,7 @@
 package com.weedow.searchy.mongodb.context
 
 import com.weedow.searchy.context.AbstractConfigurableSearchyContext
+import org.springframework.data.annotation.Persistent
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
@@ -14,7 +15,8 @@ class MongoSearchyContext : AbstractConfigurableSearchyContext() {
          * Entity Annotations supported
          */
         private val ENTITY_ANNOTATIONS = listOf(
-            Document::class.java
+            Document::class.java,
+            Persistent::class.java
         )
 
         /**
