@@ -1,6 +1,7 @@
 package com.weedow.searchy.sample.mongodb.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.weedow.searchy.mongodb.domain.MongoPersistable
 import org.bson.types.ObjectId
 import org.springframework.data.geo.Point
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType
@@ -20,43 +21,42 @@ class Person(
     val lastName: String,
 
     @Indexed(unique = true)
-    val email: String? = null,
+    var email: String? = null,
 
-    val birthday: LocalDateTime? = null,
+    var birthday: LocalDateTime? = null,
 
-    val age: Int? = null,
+    var age: Int? = null,
 
-    val height: Double? = null,
+    var height: Double? = null,
 
-    val weight: Double? = null,
+    var weight: Double? = null,
 
-    val sex: Sex? = null,
+    var sex: Sex? = null,
 
     var nickNames: Set<String>? = null,
 
     var phoneNumbers: Set<String>? = null,
 
-    @DBRef(lazy = true)
-    @JsonIgnoreProperties("persons")
-    val addressEntities: Set<Address>? = null,
+    var mainAddress: Address? = null,
+
+    var otherAddresses: Set<Address>? = null,
 
     @DBRef
     @Field("job")
     @JsonIgnoreProperties("person")
-    val jobEntity: Job? = null,
+    var jobEntity: Job? = null,
 
     @DBRef(lazy = true)
     @JsonIgnoreProperties("person")
-    val vehicles: Set<Vehicle>? = null,
+    var vehicles: Set<Vehicle>? = null,
 
-    val characteristics: Map<String, String>? = null,
+    var characteristics: Map<String, String>? = null,
 
-    //@JsonIgnore
     @DBRef(lazy = true)
-    val tasks: Map<Task, LocalDateTime>? = null,
+    var tasks: Map<Task, TaskTime>? = null,
 
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
-    val location: Point? = null
+    var location: Point? = null
 
 ) : MongoPersistable<ObjectId>() {
 

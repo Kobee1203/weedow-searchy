@@ -5,6 +5,7 @@ import com.weedow.searchy.sample.mongodb.dto.PersonDto
 import com.weedow.searchy.sample.mongodb.model.Address
 import com.weedow.searchy.sample.mongodb.model.Person
 import com.weedow.searchy.sample.mongodb.model.Sex
+import com.weedow.searchy.sample.mongodb.model.VehicleType
 import org.bson.Document
 import org.bson.types.ObjectId
 import org.springframework.data.domain.*
@@ -119,8 +120,8 @@ interface PersonRepository : MongoRepository<Person, ObjectId>/*, SearchyBaseRep
      * @param address
      * @return
      */
-    fun findByAddressEntities(address: Address): List<Person>
-    fun findByAddressEntitiesZipCode(zipCode: String): List<Person>
+    fun findByMainAddress(address: Address): List<Person>
+    fun findByOtherAddressesZipCode(zipCode: String): List<Person>
     fun findByLastNameLikeAndAgeBetween(lastName: String, from: Int, to: Int): List<Person>
     fun findByAgeOrLastNameLikeAndFirstNameLike(age: Int, lastName: String, firstName: String): List<Person>
     fun findByLocationNear(point: Point): List<Person>
@@ -211,7 +212,7 @@ interface PersonRepository : MongoRepository<Person, ObjectId>/*, SearchyBaseRep
     fun removePersonByLastNameUsingAnnotatedQuery(lastName: String): Long?
 
     // DATAMONGO-893
-    fun findByAddressEntitiesIn(address: List<Address>, page: Pageable): Page<Person>
+    fun findByOtherAddressesIn(address: List<Address>, page: Pageable): Page<Person>
 
     // DATAMONGO-745
     @Query("{firstName:{\$in:?0}, lastName:?1}")
@@ -324,13 +325,15 @@ interface PersonRepository : MongoRepository<Person, ObjectId>/*, SearchyBaseRep
     fun findDocumentById(id: String): Optional<Document>
 
     @Query(
-        value = "{ 'firstName' : ?0, 'lastName' : ?1, 'email' : ?2 , 'age' : ?3, "
-                + "'createdAt' : ?5, 'nickNames' : ?6, 'address.street' : ?7, 'address.zipCode' : ?8, " //
-                + "'address.city' : ?9, 'uniqueId' : ?10, 'credentials.username' : ?11, 'credentials.password' : ?12 }"
+        value = "{"
+                + "'firstName' : ?0, 'lastName' : ?1, 'email' : ?2 , 'age' : ?3, 'nickNames' : ?4, "
+                + "{'vehicles': { '\$elemMatch' : { '\$ref' : 'vehicle', 'brand' : ?5, 'model' : ?6, 'vehicleType' : ?7 } } }"
+                //+ "'addressEntities.street' : ?5, 'addressEntities.zipCode' : ?6, 'addressEntities.city' : ?7"
+                + "}"
     )
     fun findPersonByManyArguments(
-        firstName: String, lastName: String, email: String, age: Int?,
-        createdAt: Date?, nickNames: List<String>, street: String, zipCode: String,  //
-        city: String, uniqueId: UUID?, username: String, password: String
+        firstName: String, lastName: String, email: String, age: Int?, nickNames: List<String>,
+        brand: String, model: String, vehicleType: VehicleType
     ): Person
+
 }

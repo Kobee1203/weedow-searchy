@@ -1,6 +1,7 @@
 package com.weedow.searchy.sample.mongodb.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.weedow.searchy.mongodb.domain.MongoPersistable
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
@@ -12,7 +13,7 @@ class Vehicle(
 
     val model: String,
 
-    @DBRef
+    @DBRef(lazy = true)
     @JsonIgnoreProperties("vehicles")
     val person: Person,
 

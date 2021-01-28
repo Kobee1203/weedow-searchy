@@ -2,13 +2,9 @@ package com.weedow.searchy.sample.mongodb.model
 
 import com.weedow.searchy.mongodb.domain.MongoPersistable
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.LocalDateTime
 
 @Document
-class Feature(
-    val name: String,
-
-    val description: String,
-
-    val metadata: Map<String, String>? = null
-
+class TaskTime(
+    val time: LocalDateTime
 ) : MongoPersistable<String>()

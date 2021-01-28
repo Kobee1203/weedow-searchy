@@ -6,8 +6,6 @@ import com.weedow.searchy.descriptor.SearchyDescriptor
 import com.weedow.searchy.descriptor.SearchyDescriptorBuilder
 import com.weedow.searchy.descriptor.SearchyDescriptorRegistry
 import com.weedow.searchy.join.handler.FetchingAllEntityJoinHandler
-import com.weedow.searchy.query.specification.SpecificationExecutorFactory
-import com.weedow.searchy.sample.mongodb.model.Address
 import com.weedow.searchy.sample.mongodb.model.Person
 import com.weedow.searchy.sample.mongodb.repository.PersonRepository
 import com.weedow.searchy.validation.validator.EmailValidator
@@ -20,7 +18,6 @@ class SearchyConfiguration : SearchyConfigurer {
 
     override fun addSearchyDescriptors(registry: SearchyDescriptorRegistry) {
         registry.addSearchyDescriptor(personSearchyDescriptor())
-        registry.addSearchyDescriptor(addressSearchyDescriptor())
     }
 
     fun personSearchyDescriptor(): SearchyDescriptor<Person> = SearchyDescriptorBuilder.builder<Person>().build()
@@ -41,13 +38,4 @@ class SearchyConfiguration : SearchyConfigurer {
         .entityJoinHandlers(FetchingAllEntityJoinHandler())
         .build()
 
-    fun addressSearchyDescriptor(): SearchyDescriptor<Address> = SearchyDescriptorBuilder.builder<Address>().build()
-
-    @Bean
-    fun address3SearchyDescriptor(specificationExecutorFactory: SpecificationExecutorFactory): SearchyDescriptor<Address> =
-        SearchyDescriptorBuilder.builder<Address>()
-            .id("address2")
-            .entityJoinHandlers(FetchingAllEntityJoinHandler())
-            .specificationExecutor(specificationExecutorFactory.getSpecificationExecutor(Address::class.java))
-            .build()
 }
