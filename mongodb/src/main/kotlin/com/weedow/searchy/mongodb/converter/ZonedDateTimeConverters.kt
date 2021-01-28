@@ -1,4 +1,4 @@
-package com.weedow.searchy.sample.mongodb.converter
+package com.weedow.searchy.mongodb.converter
 
 import org.bson.Document
 import org.springframework.core.convert.converter.Converter
@@ -15,7 +15,7 @@ internal const val ZONE = "zone"
 internal const val OFFSET = "offset"
 
 @WritingConverter
-object ZonedDateTimeToDocumentConverter : Converter<ZonedDateTime, Document> {
+object ZonedDateTimeToDocumentConverter : MongoConverter<ZonedDateTime, Document> {
     override fun convert(zonedDateTime: ZonedDateTime): Document {
         val document = Document()
         document[DATE_TIME] = Date.from(zonedDateTime.toInstant())
@@ -26,7 +26,7 @@ object ZonedDateTimeToDocumentConverter : Converter<ZonedDateTime, Document> {
 }
 
 @ReadingConverter
-object DocumentToZonedDateTimeConverter : Converter<Document, ZonedDateTime> {
+object DocumentToZonedDateTimeConverter : MongoConverter<Document, ZonedDateTime> {
     override fun convert(document: Document): ZonedDateTime {
         val dateTime: Date = document.getDate(DATE_TIME)
         val zoneId = document.getString(ZONE)
