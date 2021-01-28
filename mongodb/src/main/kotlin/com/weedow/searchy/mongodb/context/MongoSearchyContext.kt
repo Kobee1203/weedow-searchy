@@ -25,10 +25,10 @@ class MongoSearchyContext : AbstractConfigurableSearchyContext() {
         )
     }
 
-    override val entityAnnotations: List<Class<out Annotation>>
-        get() = ENTITY_ANNOTATIONS
+    override val entityAnnotations: List<Class<out Annotation>> = ENTITY_ANNOTATIONS
 
-    override val joinAnnotations: List<Class<out Annotation>>
-        get() = JOIN_ANNOTATIONS
+    override val joinAnnotations: List<Class<out Annotation>> = JOIN_ANNOTATIONS
+
+    override val isUnknownAsEmbedded: Boolean = true
 
 }

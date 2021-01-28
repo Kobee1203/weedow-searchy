@@ -8,6 +8,8 @@ import com.weedow.searchy.query.querytype.QEntity
  */
 interface SearchyContext {
 
+    val isUnknownAsEmbedded: Boolean
+
     /**
      * Annotation classes to determine the classes as an Entity
      */

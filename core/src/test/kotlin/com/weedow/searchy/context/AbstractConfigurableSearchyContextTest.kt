@@ -155,7 +155,10 @@ internal class AbstractConfigurableSearchyContextTest {
         val addresses: Set<Address>,
 
         @OneToOne
-        val job: Job
+        val job: Job,
+
+        @kotlin.jvm.Transient
+        val transientField1: Class<*>? = null
     ) {
 
         companion object {

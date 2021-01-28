@@ -79,7 +79,15 @@ open class QEntityImpl<T>(
                     QEntityImpl(searchyContext, propertyInfos.type, forProperty(propertyInfos.fieldName), inits.get(propertyInfos.fieldName))
                 else null
             ElementType.COMPARABLE -> createComparable(propertyInfos.fieldName, propertyInfos.type)
-            else -> createSimple(propertyInfos.fieldName, propertyInfos.type)
+            else -> {
+                if (searchyContext.isUnknownAsEmbedded) {
+                    if (inits.isInitialized(propertyInfos.fieldName))
+                        QEntityImpl(searchyContext, propertyInfos.type, forProperty(propertyInfos.fieldName), inits.get(propertyInfos.fieldName))
+                    else null
+                } else {
+                    createSimple(propertyInfos.fieldName, propertyInfos.type)
+                }
+            }
         }
         if (path != null) {
             fieldPaths[propertyInfos.fieldName] = QPathImpl(path, propertyInfos)

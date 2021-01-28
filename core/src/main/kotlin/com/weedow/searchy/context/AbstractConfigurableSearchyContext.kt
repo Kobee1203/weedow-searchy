@@ -37,7 +37,7 @@ abstract class AbstractConfigurableSearchyContext : ConfigurableSearchyContext {
 
     override fun getAllPropertyInfos(entityClass: Class<*>): List<PropertyInfos> {
         return FieldUtils.getAllFieldsList(entityClass)
-            .filter { field -> !Modifier.isStatic(field.modifiers) }
+            .filter { field -> !Modifier.isStatic(field.modifiers) && !Modifier.isTransient(field.modifiers) }
             .map { field -> getPropertyInfos(entityClass, field) }
     }
 

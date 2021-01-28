@@ -3,7 +3,7 @@ package com.weedow.searchy
 import com.weedow.searchy.context.AbstractConfigurableSearchyContext
 import javax.persistence.*
 
-class TestSearchyContext : AbstractConfigurableSearchyContext() {
+class TestSearchyContext(override val isUnknownAsEmbedded: Boolean = false) : AbstractConfigurableSearchyContext() {
 
     companion object {
         /**
@@ -25,10 +25,8 @@ class TestSearchyContext : AbstractConfigurableSearchyContext() {
         )
     }
 
-    override val entityAnnotations: List<Class<out Annotation>>
-        get() = ENTITY_ANNOTATIONS
+    override val entityAnnotations: List<Class<out Annotation>> = ENTITY_ANNOTATIONS
 
-    override val joinAnnotations: List<Class<out Annotation>>
-        get() = JOIN_ANNOTATIONS
+    override val joinAnnotations: List<Class<out Annotation>> = JOIN_ANNOTATIONS
 
 }
