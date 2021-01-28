@@ -11,7 +11,7 @@ class Task(
     val name: String,
 
     @Column
-    val description: String
+    val description: String?
 
 ) : JpaPersistable<Long>() {
 
