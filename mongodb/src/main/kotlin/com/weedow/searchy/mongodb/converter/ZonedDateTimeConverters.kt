@@ -1,7 +1,6 @@
 package com.weedow.searchy.mongodb.converter
 
 import org.bson.Document
-import org.springframework.core.convert.converter.Converter
 import org.springframework.data.convert.ReadingConverter
 import org.springframework.data.convert.WritingConverter
 import java.time.ZoneId

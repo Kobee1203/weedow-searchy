@@ -12,9 +12,9 @@ abstract class AbstractLongIdPrePersistEntityHandler(
         doHandle(entity, generatedSequence)
     }
 
-    abstract fun doHandle(entity: Any, generatedSequence: Long)
+    protected abstract fun doHandle(entity: Any, generatedSequence: Long)
 
-    protected fun generateSequence(entity: Any): Long {
+    private fun generateSequence(entity: Any): Long {
         return dbSequenceGeneratorService.getNextSequence(entity.javaClass.simpleName.toLowerCase() + "_sequence")
     }
 

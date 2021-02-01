@@ -48,7 +48,7 @@ class MongoSearchyAutoConfiguration {
     */
 
     @Bean
-    fun mongoConverters(): MongoConverters {
+    fun searchyMongoConverters(): MongoConverters {
         return MongoConverters.of(
             DocumentToZonedDateTimeConverter,
             ZonedDateTimeToDocumentConverter,
@@ -77,7 +77,7 @@ class MongoSearchyAutoConfiguration {
                 val collectionInfos = "${persistentEntity.collection} ($collectionFields)"
                 log.debug("'DbSequence' collection is registered to Mongo Mapping Context: {}", collectionInfos)
             } else {
-                log.debug("'DbSequence' collection is NOT registered to Mongo Mapping Context!")
+                log.warn("'DbSequence' collection is NOT registered to Mongo Mapping Context!")
             }
         }
         return DbSequenceGeneratorServiceImpl(mongoOperations)

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.io.Serializable
 
 /**
- * Default Data Search JPA Repository implementation.
+ * Default MongoDB Searchy Repository implementation.
  *
  * @param entityInformation must not be null
  * @param mongoOperations must not be null
