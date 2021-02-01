@@ -275,13 +275,13 @@ internal class JpaQueryBuilderTest {
     }
 
     @Test
-    fun or_with_no_predicates() {
-        val predicate = jpaQueryBuilder.or()
+    fun and_with_no_predicates() {
+        val predicate = jpaQueryBuilder.and()
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
         val booleanOperation = predicate as BooleanOperation
-        assertThat(booleanOperation.operator).isEqualTo(Ops.OR)
+        assertThat(booleanOperation.operator).isEqualTo(Ops.AND)
         assertThat(booleanOperation.args).isEmpty()
     }
 
@@ -312,13 +312,13 @@ internal class JpaQueryBuilderTest {
     }
 
     @Test
-    fun and_with_no_predicates() {
-        val predicate = jpaQueryBuilder.and()
+    fun or_with_no_predicates() {
+        val predicate = jpaQueryBuilder.or()
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
         val booleanOperation = predicate as BooleanOperation
-        assertThat(booleanOperation.operator).isEqualTo(Ops.AND)
+        assertThat(booleanOperation.operator).isEqualTo(Ops.OR)
         assertThat(booleanOperation.args).isEmpty()
     }
 

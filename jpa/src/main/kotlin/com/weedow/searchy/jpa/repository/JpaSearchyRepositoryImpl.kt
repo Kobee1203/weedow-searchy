@@ -14,7 +14,7 @@ import java.io.Serializable
 import javax.persistence.EntityManager
 
 /**
- * Default Data Search JPA Repository implementation.
+ * Default JPA Searchy Repository implementation.
  *
  * @param entityInformation must not be null
  * @param entityManager must not be null
