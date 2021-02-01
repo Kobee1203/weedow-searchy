@@ -1,5 +1,6 @@
 package com.weedow.searchy.mongodb.autoconfigure
 
+import com.weedow.searchy.utils.klogger
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
@@ -50,6 +51,10 @@ data class EmbeddedMongoProperties(
     val ryuk: Ryuk = Ryuk(),
 ) {
 
+    companion object {
+        private val log by klogger()
+    }
+
     @ConstructorBinding
     class Ryuk(
         /** Whether the Ryuk container should be turned off. Default is false. See https://www.testcontainers.org/features/configuration/#disabling-ryuk */
@@ -62,6 +67,11 @@ data class EmbeddedMongoProperties(
         configuration.updateUserConfig("testcontainers.reuse.enable", containerReusable.toString())
         configuration.updateUserConfig("ryuk.container.privileged", ryuk.privilegedMode.toString())
 
-        EnvironmentVariables().set("TESTCONTAINERS_RYUK_DISABLED", ryuk.disabled.toString())
+        val ryukDisabled = ryuk.disabled.toString()
+        try {
+            EnvironmentVariables().set("TESTCONTAINERS_RYUK_DISABLED", ryukDisabled)
+        } catch (e: Exception) {
+            log.warn("Could not set programmatically environment variable 'TESTCONTAINERS_RYUK_DISABLED' to '$ryukDisabled': ${e.message}", e)
+        }
     }
 }

@@ -3,14 +3,13 @@ package com.weedow.searchy.mongodb.autoconfigure
 import java.lang.reflect.Field
 
 /**
- * The `EnvironmentVariables` allows to set environment variables for your test.
+ * The `EnvironmentVariables` allows to set environment variables.
  * <pre>
  * public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
  * environmentVariables.set("name", "value");
- * assertEquals("value", System.getenv("name"));
  * </pre>
  *
- * You can ensure that some environment variables are not set by calling [.clear].
+ * You can ensure that some environment variables are not set by calling [clear].
  *
  * **Warning:** This class uses reflection for modifying internals of the environment variables map. It fails if your `SecurityManager` forbids such modifications.
  */
@@ -78,6 +77,7 @@ class EnvironmentVariables {
                 null
             }
 
+        @Suppress("UNCHECKED_CAST")
         @Throws(NoSuchFieldException::class, IllegalAccessException::class)
         private fun getFieldValue(klass: Class<*>, obj: Any?, name: String): MutableMap<String, String> {
             val field: Field = klass.getDeclaredField(name)
