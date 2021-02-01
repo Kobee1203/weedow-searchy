@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.DependsOn
+import org.testcontainers.containers.ContainerLaunchException
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.utility.TestcontainersConfiguration
@@ -72,7 +73,7 @@ class EmbeddedMongoSearchyAutoConfiguration {
         try {
             Socket(container.containerIpAddress, mappedPort)
         } catch (e: IOException) {
-            throw AssertionError("The expected port $mappedPort is not available!")
+            throw ContainerLaunchException("The expected port $mappedPort is not available from the container '${container.containerName}'!")
         }
 
         return container
