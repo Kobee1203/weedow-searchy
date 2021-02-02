@@ -28,6 +28,11 @@
             <artifactId>weedow-searchy-jpa</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.weedow</groupId>
+            <artifactId>weedow-searchy-mongodb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
