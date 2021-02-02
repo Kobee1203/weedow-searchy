@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>weedow-searchy-collections</artifactId>
-    <name>weedow-searchy-jpa</name>
+    <name>weedow-searchy-collections</name>
     <description>The Searchy Collections module provides integration with Java Collections and Beans.</description>
 
     <dependencies>
