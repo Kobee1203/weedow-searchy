@@ -97,6 +97,7 @@
 
         <!-- Testing dependencies versions -->
         <mockito-kotlin.version>2.2.0</mockito-kotlin.version>
+        <json-unit-spring.version>2.24.0</json-unit-spring.version>
     </properties>
 
     <modules>
@@ -140,6 +141,13 @@
                 <groupId>com.nhaarman.mockitokotlin2</groupId>
                 <artifactId>mockito-kotlin</artifactId>
                 <version>${mockito-kotlin.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>net.javacrumbs.json-unit</groupId>
+                <artifactId>json-unit-spring</artifactId>
+                <version>${json-unit-spring.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
