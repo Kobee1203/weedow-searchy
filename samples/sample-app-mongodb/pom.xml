@@ -66,6 +66,11 @@
             <version>${nv-i18n.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>net.javacrumbs.json-unit</groupId>
+            <artifactId>json-unit-spring</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
