@@ -1,12 +1,8 @@
 package com.weedow.searchy.mongodb.query
 
 import com.querydsl.core.JoinType
-import com.querydsl.core.types.Expression
-import com.querydsl.core.types.Ops
-import com.querydsl.core.types.Path
-import com.querydsl.core.types.Predicate
+import com.querydsl.core.types.*
 import com.querydsl.core.types.dsl.*
-import com.querydsl.mongodb.MongodbOps
 import com.weedow.searchy.context.SearchyContext
 import com.weedow.searchy.query.QueryBuilder
 import com.weedow.searchy.query.querytype.*
@@ -58,7 +54,14 @@ class MongoQueryBuilder<T>(
             return QEntityJoinImpl(join, propertyInfos)
         }
 
-        return QEntityJoinImpl(qPath.path as QEntity<*>, propertyInfos)
+        val qEntity = createQEntity(aliasType, qPath)
+        return QEntityJoinImpl(qEntity, propertyInfos)
+    }
+
+    private fun <E> createQEntity(entityClass: Class<E>, qPath: QPath<*>): QEntity<E> {
+        return searchyContext.get(entityClass) { entityClazz ->
+            QEntityImpl(searchyContext, entityClazz, qPath.path.metadata)
+        }
     }
 
     private fun <E> createAlias(aliasType: Class<E>, qPath: QPath<*>): QEntity<E> {
@@ -103,16 +106,8 @@ class MongoQueryBuilder<T>(
     }
 
     override fun equal(x: Expression<*>, value: Any): Predicate {
-        val type = x.type
         val expressionValue = convertValueToExpression(value)
-        return when {
-            Collection::class.java.isAssignableFrom(type) -> {
-                Expressions.predicate(MongodbOps.ELEM_MATCH, expressionValue, x)
-            }
-            else -> {
-                Expressions.predicate(Ops.EQ, x, expressionValue)
-            }
-        }
+        return Expressions.predicate(Ops.EQ, x, expressionValue)
     }
 
     override fun isNull(x: Expression<*>): Predicate {

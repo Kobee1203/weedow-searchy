@@ -1,9 +1,6 @@
 package com.weedow.searchy.mongodb.query
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
+import com.nhaarman.mockitokotlin2.*
 import com.querydsl.core.JoinType
 import com.querydsl.core.types.Expression
 import com.querydsl.core.types.Ops
@@ -12,7 +9,6 @@ import com.querydsl.core.types.dsl.BooleanOperation
 import com.querydsl.core.types.dsl.DateOperation
 import com.querydsl.core.types.dsl.DateTimeOperation
 import com.querydsl.core.types.dsl.TimeOperation
-import com.querydsl.mongodb.MongodbOps
 import com.weedow.searchy.context.SearchyContext
 import com.weedow.searchy.query.querytype.*
 import org.assertj.core.api.Assertions.assertThat
@@ -60,10 +56,11 @@ internal class MongoQueryBuilderTest {
             on { this.type }.thenReturn(Any::class.java)
         }
 
-        val path = mock<QEntity<Any>>()
+        val qEntity = mock<QEntity<Any>>()
+        whenever(searchyContext.get(eq(Any::class.java), any())).doReturn(qEntity)
+
         val qPath = mock<QPath<*>> {
             on { this.propertyInfos }.thenReturn(propertyInfos)
-            on { this.path }.thenReturn(path)
         }
         val joinType = mock<JoinType>()
         val fetched = false
@@ -72,9 +69,9 @@ internal class MongoQueryBuilderTest {
 
         assertThat(join).isInstanceOf(QEntityJoinImpl::class.java)
         assertThat(join).extracting("propertyInfos").isSameAs(propertyInfos)
-        assertThat(join).extracting("qEntity").isSameAs(path)
+        assertThat(join).extracting("qEntity").isSameAs(qEntity)
 
-        verifyNoMoreInteractions(query)
+        verifyZeroInteractions(query)
         verifyNoMoreInteractions(searchyContext)
         verifyZeroInteractions(qEntityRoot)
     }
@@ -90,6 +87,10 @@ internal class MongoQueryBuilderTest {
         val booleanOperation = predicate as BooleanOperation
         assertThat(booleanOperation.operator).isEqualTo(Ops.AND)
         assertThat(booleanOperation.args).containsExactly(expr1, expr2)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -103,6 +104,10 @@ internal class MongoQueryBuilderTest {
         val booleanOperation = predicate as BooleanOperation
         assertThat(booleanOperation.operator).isEqualTo(Ops.AND)
         assertThat(booleanOperation.args).containsExactly(predicate1, predicate2)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -114,6 +119,10 @@ internal class MongoQueryBuilderTest {
         val booleanOperation = predicate as BooleanOperation
         assertThat(booleanOperation.operator).isEqualTo(Ops.AND)
         assertThat(booleanOperation.args).isEmpty()
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -127,6 +136,10 @@ internal class MongoQueryBuilderTest {
         val booleanOperation = predicate as BooleanOperation
         assertThat(booleanOperation.operator).isEqualTo(Ops.OR)
         assertThat(booleanOperation.args).containsExactly(expr1, expr2)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -140,6 +153,10 @@ internal class MongoQueryBuilderTest {
         val booleanOperation = predicate as BooleanOperation
         assertThat(booleanOperation.operator).isEqualTo(Ops.OR)
         assertThat(booleanOperation.args).containsExactly(predicate1, predicate2)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -151,6 +168,10 @@ internal class MongoQueryBuilderTest {
         val booleanOperation = predicate as BooleanOperation
         assertThat(booleanOperation.operator).isEqualTo(Ops.OR)
         assertThat(booleanOperation.args).isEmpty()
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -163,13 +184,15 @@ internal class MongoQueryBuilderTest {
         val booleanOperation = predicate as BooleanOperation
         assertThat(booleanOperation.operator).isEqualTo(Ops.NOT)
         assertThat(booleanOperation.args).containsExactly(expr)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
     fun equal() {
-        val expr = mock<Expression<*>> {
-            on { this.type }.thenReturn(Any::class.java)
-        }
+        val expr = mock<Expression<*>>()
         val value = "myvalue"
         val predicate = mongoQueryBuilder.equal(expr, value)
 
@@ -180,13 +203,15 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(value)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
     fun equal_with_current_date_value() {
-        val expr = mock<Expression<*>> {
-            on { this.type }.thenReturn(Any::class.java)
-        }
+        val expr = mock<Expression<*>>()
         val value = "CURRENT_DATE"
         val predicate = mongoQueryBuilder.equal(expr, value)
 
@@ -198,13 +223,15 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).isInstanceOf(DateOperation::class.java)
         assertThat(booleanOperation.args[1]).extracting("operator").isEqualTo(Ops.DateTimeOps.CURRENT_DATE)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
     fun equal_with_current_time_value() {
-        val expr = mock<Expression<*>> {
-            on { this.type }.thenReturn(Any::class.java)
-        }
+        val expr = mock<Expression<*>>()
         val value = "CURRENT_TIME"
         val predicate = mongoQueryBuilder.equal(expr, value)
 
@@ -216,13 +243,15 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).isInstanceOf(TimeOperation::class.java)
         assertThat(booleanOperation.args[1]).extracting("operator").isEqualTo(Ops.DateTimeOps.CURRENT_TIME)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
     fun equal_with_current_date_time_value() {
-        val expr = mock<Expression<*>> {
-            on { this.type }.thenReturn(Any::class.java)
-        }
+        val expr = mock<Expression<*>>()
         val value = "CURRENT_DATE_TIME"
         val predicate = mongoQueryBuilder.equal(expr, value)
 
@@ -234,23 +263,29 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).isInstanceOf(DateTimeOperation::class.java)
         assertThat(booleanOperation.args[1]).extracting("operator").isEqualTo(Ops.DateTimeOps.CURRENT_TIMESTAMP)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
     fun equal_with_collection() {
-        val expr = mock<Expression<*>> {
-            on { this.type }.thenReturn(Collection::class.java)
-        }
+        val expr = mock<Expression<*>>()
         val values = listOf("myvalue1", "myvalue2")
         val predicate = mongoQueryBuilder.equal(expr, values)
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
         val booleanOperation = predicate as BooleanOperation
-        assertThat(booleanOperation.operator).isEqualTo(MongodbOps.ELEM_MATCH)
+        assertThat(booleanOperation.operator).isEqualTo(Ops.EQ)
         assertThat(booleanOperation.args).hasSize(2)
-        assertThat(booleanOperation.args[0]).extracting("constant").isEqualTo(values)
-        assertThat(booleanOperation.args[1]).isSameAs(expr)
+        assertThat(booleanOperation.args[0]).isSameAs(expr)
+        assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(values)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -267,6 +302,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.operator).isEqualTo(Ops.IS_NULL)
         assertThat(booleanOperation.args).hasSize(1)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -283,6 +322,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.operator).isEqualTo(Ops.COL_IS_EMPTY)
         assertThat(booleanOperation.args).hasSize(1)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -299,6 +342,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.operator).isEqualTo(Ops.MAP_IS_EMPTY)
         assertThat(booleanOperation.args).hasSize(1)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -314,6 +361,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo("MYVALUE%")
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -329,6 +380,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo("myvalue%")
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -344,6 +399,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(value)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -359,6 +418,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(value)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -374,6 +437,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(value)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -389,13 +456,15 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(value)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
     fun in_with_single_value() {
-        val expr = mock<Expression<*>> {
-            on { this.type }.thenReturn(Any::class.java)
-        }
+        val expr = mock<Expression<*>>()
         val v = "myvalue"
         val values = listOf(v)
         val predicate = mongoQueryBuilder.`in`(expr, values)
@@ -407,6 +476,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(v)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
     @Test
@@ -422,6 +495,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(values)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
     }
 
 }
