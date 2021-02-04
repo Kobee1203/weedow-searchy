@@ -1,0 +1,26 @@
+[
+  {
+    "id": 11111111111111111111111111111,
+    "_class": "com.weedow.searchy.sample.mongodb.model.Job",
+    "active": true,
+    "company": "Acme",
+    "createdOn": "2021-02-02T17:32:32.412Z",
+    "hireDate": "2019-09-01T09:00:00.000Z",
+    "person": "60198caf62c3701a6a97404b",
+    "salary": 50000,
+    "title": "Lab Technician",
+    "updatedOn": "2021-02-02T17:32:32.412Z"
+  },
+  {
+    "id": 22222222222222222222222222222,
+    "_class": "com.weedow.searchy.sample.mongodb.model.Job",
+    "active": true,
+    "company": "Fishing & Co",
+    "createdOn": "2021-02-02T17:32:32.508Z",
+    "hireDate": "2019-09-01T09:00:00.000Z",
+    "person": "60198cb062c3701a6a97404c",
+    "salary": 60000,
+    "title": "Commercial Fisherman",
+    "updatedOn": "2021-02-02T17:32:32.508Z"
+  }
+]

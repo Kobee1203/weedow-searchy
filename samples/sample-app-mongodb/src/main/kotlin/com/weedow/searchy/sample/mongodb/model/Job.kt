@@ -23,4 +23,14 @@ class Job(
     @JsonIgnoreProperties("jobEntity")
     val person: Person
 
-) : MongoPersistable<BigInteger>()
+) : MongoPersistable<BigInteger>() {
+
+    private constructor(id: String) : this(true, "", "", 0, OffsetDateTime.now(), Person.ref("000000000000000000000000")) {
+        this.setId(BigInteger(id))
+    }
+
+    companion object {
+        @JvmStatic
+        fun ref(id: String) = Job(id)
+    }
+}

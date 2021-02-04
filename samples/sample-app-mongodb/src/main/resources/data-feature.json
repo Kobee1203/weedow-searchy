@@ -1,0 +1,50 @@
+[
+  {
+    "id": "60198cb062c3701a6a97404d",
+    "_class": "com.weedow.searchy.sample.mongodb.model.Feature",
+    "createdOn": "2021-02-02T17:32:32.057Z",
+    "description": "Connected navigation with cartography and connected navigation services (3 years): Google search for addresses and points of interest, real-time traffic information, fuel prices, warning zones.",
+    "name": "gps",
+    "updatedOn": "2021-02-02T17:32:32.057Z"
+  },
+  {
+    "id": "60198cb062c3701a6a97404e",
+    "_class": "com.weedow.searchy.sample.mongodb.model.Feature",
+    "createdOn": "2021-02-02T17:32:32.120Z",
+    "description": "Dual deployment driver front airbag and passenger front airbag. Front seat side airbags and front and rear side curtain airbags for optimum safety of all occupants.",
+    "name": "airbag",
+    "updatedOn": "2021-02-02T17:32:32.120Z"
+  },
+  {
+    "id": "60198cb062c3701a6a97404f",
+    "_class": "com.weedow.searchy.sample.mongodb.model.Feature",
+    "createdOn": "2021-02-02T17:32:32.127Z",
+    "description": "Your vehicle is on watch at all times: its camera reads traffic signs and informs you of the latest speed limits. In the event of overspeeding, your dashboard and navigation system will give you a visual warning when you exceed the speed limit.",
+    "name": "overspeed",
+    "updatedOn": "2021-02-02T17:32:32.127Z"
+  },
+  {
+    "id": "60198cb062c3701a6a974050",
+    "_class": "com.weedow.searchy.sample.mongodb.model.Feature",
+    "createdOn": "2021-02-02T17:32:32.135Z",
+    "description": "Emergency Brake Assist (EBA) applies maximum braking power when it detects a sudden braking maneuver by the driver. This helps reduce braking distances.",
+    "name": "eba",
+    "updatedOn": "2021-02-02T17:32:32.135Z"
+  },
+  {
+    "id": "60198cb062c3701a6a974051",
+    "_class": "com.weedow.searchy.sample.mongodb.model.Feature",
+    "createdOn": "2021-02-02T17:32:32.140Z",
+    "description": "Automatic air conditioning: select your temperature and the system will then manage the other parameters for your comfort.",
+    "name": "airConditioning",
+    "updatedOn": "2021-02-02T17:32:32.140Z"
+  },
+  {
+    "id": "60198cb062c3701a6a974052",
+    "_class": "com.weedow.searchy.sample.mongodb.model.Feature",
+    "createdOn": "2021-02-02T17:32:32.144Z",
+    "description": "",
+    "name": "backCamera",
+    "updatedOn": "2021-02-02T17:32:32.144Z"
+  }
+]

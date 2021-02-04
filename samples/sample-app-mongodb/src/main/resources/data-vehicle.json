@@ -1,0 +1,75 @@
+[
+  {
+    "id": 1,
+    "_class": "com.weedow.searchy.sample.mongodb.model.Vehicle",
+    "brand": "Renault",
+    "features": {
+      "gps": {
+        "id": "60198cb062c3701a6a97404d",
+        "name": "gps",
+        "description": "Connected navigation with cartography and connected navigation services (3 years): Google search for addresses and points of interest, real-time traffic information, fuel prices, warning zones.",
+        "createdOn": "2021-02-02T17:32:32.057Z",
+        "updatedOn": "2021-02-02T17:32:32.057Z"
+      },
+      "airbag": {
+        "id": "60198cb062c3701a6a97404e",
+        "name": "airbag",
+        "description": "Dual deployment driver front airbag and passenger front airbag. Front seat side airbags and front and rear side curtain airbags for optimum safety of all occupants.",
+        "createdOn": "2021-02-02T17:32:32.120Z",
+        "updatedOn": "2021-02-02T17:32:32.120Z"
+      },
+      "overspeed": {
+        "id": "60198cb062c3701a6a97404f",
+        "name": "overspeed",
+        "description": "Your vehicle is on watch at all times: its camera reads traffic signs and informs you of the latest speed limits. In the event of overspeeding, your dashboard and navigation system will give you a visual warning when you exceed the speed limit.",
+        "createdOn": "2021-02-02T17:32:32.127Z",
+        "updatedOn": "2021-02-02T17:32:32.127Z"
+      }
+    },
+    "model": "Clio E-Tech",
+    "person": "60198caf62c3701a6a97404b",
+    "updatedOn": "2021-02-02T17:32:32.281Z",
+    "vehicleType": "CAR"
+  },
+  {
+    "id": 2,
+    "_class": "com.weedow.searchy.sample.mongodb.model.Vehicle",
+    "brand": "Harley-Davidson",
+    "features": {
+      "eba": {
+        "id": "60198cb062c3701a6a974050",
+        "name": "eba",
+        "description": "Emergency Brake Assist (EBA) applies maximum braking power when it detects a sudden braking maneuver by the driver. This helps reduce braking distances.",
+        "createdOn": "2021-02-02T17:32:32.135Z",
+        "updatedOn": "2021-02-02T17:32:32.135Z"
+      },
+      "airConditioning": {
+        "id": "60198cb062c3701a6a974051",
+        "name": "airConditioning",
+        "description": "Automatic air conditioning: select your temperature and the system will then manage the other parameters for your comfort.",
+        "createdOn": "2021-02-02T17:32:32.140Z",
+        "updatedOn": "2021-02-02T17:32:32.140Z"
+      },
+      "backCamera": {
+        "id": "60198cb062c3701a6a974052",
+        "name": "backCamera",
+        "description": "",
+        "createdOn": "2021-02-02T17:32:32.144Z",
+        "updatedOn": "2021-02-02T17:32:32.144Z"
+      }
+    },
+    "model": "Livewire",
+    "person": "60198caf62c3701a6a97404b",
+    "updatedOn": "2021-02-02T17:32:32.346Z",
+    "vehicleType": "MOTORBIKE"
+  },
+  {
+    "id": 3,
+    "_class": "com.weedow.searchy.sample.mongodb.model.Vehicle",
+    "brand": "Porsche",
+    "model": "911 Carrera S",
+    "person": "60198cb062c3701a6a97404c",
+    "updatedOn": "2021-02-02T17:32:32.382Z",
+    "vehicleType": "CAR"
+  }
+]

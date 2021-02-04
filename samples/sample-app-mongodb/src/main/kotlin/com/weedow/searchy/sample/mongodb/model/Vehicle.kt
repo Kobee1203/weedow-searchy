@@ -19,7 +19,17 @@ class Vehicle(
 
     val features: Map<String, Feature>? = null
 
-) : MongoPersistable<Long>()
+) : MongoPersistable<Long>() {
+
+    private constructor(id: Long) : this(VehicleType.CAR, "", "", Person.ref("000000000000000000000000")) {
+        this.setId(id)
+    }
+
+    companion object {
+        @JvmStatic
+        fun ref(id: Long) = Vehicle(id)
+    }
+}
 
 enum class VehicleType {
     CAR, MOTORBIKE, SCOOTER, VAN, TRUCK
