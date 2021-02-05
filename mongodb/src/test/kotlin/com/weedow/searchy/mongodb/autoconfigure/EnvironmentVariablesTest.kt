@@ -57,7 +57,7 @@ internal class EnvironmentVariablesTest {
         assertThat(System.getenv()).doesNotContainKeys(variableName1, variableName2)
     }
 
-    private fun randomValue(): String? {
+    private fun randomValue(): String {
         return randomUUID().toString()
     }
 

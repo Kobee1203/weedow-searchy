@@ -39,14 +39,6 @@ class MongoSearchyAutoConfiguration {
         private val log by klogger()
     }
 
-    /*
-    @Bean
-    @ConditionalOnMissingBean
-    fun <T> defaultDtoMapper(): DtoMapper<T, T> {
-        return MongoDefaultDtoMapper()
-    }
-    */
-
     @Bean
     fun searchyMongoConverters(): MongoConverters {
         return MongoConverters.of(

@@ -35,13 +35,20 @@ class EnvironmentVariables {
      * @return the rule itself.
      */
     fun clear(vararg names: String): EnvironmentVariables {
-        for (name in names) set(name, null)
+        for (name in names) {
+            set(name, null)
+        }
         return this
     }
 
     private operator fun set(variables: MutableMap<String, String>?, name: String, value: String?) {
-        if (variables != null) // theCaseInsensitiveEnvironment may be null
-            if (value == null) variables.remove(name) else variables[name] = value
+        if (variables != null) { // theCaseInsensitiveEnvironment may be null
+            if (value == null) {
+                variables.remove(name)
+            } else {
+                variables[name] = value
+            }
+        }
     }
 
     companion object {
