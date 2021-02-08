@@ -1,4 +1,4 @@
-package com.weedow.searchy.query.querytype
+package com.weedow.searchy.jpa.query.querytype
 
 import com.querydsl.core.types.Path
 import com.querydsl.core.types.PathMetadata
@@ -6,6 +6,7 @@ import com.querydsl.core.types.PathMetadataFactory
 import com.querydsl.core.types.Visitor
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.core.types.dsl.SimpleExpression
+import com.weedow.searchy.query.querytype.*
 import com.weedow.searchy.utils.MAP_KEY
 import com.weedow.searchy.utils.MAP_VALUE
 import java.lang.reflect.AnnotatedElement

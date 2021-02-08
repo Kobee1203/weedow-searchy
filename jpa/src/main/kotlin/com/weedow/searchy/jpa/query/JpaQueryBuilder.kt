@@ -10,6 +10,7 @@ import com.querydsl.jpa.JPAQueryMixin
 import com.querydsl.jpa.JPQLOps
 import com.querydsl.jpa.impl.AbstractJPAQuery
 import com.weedow.searchy.context.SearchyContext
+import com.weedow.searchy.jpa.query.querytype.QEntityJoinImpl
 import com.weedow.searchy.query.QueryBuilder
 import com.weedow.searchy.query.querytype.*
 import com.weedow.searchy.utils.Keyword
