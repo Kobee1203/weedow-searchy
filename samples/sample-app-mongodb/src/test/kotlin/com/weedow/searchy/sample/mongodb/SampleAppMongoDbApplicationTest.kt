@@ -216,4 +216,86 @@ class SampleAppMongoDbApplicationTest {
             jsonContent { isEqualTo(result.file.readText()) }
         }
     }
+
+    @Test
+    @DisplayName("GET /search/person?characteristics.key=eyes, GET /search/person?characteristics.value=blue, GET /search/person?characteristics.key=eyes&characteristics.value=blue")
+    fun search_from_map_field_as_query_param(
+        @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
+        @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
+    ) {
+        val basePath = SearchyProperties.DEFAULT_BASE_PATH
+
+        val searchyDescriptorId = "person"
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("characteristics.key", "eyes")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { isEqualTo(result_john_doe_jane_doe.file.readText()) }
+        }
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("characteristics.value", "blue")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { isEqualTo(result_john_doe.file.readText()) }
+        }
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("characteristics.key", "eyes")
+            this.param("characteristics.value", "blue")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { isEqualTo(result_john_doe.file.readText()) }
+        }
+    }
+
+    /*
+    @Test
+    @DisplayName("GET /search/person?vehicles.features.value.name=gps")
+    fun search_from_map_field_as_query_paramthat_contains_entity_as_value(@Value("classpath:data/result_john_doe.json") result: Resource) {
+        val basePath = SearchyProperties.DEFAULT_BASE_PATH
+
+        val searchyDescriptorId = "person"
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("vehicles.features.value.name", "gps")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { isEqualTo(result.file.readText()) }
+        }
+    }
+    */
+
+    @Test
+    @DisplayName("GET /search/person?tasks.key.name=Clean up the garage, GET /search/person?tasks.key.name=Clean up the garage&tasks.key.name=Go to the doctor's appointment")
+    fun search_from_map_field_as_query_param_that_contains_entity_as_key(
+        @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
+        @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
+    ) {
+        val basePath = SearchyProperties.DEFAULT_BASE_PATH
+
+        val searchyDescriptorId = "person"
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("tasks.key.name", "Clean up the garage")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { isEqualTo(result_john_doe.file.readText()) }
+        }
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("tasks.key.name", "Clean up the garage")
+            this.param("tasks.key.name", "Go shopping") // John and Jane have got this task
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { isEqualTo(result_john_doe_jane_doe.file.readText()) }
+        }
+    }
 }

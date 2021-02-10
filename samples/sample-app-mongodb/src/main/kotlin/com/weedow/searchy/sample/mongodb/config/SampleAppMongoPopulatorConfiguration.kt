@@ -143,17 +143,44 @@ class SampleAppMongoPopulatorConfiguration {
 
             val characteristics1 = mapOf(
                 "eyes" to "blue",
-                "hair" to "brown"
+                "hair" to "brown",
+                "shoe-size" to "42"
             )
             val characteristics2 = mapOf(
                 "eyes" to "green",
-                "hair" to "blond"
+                "hair" to "blond",
+                "hair-length" to "long",
             )
 
-            val address1 = Address("Rue des Peupliers", "78370", CountryCode.FR, City("Plaisir", 48.8167, 1.95))
-            val address2 = Address("Rue des Petits Pois", "17051", CountryCode.FR, City("Le-Bois-Plage-En-Ré", 46.1833, -1.3833))
+            val roomDescription1 = mapOf(
+                "kitchen" to RoomDescription(15.0, "ground-floor", 1, RoomType.KITCHEN),
+                "diningroom" to RoomDescription(25.0, "ground-floor", 3, RoomType.DININGROOM),
+                "bedroom1" to RoomDescription(12.0, "ground-floor", 1, RoomType.BEDROOM),
+                "bathroom1" to RoomDescription(12.0, "ground-floor", 1, RoomType.BATHROOM),
+                "restroom1" to RoomDescription(7.0, "ground-floor", 1, RoomType.RESTROOM),
+                "bedroom2" to RoomDescription(15.0, "first-floor", 1, RoomType.BEDROOM),
+                "bathroom2" to RoomDescription(12.0, "first-floor", 1, RoomType.BATHROOM),
+                "restroom2" to RoomDescription(7.0, "first-floor", 0, RoomType.RESTROOM),
+                "office" to RoomDescription(12.0, "first-floor", 1, RoomType.OFFICE)
+            )
+            val address1 = Address("Rue des Peupliers", "78370", CountryCode.FR, City("Plaisir", 48.8167, 1.95), roomDescription1)
+            val roomDescription2 = mapOf(
+                "kitchen" to RoomDescription(17.0, "ground-floor", 1, RoomType.KITCHEN),
+                "diningroom" to RoomDescription(23.0, "ground-floor", 3, RoomType.DININGROOM),
+                "bedroom1" to RoomDescription(12.5, "ground-floor", 1, RoomType.BEDROOM),
+                "bathroom1" to RoomDescription(11.5, "ground-floor", 1, RoomType.BATHROOM),
+                "restroom1" to RoomDescription(6.5, "ground-floor", 0, RoomType.RESTROOM)
+            )
+            val address2 = Address("Rue des Petits Pois", "17051", CountryCode.FR, City("Le-Bois-Plage-En-Ré", 46.1833, -1.3833), roomDescription2)
             val address3 = Address("Allée du sable fin", "20166", CountryCode.FR, City("Porticcio", 41.8833, 8.7833))
-            val address4 = Address("10 Mathew St", "L2 6RE", CountryCode.UK, City("Liverpool", 53.4167, -3.0))
+            val roomDescription4 = mapOf(
+                "kitchen" to RoomDescription(15.0, "ground-floor", 1, RoomType.KITCHEN),
+                "diningroom" to RoomDescription(21.5, "ground-floor", 2, RoomType.DININGROOM),
+                "bedroom1" to RoomDescription(11.5, "ground-floor", 1, RoomType.BEDROOM),
+                "bathroom1" to RoomDescription(10.5, "ground-floor", 1, RoomType.BATHROOM),
+                "restroom1" to RoomDescription(5.0, "ground-floor", 0, RoomType.RESTROOM)
+            )
+            val address4 = Address("10 Mathew St", "L2 6RE", CountryCode.UK, City("Liverpool", 53.4167, -3.0), roomDescription4)
             val address5 = Address("Westermarkt 20", "1016 GV", CountryCode.NL, City("Amsterdam", 52.3676, 4.9041))
 
             val job1 = jobRepository.save(

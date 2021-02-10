@@ -6,5 +6,6 @@ data class Address(
     val street: String,
     val zipCode: String,
     val country: CountryCode,
-    val city: City
+    val city: City,
+    val roomDescription: Map<String, RoomDescription>? = null
 )

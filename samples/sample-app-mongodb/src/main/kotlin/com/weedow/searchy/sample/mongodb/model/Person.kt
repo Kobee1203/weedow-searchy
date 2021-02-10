@@ -41,6 +41,11 @@ class Person(
 
     var otherAddresses: Set<Address>? = null,
 
+    var characteristics: Map<String, String>? = null,
+
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+    var location: Point? = null,
+
     @DBRef
     @Field("job")
     @JsonIgnoreProperties("person")
@@ -50,13 +55,8 @@ class Person(
     @JsonIgnoreProperties("person")
     var vehicles: Set<Vehicle>? = null,
 
-    var characteristics: Map<String, String>? = null,
-
     @DBRef(lazy = true)
-    var tasks: Map<Task, TaskTime>? = null,
-
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
-    var location: Point? = null
+    var tasks: Map<Task, TaskTime>? = null
 
 ) : MongoPersistable<ObjectId>() {
 

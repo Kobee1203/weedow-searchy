@@ -6,7 +6,8 @@
     "birthday": "1981-03-12T09:36:00.000Z",
     "characteristics": {
       "eyes": "blue",
-      "hair": "brown"
+      "hair": "brown",
+      "shoe-size": "42"
     },
     "createdOn": "2021-02-02T17:32:31.830Z",
     "email": "john.doe@acme.com",
@@ -22,6 +23,62 @@
         "name": "Plaisir",
         "latitude": 48.8167,
         "longitude": 1.95
+      },
+      "roomDescription": {
+        "kitchen" : {
+          "area": 15.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "roomType": "KITCHEN"
+        },
+        "diningroom" : {
+          "area": 25.0,
+          "floor": "ground-floor",
+          "windows": 3,
+          "roomType": "DININGROOM"
+        },
+        "bedroom1" : {
+          "area": 12.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "roomType": "BEDROOM"
+        },
+        "bathroom1" : {
+          "area": 12.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "roomType": "BATHROOM"
+        },
+        "restroom1" : {
+          "area": 7.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "roomType": "RESTROOM"
+        },
+        "bedroom2" : {
+          "area": 15.0,
+          "floor": "first-floor",
+          "windows": 1,
+          "roomType": "BEDROOM"
+        },
+        "bathroom2" : {
+          "area": 12.0,
+          "floor": "first-floor",
+          "windows": 1,
+          "roomType": "BATHROOM"
+        },
+        "restroom2" : {
+          "area": 7.0,
+          "floor": "first-floor",
+          "windows": 0,
+          "roomType": "RESTROOM"
+        },
+        "office" : {
+          "area": 12.0,
+          "floor": "first-floor",
+          "windows": 1,
+          "roomType": "OFFICE"
+        }
       }
     },
     "nickNames": ["Joe", "Johnny"],
@@ -34,6 +91,38 @@
           "name": "Le-Bois-Plage-En-Ré",
           "latitude": 46.1833,
           "longitude": -1.3833
+        },
+        "roomDescription": {
+          "kitchen" : {
+            "area": 17.0,
+            "floor": "ground-floor",
+            "windows": 1,
+            "roomType": "KITCHEN"
+          },
+          "diningroom" : {
+            "area": 23.0,
+            "floor": "ground-floor",
+            "windows": 3,
+            "roomType": "DININGROOM"
+          },
+          "bedroom1" : {
+            "area": 12.5,
+            "floor": "ground-floor",
+            "windows": 1,
+            "roomType": "BEDROOM"
+          },
+          "bathroom1" : {
+            "area": 11.5,
+            "floor": "ground-floor",
+            "windows": 1,
+            "roomType": "BATHROOM"
+          },
+          "restroom1" : {
+            "area": 6.5,
+            "floor": "ground-floor",
+            "windows": 1,
+            "roomType": "RESTROOM"
+          }
         }
       },
       {
@@ -65,7 +154,8 @@
     "birthday": "1981-11-26T11:30:00.000Z",
     "characteristics": {
       "eyes": "green",
-      "hair": "blond"
+      "hair": "blond",
+      "hair-length": "long"
     },
     "createdOn": "2021-02-02T17:32:32.048Z",
     "email": "jane.doe@acme.com",
