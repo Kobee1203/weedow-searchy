@@ -4,7 +4,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import com.querydsl.core.types.dsl.PathBuilder
 import com.weedow.searchy.context.SearchyContext
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -50,12 +50,12 @@ internal class MongoSpecificationExecutorFactoryTest {
 
         val specificationExecutor = mongoSpecificationExecutorFactory.getSpecificationExecutor(entityClass)
 
-        Assertions.assertThat(specificationExecutor)
+        assertThat(specificationExecutor)
             .isInstanceOf(MongoSpecificationExecutor::class.java)
             .extracting("searchyContext", "mongoOperations")
             .contains(searchyContext, mongoOperations)
-        Assertions.assertThat(specificationExecutor).extracting("path").isInstanceOf(PathBuilder::class.java)
-        Assertions.assertThat(specificationExecutor).extracting("path.type").isEqualTo(entityClass)
+        assertThat(specificationExecutor).extracting("path").isInstanceOf(PathBuilder::class.java)
+        assertThat(specificationExecutor).extracting("path.type").isEqualTo(entityClass)
     }
 
     class EntityWithSpringId(

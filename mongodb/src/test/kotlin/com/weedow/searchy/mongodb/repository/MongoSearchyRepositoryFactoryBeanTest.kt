@@ -3,7 +3,7 @@ package com.weedow.searchy.mongodb.repository
 import com.nhaarman.mockitokotlin2.mock
 import com.weedow.searchy.context.SearchyContext
 import com.weedow.searchy.repository.SearchyBaseRepository
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.data.annotation.Id
 import org.springframework.data.mapping.context.MappingContext
@@ -37,13 +37,13 @@ internal class MongoSearchyRepositoryFactoryBeanTest {
         factoryBean.setBeanClassLoader(javaClass.classLoader)
         factoryBean.afterPropertiesSet()
 
-        Assertions.assertThat(factoryBean.objectType).isEqualTo(PersonRepository::class.java)
-        Assertions.assertThat(factoryBean.`object`.toString()).startsWith(MongoSearchyRepositoryImpl::class.qualifiedName) // 'object' is a Proxy
-        Assertions.assertThat(factoryBean.entityInformation.javaType).isEqualTo(Person::class.java)
-        Assertions.assertThat(factoryBean.repositoryInformation.repositoryBaseClass).isEqualTo(MongoSearchyRepositoryImpl::class.java)
-        Assertions.assertThat(factoryBean.repositoryInformation.repositoryInterface).isEqualTo(PersonRepository::class.java)
-        Assertions.assertThat(factoryBean.repositoryInformation.domainType).isEqualTo(Person::class.java)
-        Assertions.assertThat(factoryBean.repositoryInformation.idType).isEqualTo(String::class.javaObjectType)
+        assertThat(factoryBean.objectType).isEqualTo(PersonRepository::class.java)
+        assertThat(factoryBean.`object`.toString()).startsWith(MongoSearchyRepositoryImpl::class.qualifiedName) // 'object' is a Proxy
+        assertThat(factoryBean.entityInformation.javaType).isEqualTo(Person::class.java)
+        assertThat(factoryBean.repositoryInformation.repositoryBaseClass).isEqualTo(MongoSearchyRepositoryImpl::class.java)
+        assertThat(factoryBean.repositoryInformation.repositoryInterface).isEqualTo(PersonRepository::class.java)
+        assertThat(factoryBean.repositoryInformation.domainType).isEqualTo(Person::class.java)
+        assertThat(factoryBean.repositoryInformation.idType).isEqualTo(String::class.javaObjectType)
     }
 
     interface PersonRepository : SearchyBaseRepository<Person, String>

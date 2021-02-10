@@ -3,9 +3,8 @@ package com.weedow.searchy.mongodb.event
 import com.nhaarman.mockitokotlin2.whenever
 import com.weedow.searchy.mongodb.domain.DbSequenceGeneratorService
 import com.weedow.searchy.mongodb.domain.MongoPersistable
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -28,7 +27,7 @@ internal class LongIdMongoPersistablePrePersistEntityHandlerTest {
 
         val supports = prePersistEntityHandler.supports(entity)
 
-        Assertions.assertThat(supports).isTrue
+        assertThat(supports).isTrue
     }
 
     @Test
@@ -37,7 +36,7 @@ internal class LongIdMongoPersistablePrePersistEntityHandlerTest {
 
         val supports = prePersistEntityHandler.supports(entity)
 
-        Assertions.assertThat(supports).isFalse
+        assertThat(supports).isFalse
     }
 
     @Test
@@ -46,7 +45,7 @@ internal class LongIdMongoPersistablePrePersistEntityHandlerTest {
 
         val supports = prePersistEntityHandler.supports(entity)
 
-        Assertions.assertThat(supports).isFalse
+        assertThat(supports).isFalse
     }
 
     @Test
@@ -56,7 +55,7 @@ internal class LongIdMongoPersistablePrePersistEntityHandlerTest {
 
         val supports = prePersistEntityHandler.supports(entity)
 
-        Assertions.assertThat(supports).isFalse
+        assertThat(supports).isFalse
     }
 
     @Test
@@ -67,12 +66,12 @@ internal class LongIdMongoPersistablePrePersistEntityHandlerTest {
 
         prePersistEntityHandler.handle(entity)
 
-        Assertions.assertThat(entity.id).isEqualTo(5)
+        assertThat(entity.id).isEqualTo(5)
     }
 
     @Test
     fun getOrder() {
-        Assertions.assertThat(prePersistEntityHandler.order).isEqualTo(Ordered.HIGHEST_PRECEDENCE + 20)
+        assertThat(prePersistEntityHandler.order).isEqualTo(Ordered.HIGHEST_PRECEDENCE + 20)
     }
 
     internal class SupportedEntity : MongoPersistable<Long>()

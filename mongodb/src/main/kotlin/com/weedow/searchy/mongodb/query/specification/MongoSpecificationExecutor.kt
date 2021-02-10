@@ -54,9 +54,7 @@ open class MongoSpecificationExecutor<T>(
         return query
     }
 
-    private fun doCreateQuery(): SpringDataMongodbQuery<T> {
-        return SpringDataMongodbQuery(mongoOperations, typeInformation().javaType)
-    }
+    private fun doCreateQuery() = SpringDataMongodbQuery(mongoOperations, typeInformation().javaType)
 
     private fun createQueryBuilder(query: SpringDataMongodbQuery<T>) =
         MongoQueryBuilder(searchyContext, query, QEntityRootImpl(searchyContext.get(path.type)))

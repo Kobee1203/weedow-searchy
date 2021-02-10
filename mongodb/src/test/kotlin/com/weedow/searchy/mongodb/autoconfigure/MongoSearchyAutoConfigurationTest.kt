@@ -7,7 +7,7 @@ import com.weedow.searchy.mongodb.domain.DbSequence
 import com.weedow.searchy.mongodb.event.*
 import com.weedow.searchy.query.specification.SpecificationExecutorFactory
 import org.apache.commons.lang3.reflect.FieldUtils
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
@@ -35,18 +35,18 @@ internal class MongoSearchyAutoConfigurationTest {
                 )
             )
             .run { context ->
-                Assertions.assertThat(context).hasBean("searchyMongoConverters")
-                Assertions.assertThat(context).hasBean("mongoSearchyConversions")
-                Assertions.assertThat(context).hasBean("dbSequenceGeneratorService")
-                Assertions.assertThat(context).hasBean("longIdMongoPersistablePrePersistEntityHandler")
-                Assertions.assertThat(context).hasBean("longIdAnnotationPrePersistEntityHandler")
-                Assertions.assertThat(context).hasBean("longIdPrePersistEntityHandler")
-                Assertions.assertThat(context).hasBean("isNewEntityMongoListener")
-                Assertions.assertThat(context).hasBean("mongoSpecificationExecutorFactory")
-                Assertions.assertThat(context).hasBean("mongoSearchyContext")
+                assertThat(context).hasBean("searchyMongoConverters")
+                assertThat(context).hasBean("mongoSearchyConversions")
+                assertThat(context).hasBean("dbSequenceGeneratorService")
+                assertThat(context).hasBean("longIdMongoPersistablePrePersistEntityHandler")
+                assertThat(context).hasBean("longIdAnnotationPrePersistEntityHandler")
+                assertThat(context).hasBean("longIdPrePersistEntityHandler")
+                assertThat(context).hasBean("isNewEntityMongoListener")
+                assertThat(context).hasBean("mongoSpecificationExecutorFactory")
+                assertThat(context).hasBean("mongoSearchyContext")
 
                 val mongoConverters = context.getBean("searchyMongoConverters", MongoConverters::class.java)
-                Assertions.assertThat(mongoConverters.converters).containsExactly(
+                assertThat(mongoConverters.converters).containsExactly(
                     DocumentToZonedDateTimeConverter,
                     ZonedDateTimeToDocumentConverter,
                     DocumentToOffsetDateTimeConverter,
@@ -56,7 +56,7 @@ internal class MongoSearchyAutoConfigurationTest {
                 val mongoCustomConversions = context.getBean("mongoSearchyConversions", MongoCustomConversions::class.java)
                 val registration = TestConverterRegistration()
                 mongoCustomConversions.registerConvertersIn(registration)
-                Assertions.assertThat(registration.getConverters())
+                assertThat(registration.getConverters())
                     .hasSize(66) // 63 Converters + 3 GenericConverters
                     .contains(
                         DocumentToZonedDateTimeConverter,
@@ -68,14 +68,14 @@ internal class MongoSearchyAutoConfigurationTest {
                 val isNewEntityMongoListener = context.getBean("isNewEntityMongoListener", IsNewEntityMongoListener::class.java)
                 val prePersistEntityHandlers =
                     FieldUtils.readField(isNewEntityMongoListener, "prePersistEntityHandlers", true) as List<PrePersistEntityHandler>
-                Assertions.assertThat(prePersistEntityHandlers).extracting("class").containsExactly(
+                assertThat(prePersistEntityHandlers).extracting("class").containsExactly(
                     LongIdMongoPersistablePrePersistEntityHandler::class.java,
                     LongIdAnnotationPrePersistEntityHandler::class.java,
                     LongIdPrePersistEntityHandler::class.java
                 )
                 val preUpdateEntityHandlers =
                     FieldUtils.readField(isNewEntityMongoListener, "preUpdateEntityHandlers", true) as List<PreUpdateEntityHandler>
-                Assertions.assertThat(preUpdateEntityHandlers).isEmpty()
+                assertThat(preUpdateEntityHandlers).isEmpty()
             }
     }
 
@@ -90,20 +90,20 @@ internal class MongoSearchyAutoConfigurationTest {
             )
             .withUserConfiguration(TestCustomMongoConfiguration::class.java)
             .run { context ->
-                Assertions.assertThat(context).hasBean("searchyMongoConverters")
-                Assertions.assertThat(context).hasBean("mongoSearchyConversions")
-                Assertions.assertThat(context).hasBean("dbSequenceGeneratorService")
-                Assertions.assertThat(context).hasBean("longIdMongoPersistablePrePersistEntityHandler")
-                Assertions.assertThat(context).hasBean("longIdAnnotationPrePersistEntityHandler")
-                Assertions.assertThat(context).hasBean("longIdPrePersistEntityHandler")
-                Assertions.assertThat(context).hasBean("isNewEntityMongoListener")
-                Assertions.assertThat(context).doesNotHaveBean("mongoSpecificationExecutorFactory")
-                Assertions.assertThat(context).doesNotHaveBean("mongoSearchyContext")
-                Assertions.assertThat(context).hasBean("customMongoSpecificationExecutorFactory")
-                Assertions.assertThat(context).hasBean("customMongoSearchyContext")
+                assertThat(context).hasBean("searchyMongoConverters")
+                assertThat(context).hasBean("mongoSearchyConversions")
+                assertThat(context).hasBean("dbSequenceGeneratorService")
+                assertThat(context).hasBean("longIdMongoPersistablePrePersistEntityHandler")
+                assertThat(context).hasBean("longIdAnnotationPrePersistEntityHandler")
+                assertThat(context).hasBean("longIdPrePersistEntityHandler")
+                assertThat(context).hasBean("isNewEntityMongoListener")
+                assertThat(context).doesNotHaveBean("mongoSpecificationExecutorFactory")
+                assertThat(context).doesNotHaveBean("mongoSearchyContext")
+                assertThat(context).hasBean("customMongoSpecificationExecutorFactory")
+                assertThat(context).hasBean("customMongoSearchyContext")
 
                 val mongoConverters = context.getBean("searchyMongoConverters", MongoConverters::class.java)
-                Assertions.assertThat(mongoConverters.converters).containsExactly(
+                assertThat(mongoConverters.converters).containsExactly(
                     DocumentToZonedDateTimeConverter,
                     ZonedDateTimeToDocumentConverter,
                     DocumentToOffsetDateTimeConverter,
@@ -113,7 +113,7 @@ internal class MongoSearchyAutoConfigurationTest {
                 val mongoCustomConversions = context.getBean("mongoSearchyConversions", MongoCustomConversions::class.java)
                 val registration = TestConverterRegistration()
                 mongoCustomConversions.registerConvertersIn(registration)
-                Assertions.assertThat(registration.getConverters())
+                assertThat(registration.getConverters())
                     .hasSize(69) // 63 Converters + 3 GenericConverters + 3 Custom Converters
                     .contains(
                         DocumentToZonedDateTimeConverter,
@@ -128,7 +128,7 @@ internal class MongoSearchyAutoConfigurationTest {
                 val isNewEntityMongoListener = context.getBean("isNewEntityMongoListener", IsNewEntityMongoListener::class.java)
                 val prePersistEntityHandlers =
                     FieldUtils.readField(isNewEntityMongoListener, "prePersistEntityHandlers", true) as List<PrePersistEntityHandler>
-                Assertions.assertThat(prePersistEntityHandlers).extracting("class").containsExactly(
+                assertThat(prePersistEntityHandlers).extracting("class").containsExactly(
                     LongIdMongoPersistablePrePersistEntityHandler::class.java,
                     LongIdAnnotationPrePersistEntityHandler::class.java,
                     LongIdPrePersistEntityHandler::class.java,
@@ -136,7 +136,7 @@ internal class MongoSearchyAutoConfigurationTest {
                 )
                 val preUpdateEntityHandlers =
                     FieldUtils.readField(isNewEntityMongoListener, "preUpdateEntityHandlers", true) as List<PreUpdateEntityHandler>
-                Assertions.assertThat(preUpdateEntityHandlers).extracting("class").containsExactly(CustomPreUpdateEntityHandler::class.java)
+                assertThat(preUpdateEntityHandlers).extracting("class").containsExactly(CustomPreUpdateEntityHandler::class.java)
             }
     }
 

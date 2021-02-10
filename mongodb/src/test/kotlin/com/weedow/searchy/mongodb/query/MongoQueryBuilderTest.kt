@@ -2,22 +2,29 @@ package com.weedow.searchy.mongodb.query
 
 import com.nhaarman.mockitokotlin2.*
 import com.querydsl.core.JoinType
-import com.querydsl.core.types.Expression
-import com.querydsl.core.types.Ops
-import com.querydsl.core.types.Predicate
-import com.querydsl.core.types.dsl.BooleanOperation
-import com.querydsl.core.types.dsl.DateOperation
-import com.querydsl.core.types.dsl.DateTimeOperation
-import com.querydsl.core.types.dsl.TimeOperation
+import com.querydsl.core.types.*
+import com.querydsl.core.types.dsl.*
 import com.weedow.searchy.context.SearchyContext
+import com.weedow.searchy.mongodb.query.querytype.PathWrapper
+import com.weedow.searchy.mongodb.query.querytype.QEntityJoinImpl
 import com.weedow.searchy.query.querytype.*
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.bson.BsonJavaScript
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.repository.support.SpringDataMongodbQuery
+import java.nio.charset.StandardCharsets
+import java.util.stream.Stream
+import kotlin.reflect.full.createInstance
 
 @ExtendWith(MockitoExtension::class)
 internal class MongoQueryBuilderTest {
@@ -49,15 +56,26 @@ internal class MongoQueryBuilderTest {
         verifyZeroInteractions(qEntityRoot)
     }
 
-    @Test
-    fun join_without_join_annotation() {
+    @ParameterizedTest
+    @EnumSource(value = ElementType::class)
+    fun join_without_join_annotation(elementType: ElementType) {
+        val expectedType = Any::class.java
+
         val propertyInfos = mock<PropertyInfos> {
-            on { this.elementType }.thenReturn(ElementType.SIMPLE)
-            on { this.type }.thenReturn(Any::class.java)
+            on { this.elementType }.thenReturn(elementType)
+        }
+        when (elementType) {
+            ElementType.SET,
+            ElementType.LIST,
+            ElementType.COLLECTION,
+            ElementType.ARRAY
+            -> whenever(propertyInfos.parameterizedTypes).thenReturn(listOf(expectedType))
+            ElementType.MAP -> whenever(propertyInfos.parameterizedTypes).thenReturn(listOf(String::class.java, expectedType))
+            else -> whenever(propertyInfos.type).thenReturn(expectedType)
         }
 
         val qEntity = mock<QEntity<Any>>()
-        whenever(searchyContext.get(eq(Any::class.java), any())).doReturn(qEntity)
+        whenever(searchyContext.get(eq(expectedType), any())).doReturn(qEntity)
 
         val qPath = mock<QPath<*>> {
             on { this.propertyInfos }.thenReturn(propertyInfos)
@@ -74,6 +92,29 @@ internal class MongoQueryBuilderTest {
         verifyZeroInteractions(query)
         verifyNoMoreInteractions(searchyContext)
         verifyZeroInteractions(qEntityRoot)
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = ElementType::class, mode = EnumSource.Mode.EXCLUDE, names = ["SET", "LIST", "COLLECTION", "ARRAY", "MAP", "ENTITY"])
+    fun throw_exception_when_element_type_is_invalid_for_joined_field(elementType: ElementType) {
+        val joinAnnotationKlass = DBRef::class
+
+        whenever(searchyContext.isJoinAnnotation(joinAnnotationKlass.java)).thenReturn(true)
+
+        val propertyInfos = mock<PropertyInfos> {
+            on { this.elementType }.thenReturn(elementType)
+            on { this.annotations }.thenReturn(listOf(joinAnnotationKlass.createInstance()))
+        }
+        val qPath = mock<QPath<*>> {
+            on { this.propertyInfos }.thenReturn(propertyInfos)
+        }
+
+        val joinType = mock<JoinType>()
+        val fetched = false
+
+        assertThatThrownBy { mongoQueryBuilder.join(qPath, joinType, fetched) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessage("Could not identify the alias type for the QPath of type '$elementType': $qPath")
     }
 
     @Test
@@ -282,6 +323,111 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(values)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
+    }
+
+    @Test
+    fun equal_with_pathwrapper_map_key() {
+        val expr = mock<PathWrapper<*>> {
+            on { this.elementType }.thenReturn(ElementType.MAP_KEY)
+        }
+        val value = "myvalue"
+        val predicate = mongoQueryBuilder.equal(expr, value)
+
+        assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
+
+        val booleanOperation = predicate as BooleanOperation
+        assertThat(booleanOperation.operator).isEqualTo(Ops.CONTAINS_KEY)
+        assertThat(booleanOperation.args).hasSize(2)
+        assertThat(booleanOperation.args[0]).isSameAs(expr)
+        assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(value)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
+    }
+
+    @ParameterizedTest
+    @MethodSource("get_parent_path")
+    fun equal_with_pathwrapper_map_value(parentPath: Path<*>?) {
+        val path = "expr_name"
+        val expr = mock<PathWrapper<*>> {
+            on { this.elementType }.thenReturn(ElementType.MAP_VALUE)
+            val metadata = mock<PathMetadata> {
+                on { this.name }.thenReturn(path)
+                on { this.parent }.thenReturn(parentPath)
+            }
+            on { this.metadata }.thenReturn(metadata)
+        }
+        val value = "myvalue"
+        val predicate = mongoQueryBuilder.equal(expr, value)
+
+        assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
+
+        val booleanOperation = predicate as BooleanOperation
+        assertThat(booleanOperation.operator).isEqualTo(Ops.EQ)
+        assertThat(booleanOperation.args).hasSize(2)
+        assertThat(booleanOperation.args[0]).isInstanceOf(StringPath::class.java).isEqualTo(Expressions.stringPath("\$where"))
+        val jsFunction = String(javaClass.getResourceAsStream("/map_contains_value.js").readAllBytes(), StandardCharsets.UTF_8)
+        val func = BsonJavaScript(jsFunction.replace("{PATH}", path).replace("{VALUE}", "\"$value\""))
+        assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(func)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
+    }
+
+    @Test
+    fun equal_with_pathwrapper_map_value_with_parent() {
+        val path = "expr_name"
+        val parentPath = "parent_expr"
+        val expr = mock<PathWrapper<*>> {
+            on { this.elementType }.thenReturn(ElementType.MAP_VALUE)
+            val metadata = mock<PathMetadata> {
+                on { this.name }.thenReturn(path)
+                val parent = mock<Path<*>> {
+                    val parentMetadata = mock<PathMetadata> {
+                        on { this.isRoot }.thenReturn(false)
+                        on { this.name }.thenReturn(parentPath)
+                    }
+                    on { this.metadata }.thenReturn(parentMetadata)
+                }
+                on { this.parent }.thenReturn(parent)
+            }
+            on { this.metadata }.thenReturn(metadata)
+        }
+        val value = "myvalue"
+        val predicate = mongoQueryBuilder.equal(expr, value)
+
+        assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
+
+        val booleanOperation = predicate as BooleanOperation
+        assertThat(booleanOperation.operator).isEqualTo(Ops.EQ)
+        assertThat(booleanOperation.args).hasSize(2)
+        assertThat(booleanOperation.args[0]).isInstanceOf(StringPath::class.java).isEqualTo(Expressions.stringPath("\$where"))
+        val jsFunction = String(javaClass.getResourceAsStream("/map_contains_value.js").readAllBytes(), StandardCharsets.UTF_8)
+        val func = BsonJavaScript(jsFunction.replace("{PATH}", "$parentPath.$path").replace("{VALUE}", "\"$value\""))
+        assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(func)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = ElementType::class, mode = EnumSource.Mode.EXCLUDE, names = ["MAP_KEY", "MAP_VALUE"])
+    fun throw_exception_when_equal_with_pathwrapper_and_invalid_element_type(elementType: ElementType) {
+        val expr = mock<PathWrapper<*>> {
+            on { this.elementType }.thenReturn(elementType)
+        }
+        val value = "myvalue"
+
+        assertThatThrownBy { mongoQueryBuilder.equal(expr, value) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessage("ElementType '${elementType}' from the PathWrapper is not supported")
 
         verifyZeroInteractions(query)
         verifyZeroInteractions(searchyContext)
@@ -501,4 +647,21 @@ internal class MongoQueryBuilderTest {
         verifyZeroInteractions(qEntityRoot)
     }
 
+    companion object {
+        @JvmStatic
+        @Suppress("unused")
+        private fun get_parent_path(): Stream<Arguments> {
+            return Stream.of(
+                // No parent
+                Arguments.of(null),
+                // Parent that is root
+                Arguments.of(mock<Path<*>> {
+                    val pathMetadata = mock<PathMetadata> {
+                        on { this.isRoot }.thenReturn(true)
+                    }
+                    on { this.metadata }.thenReturn(pathMetadata)
+                })
+            )
+        }
+    }
 }

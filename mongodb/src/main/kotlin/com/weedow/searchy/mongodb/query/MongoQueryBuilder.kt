@@ -1,13 +1,21 @@
 package com.weedow.searchy.mongodb.query
 
 import com.querydsl.core.JoinType
-import com.querydsl.core.types.*
+import com.querydsl.core.types.Expression
+import com.querydsl.core.types.Ops
+import com.querydsl.core.types.Path
+import com.querydsl.core.types.Predicate
 import com.querydsl.core.types.dsl.*
 import com.weedow.searchy.context.SearchyContext
+import com.weedow.searchy.mongodb.query.querytype.PathWrapper
+import com.weedow.searchy.mongodb.query.querytype.QEntityJoinImpl
 import com.weedow.searchy.query.QueryBuilder
 import com.weedow.searchy.query.querytype.*
 import com.weedow.searchy.utils.Keyword
+import org.bson.BsonJavaScript
+import org.springframework.core.io.DefaultResourceLoader
 import org.springframework.data.mongodb.repository.support.SpringDataMongodbQuery
+import java.nio.charset.StandardCharsets
 
 /**
  * MongoDB [QueryBuilder] implementation.
@@ -21,6 +29,16 @@ class MongoQueryBuilder<T>(
     private val query: SpringDataMongodbQuery<T>,
     override val qEntityRoot: QEntityRoot<T>
 ) : QueryBuilder<T> {
+
+    companion object {
+        val MAP_CONTAINS_VALUE_JS = String(
+            DefaultResourceLoader()
+                .getResource("classpath:map_contains_value.js")
+                .inputStream
+                .readAllBytes(),
+            StandardCharsets.UTF_8
+        )
+    }
 
     override fun distinct() {
         query.distinct()
@@ -107,7 +125,24 @@ class MongoQueryBuilder<T>(
 
     override fun equal(x: Expression<*>, value: Any): Predicate {
         val expressionValue = convertValueToExpression(value)
-        return Expressions.predicate(Ops.EQ, x, expressionValue)
+        return if (x is PathWrapper<*>) {
+            when (x.elementType) {
+                ElementType.MAP_KEY -> Expressions.predicate(Ops.CONTAINS_KEY, x, expressionValue)
+                ElementType.MAP_VALUE -> {
+                    var path = x.metadata.name
+                    var p = x.metadata.parent
+                    while (p != null && !p.metadata.isRoot) {
+                        path = p.metadata.name + "." + path
+                        p = p.metadata.parent
+                    }
+                    val func = BsonJavaScript(MAP_CONTAINS_VALUE_JS.replace("{PATH}", path).replace("{VALUE}", "\"$expressionValue\""))
+                    Expressions.predicate(Ops.EQ, Expressions.stringPath("\$where"), Expressions.constant(func))
+                }
+                else -> throw IllegalArgumentException("ElementType '${x.elementType}' from the PathWrapper is not supported")
+            }
+        } else {
+            Expressions.predicate(Ops.EQ, x, expressionValue)
+        }
     }
 
     override fun isNull(x: Expression<*>): Predicate {
