@@ -185,7 +185,11 @@ class SampleApplicationTest {
     }
 
     @Test
-    @DisplayName("GET /search/person?characteristics.key=eyes, GET /search/person?characteristics.value=blue, GET /search/person?characteristics.key=eyes&characteristics.value=blue")
+    @DisplayName(
+        "GET /search/person?characteristics.key=eyes," +
+                "GET /search/person?characteristics.value=blue," +
+                "GET /search/person?characteristics.key=eyes&characteristics.value=blue"
+    )
     fun search_from_map_field_as_query_param(
         @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
         @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
@@ -221,8 +225,68 @@ class SampleApplicationTest {
     }
 
     @Test
+    @DisplayName(
+        "GET /search/person?job.company=Acme," +
+                "GET /search/person?job.active=true"
+    )
+    fun search_from_entity_field_as_query_param(
+        @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
+        @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
+    ) {
+        val basePath = SearchyProperties.DEFAULT_BASE_PATH
+
+        val searchyDescriptorId = "person"
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("job.company", "Acme")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { isEqualTo(result_john_doe.file.readText()) }
+        }
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("job.active", "true")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { isEqualTo(result_john_doe_jane_doe.file.readText()) }
+        }
+    }
+
+    @Test
+    @DisplayName(
+        "GET /search/person?vehicles.brand=Renault," +
+                "GET /search/person?vehicles.vehicleType=CAR"
+    )
+    fun search_from_entities_collection_field_as_query_param(
+        @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
+        @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
+    ) {
+        val basePath = SearchyProperties.DEFAULT_BASE_PATH
+
+        val searchyDescriptorId = "person"
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("vehicles.brand", "Renault")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { isEqualTo(result_john_doe.file.readText()) }
+        }
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("vehicles.vehicleType", "CAR")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { isEqualTo(result_john_doe_jane_doe.file.readText()) }
+        }
+    }
+
+    @Test
     @DisplayName("GET /search/person?vehicles.features.value.name=gps")
-    fun search_from_map_field_as_query_paramthat_contains_entity_as_value(@Value("classpath:data/result_john_doe.json") result: Resource) {
+    fun search_from_map_field_as_query_param_that_contains_entity_as_value(@Value("classpath:data/result_john_doe.json") result: Resource) {
         val basePath = SearchyProperties.DEFAULT_BASE_PATH
 
         val searchyDescriptorId = "person"
@@ -237,7 +301,10 @@ class SampleApplicationTest {
     }
 
     @Test
-    @DisplayName("GET /search/person?tasks.key.name=Clean up the garage, GET /search/person?tasks.key.name=Clean up the garage&tasks.key.name=Go to the doctor's appointment")
+    @DisplayName(
+        "GET /search/person?tasks.key.name=Clean up the garage," +
+                "GET /search/person?tasks.key.name=Clean up the garage&tasks.key.name=Go to the doctor's appointment"
+    )
     fun search_from_map_field_as_query_param_that_contains_entity_as_key(
         @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
         @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
