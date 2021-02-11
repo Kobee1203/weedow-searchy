@@ -30,6 +30,62 @@
         "name": "Plaisir",
         "latitude": 48.8167,
         "longitude": 1.95
+      },
+      "roomDescription": {
+        "kitchen": {
+          "area": 15.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "KITCHEN"
+        },
+        "diningroom": {
+          "area": 25.0,
+          "floor": "ground-floor",
+          "windows": 3,
+          "type": "DININGROOM"
+        },
+        "bedroom1": {
+          "area": 12.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "BEDROOM"
+        },
+        "bathroom1": {
+          "area": 12.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "BATHROOM"
+        },
+        "restroom1": {
+          "area": 7.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "RESTROOM"
+        },
+        "bedroom2": {
+          "area": 15.0,
+          "floor": "first-floor",
+          "windows": 1,
+          "type": "BEDROOM"
+        },
+        "bathroom2": {
+          "area": 12.0,
+          "floor": "first-floor",
+          "windows": 1,
+          "type": "BATHROOM"
+        },
+        "restroom2": {
+          "area": 7.0,
+          "floor": "first-floor",
+          "windows": 0,
+          "type": "RESTROOM"
+        },
+        "office": {
+          "area": 12.0,
+          "floor": "first-floor",
+          "windows": 1,
+          "type": "OFFICE"
+        }
       }
     },
     "otherAddresses": [
@@ -41,6 +97,38 @@
           "name": "Le-Bois-Plage-En-Ré",
           "latitude": 46.1833,
           "longitude": -1.3833
+        },
+        "roomDescription": {
+          "kitchen": {
+            "area": 17.0,
+            "floor": "ground-floor",
+            "windows": 1,
+            "type": "KITCHEN"
+          },
+          "diningroom": {
+            "area": 23.0,
+            "floor": "ground-floor",
+            "windows": 3,
+            "type": "DININGROOM"
+          },
+          "bedroom1": {
+            "area": 12.5,
+            "floor": "ground-floor",
+            "windows": 1,
+            "type": "BEDROOM"
+          },
+          "bathroom1": {
+            "area": 11.5,
+            "floor": "ground-floor",
+            "windows": 1,
+            "type": "BATHROOM"
+          },
+          "restroom1": {
+            "area": 6.5,
+            "floor": "ground-floor",
+            "windows": 0,
+            "type": "RESTROOM"
+          }
         }
       },
       {
@@ -51,9 +139,16 @@
           "name": "Porticcio",
           "latitude": 41.8833,
           "longitude": 8.7833
-        }
+        },
+        "roomDescription": null
       }
     ],
+    "characteristics": {
+      "eyes": "blue",
+      "hair": "brown",
+      "shoe-size": "42"
+    },
+    "location": null,
     "jobEntity": {
       "idClass": "java.math.BigInteger",
       "id": "${json-unit.any-number}",
@@ -152,10 +247,6 @@
         "new": false
       }
     ],
-    "characteristics": {
-      "eyes": "blue",
-      "hair": "brown"
-    },
     "tasks": {
       "{\"description\":\"Go shopping with the family\",\"id\":1,\"name\":\"Go shopping\"}": {
         "idClass": "java.lang.String",
@@ -185,7 +276,6 @@
         "new": false
       }
     },
-    "location": null,
     "new": false
   }
 ]

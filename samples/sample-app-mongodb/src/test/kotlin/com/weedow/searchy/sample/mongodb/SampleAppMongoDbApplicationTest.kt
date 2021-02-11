@@ -1,7 +1,9 @@
 package com.weedow.searchy.sample.mongodb
 
 import com.weedow.searchy.config.SearchyProperties
+import net.javacrumbs.jsonunit.core.Option
 import net.javacrumbs.jsonunit.spring.jsonContent
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,7 +36,7 @@ class SampleAppMongoDbApplicationTest {
             .andExpect {
                 status { isOk() }
                 content { contentType(MediaType.APPLICATION_JSON) }
-                jsonContent { isEqualTo(result.file.readText()) }
+                jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
             }
     }
 
@@ -50,7 +52,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
@@ -67,7 +69,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
@@ -84,7 +86,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
@@ -100,7 +102,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
@@ -116,7 +118,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
@@ -132,7 +134,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
@@ -148,7 +150,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
@@ -164,7 +166,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
@@ -180,7 +182,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
@@ -196,7 +198,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
@@ -213,12 +215,16 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
 
     @Test
-    @DisplayName("GET /search/person?characteristics.key=eyes, GET /search/person?characteristics.value=blue, GET /search/person?characteristics.key=eyes&characteristics.value=blue")
+    @DisplayName(
+        "GET /search/person?characteristics.key=eyes," +
+                "GET /search/person?characteristics.value=blue," +
+                "GET /search/person?characteristics.key=eyes&characteristics.value=blue"
+    )
     fun search_from_map_field_as_query_param(
         @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
         @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
@@ -232,7 +238,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result_john_doe_jane_doe.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe_jane_doe.file.readText()) }
         }
 
         mockMvc.get("$basePath/$searchyDescriptorId") {
@@ -240,7 +246,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result_john_doe.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe.file.readText()) }
         }
 
         mockMvc.get("$basePath/$searchyDescriptorId") {
@@ -249,14 +255,128 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result_john_doe.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe.file.readText()) }
         }
     }
 
-    /*
     @Test
+    @DisplayName(
+        "GET /search/person?mainAddress.roomDescription.key=kitchen," +
+                "GET /search/person?mainAddress.roomDescription.value.floor=ground-floor," +
+                "GET /search/person?otherAddresses.roomDescription.value.type=KITCHEN" +
+                "GET /search/person?mainAddress.roomDescription.value.area=15&otherAddresses.roomDescription.value.windows=1"
+    )
+    fun search_from_nested_map_field_as_query_param(
+        @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
+        @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
+    ) {
+        val basePath = SearchyProperties.DEFAULT_BASE_PATH
+
+        val searchyDescriptorId = "person"
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("mainAddress.roomDescription.key", "kitchen")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe_jane_doe.file.readText()) }
+        }
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("mainAddress.roomDescription.value.floor", "ground-floor")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe_jane_doe.file.readText()) }
+        }
+
+        // nested Map field from collection
+        /*
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("otherAddresses.roomDescription.value.type", "KITCHEN")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe.file.readText()) }
+        }
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("mainAddress.roomDescription.value.area", "15")
+            this.param("otherAddresses.roomDescription.value.windows", "1")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe.file.readText()) }
+        }
+        */
+    }
+
+    @Test
+    @Disabled
+    @DisplayName(
+        "GET /search/person?job.company=Acme," +
+                "GET /search/person?job.active=true"
+    )
+    fun search_from_entity_field_as_query_param(
+        @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
+        @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
+    ) {
+        val basePath = SearchyProperties.DEFAULT_BASE_PATH
+
+        val searchyDescriptorId = "person"
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("job.company", "Acme")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe.file.readText()) }
+        }
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("job.active", "true")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe_jane_doe.file.readText()) }
+        }
+    }
+
+    @Test
+    @Disabled
+    @DisplayName(
+        "GET /search/person?vehicles.brand=Renault," +
+                "GET /search/person?vehicles.vehicleType=CAR"
+    )
+    fun search_from_entities_collection_field_as_query_param(
+        @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
+        @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
+    ) {
+        val basePath = SearchyProperties.DEFAULT_BASE_PATH
+
+        val searchyDescriptorId = "person"
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("vehicles.brand", "Renault")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe.file.readText()) }
+        }
+
+        mockMvc.get("$basePath/$searchyDescriptorId") {
+            this.param("vehicles.vehicleType", "CAR")
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe_jane_doe.file.readText()) }
+        }
+    }
+
+    @Test
+    @Disabled
     @DisplayName("GET /search/person?vehicles.features.value.name=gps")
-    fun search_from_map_field_as_query_paramthat_contains_entity_as_value(@Value("classpath:data/result_john_doe.json") result: Resource) {
+    fun search_from_map_field_as_query_param_that_contains_entity_as_value(@Value("classpath:data/result_john_doe.json") result: Resource) {
         val basePath = SearchyProperties.DEFAULT_BASE_PATH
 
         val searchyDescriptorId = "person"
@@ -266,13 +386,16 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result.file.readText()) }
         }
     }
-    */
 
     @Test
-    @DisplayName("GET /search/person?tasks.key.name=Clean up the garage, GET /search/person?tasks.key.name=Clean up the garage&tasks.key.name=Go to the doctor's appointment")
+    @Disabled
+    @DisplayName(
+        "GET /search/person?tasks.key.name=Clean up the garage," +
+                "GET /search/person?tasks.key.name=Clean up the garage&tasks.key.name=Go to the doctor's appointment"
+    )
     fun search_from_map_field_as_query_param_that_contains_entity_as_key(
         @Value("classpath:data/result_john_doe.json") result_john_doe: Resource,
         @Value("classpath:data/result_john_doe_jane_doe.json") result_john_doe_jane_doe: Resource
@@ -286,7 +409,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result_john_doe.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe.file.readText()) }
         }
 
         mockMvc.get("$basePath/$searchyDescriptorId") {
@@ -295,7 +418,7 @@ class SampleAppMongoDbApplicationTest {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonContent { isEqualTo(result_john_doe_jane_doe.file.readText()) }
+            jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe_jane_doe.file.readText()) }
         }
     }
 }

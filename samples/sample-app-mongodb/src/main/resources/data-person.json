@@ -3,13 +3,13 @@
     "id": "60198caf62c3701a6a97404b",
     "_class": "com.weedow.searchy.sample.mongodb.model.Person",
     "age": 39,
-    "birthday": "1981-03-12T09:36:00.000Z",
+    "birthday": "1981-03-12T10:36:00",
     "characteristics": {
       "eyes": "blue",
       "hair": "brown",
       "shoe-size": "42"
     },
-    "createdOn": "2021-02-02T17:32:31.830Z",
+    "createdOn": "2021-02-02T17:32:31.012Z",
     "email": "john.doe@acme.com",
     "firstName": "John",
     "height": 174,
@@ -29,55 +29,55 @@
           "area": 15.0,
           "floor": "ground-floor",
           "windows": 1,
-          "roomType": "KITCHEN"
+          "type": "KITCHEN"
         },
         "diningroom" : {
           "area": 25.0,
           "floor": "ground-floor",
           "windows": 3,
-          "roomType": "DININGROOM"
+          "type": "DININGROOM"
         },
         "bedroom1" : {
           "area": 12.0,
           "floor": "ground-floor",
           "windows": 1,
-          "roomType": "BEDROOM"
+          "type": "BEDROOM"
         },
         "bathroom1" : {
           "area": 12.0,
           "floor": "ground-floor",
           "windows": 1,
-          "roomType": "BATHROOM"
+          "type": "BATHROOM"
         },
         "restroom1" : {
           "area": 7.0,
           "floor": "ground-floor",
           "windows": 1,
-          "roomType": "RESTROOM"
+          "type": "RESTROOM"
         },
         "bedroom2" : {
           "area": 15.0,
           "floor": "first-floor",
           "windows": 1,
-          "roomType": "BEDROOM"
+          "type": "BEDROOM"
         },
         "bathroom2" : {
           "area": 12.0,
           "floor": "first-floor",
           "windows": 1,
-          "roomType": "BATHROOM"
+          "type": "BATHROOM"
         },
         "restroom2" : {
           "area": 7.0,
           "floor": "first-floor",
           "windows": 0,
-          "roomType": "RESTROOM"
+          "type": "RESTROOM"
         },
         "office" : {
           "area": 12.0,
           "floor": "first-floor",
           "windows": 1,
-          "roomType": "OFFICE"
+          "type": "OFFICE"
         }
       }
     },
@@ -97,31 +97,31 @@
             "area": 17.0,
             "floor": "ground-floor",
             "windows": 1,
-            "roomType": "KITCHEN"
+            "type": "KITCHEN"
           },
           "diningroom" : {
             "area": 23.0,
             "floor": "ground-floor",
             "windows": 3,
-            "roomType": "DININGROOM"
+            "type": "DININGROOM"
           },
           "bedroom1" : {
             "area": 12.5,
             "floor": "ground-floor",
             "windows": 1,
-            "roomType": "BEDROOM"
+            "type": "BEDROOM"
           },
           "bathroom1" : {
             "area": 11.5,
             "floor": "ground-floor",
             "windows": 1,
-            "roomType": "BATHROOM"
+            "type": "BATHROOM"
           },
           "restroom1" : {
             "area": 6.5,
             "floor": "ground-floor",
-            "windows": 1,
-            "roomType": "RESTROOM"
+            "windows": 0,
+            "type": "RESTROOM"
           }
         }
       },
@@ -141,7 +141,7 @@
     "tasks": {
       "{\"description\":\"Go shopping with the family\",\"id\":1,\"name\":\"Go shopping\"}": "60198cb062c3701a6a974055",
       "{\"description\":\"Go to the doctor's appointment next Monday\",\"id\":2,\"name\":\"Go to the doctor's appointment\"}": "60198cb062c3701a6a974056",
-      "{\"description\":null,\"id\":3,\"name\":\"Clean up the garage\"}": "60198cb062c3701a6a974057"
+      "{\"id\":3,\"name\":\"Clean up the garage\"}": "60198cb062c3701a6a974057"
     },
     "updatedOn": "2021-02-02T17:32:32.674Z",
     "vehicles": [1,2],
@@ -151,7 +151,7 @@
     "id": "60198cb062c3701a6a97404c",
     "_class": "com.weedow.searchy.sample.mongodb.model.Person",
     "age": 39,
-    "birthday": "1981-11-26T11:30:00.000Z",
+    "birthday": "1981-11-26T12:30:00",
     "characteristics": {
       "eyes": "green",
       "hair": "blond",
@@ -171,6 +171,38 @@
         "name": "Liverpool",
         "latitude": 53.4167,
         "longitude": -3
+      },
+      "roomDescription": {
+        "kitchen" : {
+          "area": 15.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "KITCHEN"
+        },
+        "diningroom" : {
+          "area": 21.5,
+          "floor": "ground-floor",
+          "windows": 2,
+          "type": "DININGROOM"
+        },
+        "bedroom1" : {
+          "area": 11.5,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "BEDROOM"
+        },
+        "bathroom1" : {
+          "area": 10.5,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "BATHROOM"
+        },
+        "restroom1" : {
+          "area": 5,
+          "floor": "ground-floor",
+          "windows": 0,
+          "type": "RESTROOM"
+        }
       }
     },
     "otherAddresses": [
@@ -198,6 +230,8 @@
     "id": "60198cb062c3701a6a97404d",
     "_class": "com.weedow.searchy.sample.mongodb.model.Person",
     "firstName": "Bob",
-    "lastName": "Nullos"
+    "lastName": "Nullos",
+    "createdOn": "2021-02-02T17:32:31.450Z",
+    "updatedOn": "2021-02-02T17:32:32.048Z"
   }
 ]
