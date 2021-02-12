@@ -8,15 +8,18 @@ import com.weedow.searchy.query.querytype.QEntity
  */
 interface SearchyContext {
 
+    /**
+     * Whether the embedded types without annotations must be processed as Entities.
+     */
     val isUnknownAsEmbedded: Boolean
 
     /**
-     * Annotation classes to determine the classes as an Entity
+     * Annotation classes to determine the classes as an Entity.
      */
     val entityAnnotations: List<Class<out Annotation>>
 
     /**
-     * Annotation classes to determine the fields as a join
+     * Annotation classes to determine the fields as a join.
      */
     val joinAnnotations: List<Class<out Annotation>>
 

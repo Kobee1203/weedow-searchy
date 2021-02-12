@@ -6,6 +6,9 @@ import org.springframework.data.convert.WritingConverter
 import java.time.OffsetDateTime
 
 
+/**
+ * Simple singleton to convert an [OffsetDateTime] to a [Document].
+ */
 @WritingConverter
 object OffsetDateTimeToDocumentConverter : MongoConverter<OffsetDateTime, Document> {
     override fun convert(offsetDateTime: OffsetDateTime): Document {
@@ -13,6 +16,9 @@ object OffsetDateTimeToDocumentConverter : MongoConverter<OffsetDateTime, Docume
     }
 }
 
+/**
+ * Simple singleton to convert a [Document] to an [OffsetDateTime].
+ */
 @ReadingConverter
 object DocumentToOffsetDateTimeConverter : MongoConverter<Document, OffsetDateTime> {
     override fun convert(document: Document): OffsetDateTime {

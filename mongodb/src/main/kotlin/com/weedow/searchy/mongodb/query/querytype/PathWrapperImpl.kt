@@ -6,6 +6,12 @@ import com.querydsl.core.types.Visitor
 import com.weedow.searchy.query.querytype.ElementType
 import java.lang.reflect.AnnotatedElement
 
+/**
+ * [PathWrapper] implementation for [Path] that also contains the related [ElementType].
+ *
+ * @param path [Path] to be wrapped
+ * @param elementType [ElementType] related to the given `path`
+ */
 class PathWrapperImpl<T>(
     val path: Path<T>,
     override val elementType: ElementType

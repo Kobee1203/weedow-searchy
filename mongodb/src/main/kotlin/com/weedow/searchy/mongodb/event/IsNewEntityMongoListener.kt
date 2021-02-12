@@ -8,6 +8,20 @@ import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventLis
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent
 
 
+/**
+ * [ApplicationListener][org.springframework.context.ApplicationListener] for Mongo to handle [PrePersist]/[PreUpdate] callbacks.
+ *
+ * * If it is a new Entity:
+ *     * it looks for the methods with [PrePersist] annotation, and execute them
+ *     * It loops over the [prePersistEntityHandlers], and calls the `handle` method for the handlers that support the Entity
+ * * If it is not a new Entity (Update):
+ *     * it looks for the methods with [PreUpdate] annotation, and execute them
+ *     * It loops over the [preUpdateEntityHandlers], and calls the `handle` method for the handlers that support the Entity
+ *
+ * @param persistentEntities [PersistentEntities] used to retrieve the [PersistentEntity][org.springframework.data.mapping.PersistentEntity] for the domain type found in the given event.
+ * @param prePersistEntityHandlers List of [PrePersistEntityHandler]s
+ * @param preUpdateEntityHandlers List of [PreUpdateEntityHandler]s
+ */
 class IsNewEntityMongoListener(
     private val persistentEntities: PersistentEntities,
     private val prePersistEntityHandlers: List<PrePersistEntityHandler>,

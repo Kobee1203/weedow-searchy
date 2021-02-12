@@ -13,6 +13,9 @@ internal const val DATE_TIME = "dateTime"
 internal const val ZONE = "zone"
 internal const val OFFSET = "offset"
 
+/**
+ * Simple singleton to convert a [ZonedDateTime] to a [Document].
+ */
 @WritingConverter
 object ZonedDateTimeToDocumentConverter : MongoConverter<ZonedDateTime, Document> {
     override fun convert(zonedDateTime: ZonedDateTime): Document {
@@ -24,6 +27,9 @@ object ZonedDateTimeToDocumentConverter : MongoConverter<ZonedDateTime, Document
     }
 }
 
+/**
+ * Simple singleton to convert a [Document] to a [ZonedDateTime].
+ */
 @ReadingConverter
 object DocumentToZonedDateTimeConverter : MongoConverter<Document, ZonedDateTime> {
     override fun convert(document: Document): ZonedDateTime {

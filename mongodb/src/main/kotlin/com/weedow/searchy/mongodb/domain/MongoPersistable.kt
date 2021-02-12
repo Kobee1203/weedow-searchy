@@ -11,6 +11,9 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.time.LocalDateTime
 
+/**
+ * Abstract class that declares common fields (@[Id], @[CreatedDate], @[LastModifiedDate]), and simplify the creation of entities for MongoDB.
+ */
 abstract class MongoPersistable<ID : Serializable> : Persistable<ID> {
 
     @Transient

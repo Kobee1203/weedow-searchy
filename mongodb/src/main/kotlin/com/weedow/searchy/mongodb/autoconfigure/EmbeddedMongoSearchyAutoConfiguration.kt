@@ -27,7 +27,13 @@ import java.io.IOException
 import java.net.Socket
 import java.util.stream.Collectors
 
-
+/**
+ * Auto-Configuration for an embedded MongoDB.
+ *
+ * It uses the [testcontainers](http://testcontainers.org) library to create the container and start it.
+ *
+ * It is possible to customize the container configuration from the properties defined in the [EmbeddedMongoProperties] class.
+ */
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureBefore(MongoAutoConfiguration::class)
 @EnableConfigurationProperties(MongoProperties::class, EmbeddedMongoProperties::class)
