@@ -291,7 +291,6 @@ class SampleAppMongoDbApplicationTest {
         }
 
         // nested Map field from collection
-        /*
         mockMvc.get("$basePath/$searchyDescriptorId") {
             this.param("otherAddresses.roomDescription.value.type", "KITCHEN")
         }.andExpect {
@@ -308,7 +307,6 @@ class SampleAppMongoDbApplicationTest {
             content { contentType(MediaType.APPLICATION_JSON) }
             jsonContent { `when`(Option.IGNORING_ARRAY_ORDER).isEqualTo(result_john_doe.file.readText()) }
         }
-        */
     }
 
     @Test
