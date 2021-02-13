@@ -371,9 +371,8 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.operator).isEqualTo(Ops.EQ)
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isInstanceOf(StringPath::class.java).isEqualTo(Expressions.stringPath("\$where"))
-        val jsFunction = String(javaClass.getResourceAsStream("/map_contains_value.js").readAllBytes(), StandardCharsets.UTF_8)
-        val func = BsonJavaScript(jsFunction.replace("{PATH}", path).replace("{VALUE}", "\"$value\""))
-        assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(func)
+        val jsFunction = String(javaClass.getResourceAsStream("/map_contains_value_result_1.js").readAllBytes(), StandardCharsets.UTF_8)
+        assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(BsonJavaScript(jsFunction))
 
         verifyZeroInteractions(query)
         verifyZeroInteractions(searchyContext)
@@ -408,9 +407,8 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.operator).isEqualTo(Ops.EQ)
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isInstanceOf(StringPath::class.java).isEqualTo(Expressions.stringPath("\$where"))
-        val jsFunction = String(javaClass.getResourceAsStream("/map_contains_value.js").readAllBytes(), StandardCharsets.UTF_8)
-        val func = BsonJavaScript(jsFunction.replace("{PATH}", "$parentPath.$path").replace("{VALUE}", "\"$value\""))
-        assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(func)
+        val jsFunction = String(javaClass.getResourceAsStream("/map_contains_value_result_2.js").readAllBytes(), StandardCharsets.UTF_8)
+        assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(BsonJavaScript(jsFunction))
 
         verifyZeroInteractions(query)
         verifyZeroInteractions(searchyContext)

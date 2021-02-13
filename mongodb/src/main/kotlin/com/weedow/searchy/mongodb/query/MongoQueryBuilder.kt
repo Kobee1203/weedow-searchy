@@ -9,13 +9,13 @@ import com.querydsl.core.types.dsl.*
 import com.weedow.searchy.context.SearchyContext
 import com.weedow.searchy.mongodb.query.querytype.PathWrapper
 import com.weedow.searchy.mongodb.query.querytype.QEntityJoinImpl
+import com.weedow.searchy.mongodb.utils.JSResourceUtils
 import com.weedow.searchy.query.QueryBuilder
 import com.weedow.searchy.query.querytype.*
 import com.weedow.searchy.utils.Keyword
 import org.bson.BsonJavaScript
 import org.springframework.core.io.DefaultResourceLoader
 import org.springframework.data.mongodb.repository.support.SpringDataMongodbQuery
-import java.nio.charset.StandardCharsets
 
 /**
  * MongoDB [QueryBuilder] implementation.
@@ -31,13 +31,7 @@ class MongoQueryBuilder<T>(
 ) : QueryBuilder<T> {
 
     companion object {
-        val MAP_CONTAINS_VALUE_JS = String(
-            DefaultResourceLoader()
-                .getResource("classpath:map_contains_value.js")
-                .inputStream
-                .readAllBytes(),
-            StandardCharsets.UTF_8
-        )
+        val MAP_CONTAINS_VALUE_JS = JSResourceUtils.load(DefaultResourceLoader().getResource("classpath:map_contains_value.js"))
     }
 
     override fun distinct() {

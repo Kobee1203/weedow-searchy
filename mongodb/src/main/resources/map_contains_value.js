@@ -1,4 +1,4 @@
-function () {
+function() {
     var log = function (msg) {
         printjson(msg);
     }
@@ -23,12 +23,12 @@ function () {
                     return true;
                 }
             } else { // *.value.*
-                for (var field in obj) { // Object.keys(obj).forEach(function (field) {
+                for (var field in obj) {
                     if (obj.hasOwnProperty(field) && deepIterate(obj[field], newPath, value)) {
                         log({message: "The inner object matches the condition", current_obj: obj[field]});
                         return true;
                     }
-                }//});
+                }
             }
         } else { // path with a single part
             log({message: "* Path with single part", path: path, current_part: part, current_obj: obj});
@@ -37,12 +37,12 @@ function () {
                 return obj[part] == value;
             } else {
                 log({message: "Part is equal to 'value'"});
-                for (var field in obj) { // *.value // Object.keys(obj).forEach(function (field) {
+                for (var field in obj) { // *.value
                     log({message: "Field '" + field + "' (" + obj[field] + ") is equal to " + value + "? " + (obj[field] == value)});
                     if (obj.hasOwnProperty(field) && obj[field] == value) {
                         return true;
                     }
-                }//});
+                }
             }
         }
         return false;
