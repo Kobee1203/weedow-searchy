@@ -103,7 +103,7 @@ internal class ExpressionUtilsTest {
     }
 
     @Test
-    operator fun not() {
+    fun not() {
         val fieldValue = "John"
         val fieldInfo = FieldInfo("firstName", "firstName", Person::class.java)
 

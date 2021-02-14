@@ -324,7 +324,7 @@ internal class JpaQueryBuilderTest {
     }
 
     @Test
-    operator fun not() {
+    fun not() {
         val expr = mock<Expression<Boolean>>()
         val predicate = jpaQueryBuilder.not(expr)
 

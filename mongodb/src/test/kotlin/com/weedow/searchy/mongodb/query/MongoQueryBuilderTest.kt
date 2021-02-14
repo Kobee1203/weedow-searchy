@@ -216,7 +216,7 @@ internal class MongoQueryBuilderTest {
     }
 
     @Test
-    operator fun not() {
+    fun not() {
         val expr = mock<Expression<Boolean>>()
         val predicate = mongoQueryBuilder.not(expr)
 

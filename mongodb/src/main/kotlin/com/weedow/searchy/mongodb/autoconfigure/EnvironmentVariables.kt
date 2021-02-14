@@ -13,7 +13,7 @@ import java.lang.reflect.Field
  *
  * **Warning:** This class uses reflection for modifying internals of the environment variables map. It fails if your `SecurityManager` forbids such modifications.
  */
-class EnvironmentVariables {
+internal class EnvironmentVariables {
 
     /**
      * Set the value of an environment variable.
@@ -22,7 +22,7 @@ class EnvironmentVariables {
      * @param value the environment variable's new value. May be `null`.
      * @return the rule itself.
      */
-    operator fun set(name: String, value: String?): EnvironmentVariables {
+    fun set(name: String, value: String?): EnvironmentVariables {
         set(editableMapOfVariables, name, value)
         set(theCaseInsensitiveEnvironment, name, value)
         return this
@@ -41,7 +41,7 @@ class EnvironmentVariables {
         return this
     }
 
-    private operator fun set(variables: MutableMap<String, String>?, name: String, value: String?) {
+    private fun set(variables: MutableMap<String, String>?, name: String, value: String?) {
         if (variables != null) { // theCaseInsensitiveEnvironment may be null
             if (value == null) {
                 variables.remove(name)
