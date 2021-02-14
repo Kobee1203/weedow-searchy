@@ -1,0 +1,20 @@
+[
+  {
+    "firstName": "Bob",
+    "lastName": "Nullos",
+    "email": null,
+    "birthday": null,
+    "height": null,
+    "weight": null,
+    "nickNames": [],
+    "phoneNumbers": [],
+    "addressEntities": [],
+    "jobEntity": null,
+    "vehicles": [],
+    "characteristics": {},
+    "tasks": {},
+    "id": 3,
+    "createdOn": "2020-03-08T10:36:00Z",
+    "updatedOn": "2020-04-08T12:00:00Z"
+  }
+]
