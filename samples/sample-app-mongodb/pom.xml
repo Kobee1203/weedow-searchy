@@ -49,11 +49,11 @@
             <artifactId>querydsl-apt</artifactId>
         </dependency>
 
+        <!-- Switch between 'de.flapdoodle.embed:de.flapdoodle.embed.mongo' and 'org.testcontainers:mongodb' to use a different embedded mongodb -->
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
         </dependency>
-
 <!--        <dependency>-->
 <!--            <groupId>org.testcontainers</groupId>-->
 <!--            <artifactId>mongodb</artifactId>-->

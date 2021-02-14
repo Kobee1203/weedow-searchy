@@ -33,10 +33,10 @@ internal object JSResourceUtils {
      *
      * @param `in` Input representing a JS content to be optimized
      */
-    private fun optimize(`in`: InputStream): String {
-        val out = ByteArrayOutputStream()
-        JSMin(`in`, out).jsmin()
-        return out.toString()
+    private fun optimize(input: InputStream): String {
+        val output = ByteArrayOutputStream()
+        JSMin(input, output).jsmin()
+        return output.toString()
             .replace("var log=function(msg){printjson(msg);}", "")
             .replace(Regex("log\\([^\\;]+;"), "")
     }

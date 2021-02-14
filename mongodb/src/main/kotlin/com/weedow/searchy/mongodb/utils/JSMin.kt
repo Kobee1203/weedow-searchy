@@ -8,19 +8,19 @@ import java.io.PushbackInputStream
 /**
  * JsMin.java.
  *
- * Copyright (c) 2006 John Reilly (www.inconspicuous.org) This work is a translation from C to Java of jsmin.c published by Douglas Crockford.
- * Permission is hereby granted to use the Java version under the same conditions as the jsmin.c on which it is based.
+ * Copyright (c) 2006 John Reilly (www.inconspicuous.org) This work is a translation from C to Kotlin of jsmin.c published by Douglas Crockford.
+ * Permission is hereby granted to use the Kotlin version under the same conditions as the jsmin.c on which it is based.
  *
  * http://www.crockford.com/javascript/jsmin.html
  *
- * @param in Input representing a JS content to be minified
- * @param out Output to write the minified JS content
+ * @param `in` Input representing a JS content to be minified
+ * @param output Output to write the minified JS content
  */
 class JSMin(
-    `in`: InputStream,
-    private val out: OutputStream
+    input: InputStream,
+    private val output: OutputStream
 ) {
-    private val `in`: PushbackInputStream = PushbackInputStream(`in`)
+    private val input: PushbackInputStream = PushbackInputStream(input)
     private var theA = NUL
     private var theB = NUL
     private var theX = EOF
@@ -79,7 +79,7 @@ class JSMin(
      * the character is a control character, translate it to a space or linefeed.
      */
     private fun get(): Int {
-        val c = `in`.read()
+        val c = input.read()
         if (c >= SPACE || c == LINE_FEED || c == EOF) {
             return c
         }
@@ -90,8 +90,8 @@ class JSMin(
      * Get the next character without getting it.
      */
     private fun peek(): Int {
-        val lookaheadChar = `in`.read()
-        `in`.unread(lookaheadChar)
+        val lookaheadChar = input.read()
+        input.unread(lookaheadChar)
         return lookaheadChar
     }
 
@@ -220,7 +220,7 @@ class JSMin(
 
     private fun write(c: Int) {
         if (c != NUL) {
-            out.write(c)
+            output.write(c)
         }
     }
 
@@ -240,7 +240,6 @@ class JSMin(
             get()
             get()
         }
-        //theA = LINE_FEED
         action(3)
         while (theA != EOF) {
             when (theA) {
@@ -278,7 +277,7 @@ class JSMin(
                 }
             }
         }
-        out.flush()
+        output.flush()
     }
 
     class UnterminatedCommentException : Exception()
