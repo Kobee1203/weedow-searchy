@@ -1,11 +1,11 @@
 package com.weedow.searchy.mongodb.query
 
 import com.querydsl.core.JoinType
-import com.querydsl.core.types.Expression
-import com.querydsl.core.types.Ops
-import com.querydsl.core.types.Path
-import com.querydsl.core.types.Predicate
-import com.querydsl.core.types.dsl.*
+import com.querydsl.core.types.*
+import com.querydsl.core.types.dsl.CollectionPathBase
+import com.querydsl.core.types.dsl.DateExpression
+import com.querydsl.core.types.dsl.Expressions
+import com.querydsl.core.types.dsl.TimeExpression
 import com.weedow.searchy.context.SearchyContext
 import com.weedow.searchy.mongodb.query.querytype.PathWrapper
 import com.weedow.searchy.mongodb.query.querytype.QEntityJoinImpl
@@ -16,6 +16,11 @@ import com.weedow.searchy.utils.Keyword
 import org.bson.BsonJavaScript
 import org.springframework.core.io.DefaultResourceLoader
 import org.springframework.data.mongodb.repository.support.SpringDataMongodbQuery
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.*
+
 
 /**
  * MongoDB [QueryBuilder] implementation.
@@ -31,7 +36,9 @@ class MongoQueryBuilder<T>(
 ) : QueryBuilder<T> {
 
     companion object {
-        val MAP_CONTAINS_VALUE_JS = JSResourceUtils.load(DefaultResourceLoader().getResource("classpath:map_contains_value.js"))
+        val MAP_CONTAINS_VALUE_JS: String = JSResourceUtils.load(DefaultResourceLoader().getResource("classpath:map_contains_value.js"))
+
+        val DEFAULT_TIME_ZONE: TimeZone = TimeZone.getDefault()
     }
 
     override fun distinct() {
@@ -119,23 +126,29 @@ class MongoQueryBuilder<T>(
 
     override fun equal(x: Expression<*>, value: Any): Predicate {
         val expressionValue = convertValueToExpression(value)
-        return if (x is PathWrapper<*>) {
-            when (x.elementType) {
-                ElementType.MAP_KEY -> Expressions.predicate(Ops.CONTAINS_KEY, x, expressionValue)
-                ElementType.MAP_VALUE -> {
-                    var path = x.metadata.name
-                    var p = x.metadata.parent
-                    while (p != null && !p.metadata.isRoot) {
-                        path = p.metadata.name + "." + path
-                        p = p.metadata.parent
+        return when {
+            x is PathWrapper<*> -> {
+                when (x.elementType) {
+                    ElementType.MAP_KEY -> Expressions.predicate(Ops.CONTAINS_KEY, x, expressionValue)
+                    ElementType.MAP_VALUE -> {
+                        var path = x.metadata.name
+                        var p = x.metadata.parent
+                        while (p != null && !p.metadata.isRoot) {
+                            path = p.metadata.name + "." + path
+                            p = p.metadata.parent
+                        }
+                        val func = BsonJavaScript(MAP_CONTAINS_VALUE_JS.replace("{PATH}", path).replace("{VALUE}", "\"$expressionValue\""))
+                        Expressions.predicate(Ops.EQ, Expressions.stringPath("\$where"), Expressions.constant(func))
                     }
-                    val func = BsonJavaScript(MAP_CONTAINS_VALUE_JS.replace("{PATH}", path).replace("{VALUE}", "\"$expressionValue\""))
-                    Expressions.predicate(Ops.EQ, Expressions.stringPath("\$where"), Expressions.constant(func))
+                    else -> throw IllegalArgumentException("ElementType '${x.elementType}' from the PathWrapper is not supported")
                 }
-                else -> throw IllegalArgumentException("ElementType '${x.elementType}' from the PathWrapper is not supported")
             }
-        } else {
-            Expressions.predicate(Ops.EQ, x, expressionValue)
+            isCurrentDate(expressionValue) -> {
+                Expressions.predicate(Ops.BETWEEN, x, asStartOfDay(), asEndOfDay())
+            }
+            else -> {
+                Expressions.predicate(Ops.EQ, x, expressionValue)
+            }
         }
     }
 
@@ -166,22 +179,26 @@ class MongoQueryBuilder<T>(
 
     override fun lessThan(x: Expression<*>, value: Any): Predicate {
         val expressionValue = convertValueToExpression(value)
-        return Expressions.predicate(Ops.LT, x, expressionValue)
+        val exprValue = if (isCurrentDate(expressionValue)) asStartOfDay() else expressionValue
+        return Expressions.predicate(Ops.LT, x, exprValue)
     }
 
     override fun lessThanOrEquals(x: Expression<*>, value: Any): Predicate {
         val expressionValue = convertValueToExpression(value)
-        return Expressions.predicate(Ops.LOE, x, expressionValue)
+        val exprValue = if (isCurrentDate(expressionValue)) asStartOfDay() else expressionValue
+        return Expressions.predicate(Ops.LOE, x, exprValue)
     }
 
     override fun greaterThan(x: Expression<*>, value: Any): Predicate {
         val expressionValue = convertValueToExpression(value)
-        return Expressions.predicate(Ops.GT, x, expressionValue)
+        val exprValue = if (isCurrentDate(expressionValue)) asEndOfDay() else expressionValue
+        return Expressions.predicate(Ops.GT, x, exprValue)
     }
 
     override fun greaterThanOrEquals(x: Expression<*>, value: Any): Predicate {
         val expressionValue = convertValueToExpression(value)
-        return Expressions.predicate(Ops.GOE, x, expressionValue)
+        val exprValue = if (isCurrentDate(expressionValue)) asEndOfDay() else expressionValue
+        return Expressions.predicate(Ops.GOE, x, exprValue)
     }
 
     override fun `in`(x: Expression<*>, values: Collection<*>): Predicate {
@@ -196,10 +213,24 @@ class MongoQueryBuilder<T>(
     private fun convertValueToExpression(value: Any): Expression<*> {
         return when {
             Keyword.CURRENT_DATE === value -> DateExpression.currentDate()
+            // TODO Add Support (querydsl-mongodb does not support it)
             Keyword.CURRENT_TIME === value -> TimeExpression.currentTime()
-            Keyword.CURRENT_DATE_TIME === value -> DateTimeExpression.currentTimestamp()
+            // TODO Replace Expressions.asDateTime(LocalDateTime.now()) by DateTimeExpression.currentTimestamp() when Ops.DateTimeOps.CURRENT_TIMESTAMP will be supported natively by querydsl-mongodb
+            // see: https://github.com/querydsl/querydsl/pull/2774
+            Keyword.CURRENT_DATE_TIME === value -> Expressions.asDateTime(LocalDateTime.now()) // DateTimeExpression.currentTimestamp()
             else -> Expressions.constant(value)
         }
     }
+
+    //
+    // TODO Methods below to remove when Ops.DateTimeOps.CURRENT_DATE will be supported natively by querydsl-mongodb
+    // see: https://github.com/querydsl/querydsl/pull/2774
+    //
+
+    private fun isCurrentDate(expression: Expression<*>) = expression is Operation && expression.operator == Ops.DateTimeOps.CURRENT_DATE
+
+    private fun asStartOfDay() = Expressions.asDate(Date.from(LocalDate.now().atTime(LocalTime.MIN).atZone(DEFAULT_TIME_ZONE.toZoneId()).toInstant()))
+
+    private fun asEndOfDay() = Expressions.asDate(Date.from(LocalDate.now().atTime(LocalTime.MAX).atZone(DEFAULT_TIME_ZONE.toZoneId()).toInstant()))
 
 }

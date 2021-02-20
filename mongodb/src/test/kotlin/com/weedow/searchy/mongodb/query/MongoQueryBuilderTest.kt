@@ -23,6 +23,9 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.repository.support.SpringDataMongodbQuery
 import java.nio.charset.StandardCharsets
+import java.time.*
+import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.stream.Stream
 import kotlin.reflect.full.createInstance
 
@@ -252,6 +255,9 @@ internal class MongoQueryBuilderTest {
 
     @Test
     fun equal_with_current_date_value() {
+        val startOfDay = Date.from(LocalDate.now().atTime(LocalTime.MIN).atZone(MongoQueryBuilder.DEFAULT_TIME_ZONE.toZoneId()).toInstant())
+        val endOfDay = Date.from(LocalDate.now().atTime(LocalTime.MAX).atZone(MongoQueryBuilder.DEFAULT_TIME_ZONE.toZoneId()).toInstant())
+
         val expr = mock<Expression<*>>()
         val value = "CURRENT_DATE"
         val predicate = mongoQueryBuilder.equal(expr, value)
@@ -259,11 +265,15 @@ internal class MongoQueryBuilderTest {
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
         val booleanOperation = predicate as BooleanOperation
-        assertThat(booleanOperation.operator).isEqualTo(Ops.EQ)
-        assertThat(booleanOperation.args).hasSize(2)
+        assertThat(booleanOperation.operator).isEqualTo(Ops.BETWEEN)
+        assertThat(booleanOperation.args).hasSize(3)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
-        assertThat(booleanOperation.args[1]).isInstanceOf(DateOperation::class.java)
-        assertThat(booleanOperation.args[1]).extracting("operator").isEqualTo(Ops.DateTimeOps.CURRENT_DATE)
+        assertThat(booleanOperation.args[1]).isInstanceOf(DateExpression::class.java)
+        assertThat(booleanOperation.args[1].type).isEqualTo(Date::class.java)
+        assertThat(booleanOperation.args[1]).extracting("mixin").extracting("constant").isEqualTo(startOfDay)
+        assertThat(booleanOperation.args[2]).isInstanceOf(DateExpression::class.java)
+        assertThat(booleanOperation.args[2].type).isEqualTo(Date::class.java)
+        assertThat(booleanOperation.args[2]).extracting("mixin").extracting("constant").isEqualTo(endOfDay)
 
         verifyZeroInteractions(query)
         verifyZeroInteractions(searchyContext)
@@ -292,6 +302,8 @@ internal class MongoQueryBuilderTest {
 
     @Test
     fun equal_with_current_date_time_value() {
+        val now = ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))
+
         val expr = mock<Expression<*>>()
         val value = "CURRENT_DATE_TIME"
         val predicate = mongoQueryBuilder.equal(expr, value)
@@ -302,8 +314,10 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.operator).isEqualTo(Ops.EQ)
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
-        assertThat(booleanOperation.args[1]).isInstanceOf(DateTimeOperation::class.java)
-        assertThat(booleanOperation.args[1]).extracting("operator").isEqualTo(Ops.DateTimeOps.CURRENT_TIMESTAMP)
+        assertThat(booleanOperation.args[1]).isInstanceOf(DateTimeExpression::class.java)
+        assertThat(booleanOperation.args[1].type).isEqualTo(LocalDateTime::class.java)
+        assertThat(booleanOperation.args[1]).extracting("mixin").extracting("constant").isInstanceOf(LocalDateTime::class.java)
+        assertThat(booleanOperation.args[1].toString()).startsWith(now)
 
         verifyZeroInteractions(query)
         verifyZeroInteractions(searchyContext)
@@ -550,6 +564,29 @@ internal class MongoQueryBuilderTest {
     }
 
     @Test
+    fun lessThan_with_current_date() {
+        val startOfDay = Date.from(LocalDate.now().atTime(LocalTime.MIN).atZone(MongoQueryBuilder.DEFAULT_TIME_ZONE.toZoneId()).toInstant())
+
+        val expr = mock<Expression<*>>()
+        val value = "CURRENT_DATE"
+        val predicate = mongoQueryBuilder.lessThan(expr, value)
+
+        assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
+
+        val booleanOperation = predicate as BooleanOperation
+        assertThat(booleanOperation.operator).isEqualTo(Ops.LT)
+        assertThat(booleanOperation.args).hasSize(2)
+        assertThat(booleanOperation.args[0]).isSameAs(expr)
+        assertThat(booleanOperation.args[1]).isInstanceOf(DateExpression::class.java)
+        assertThat(booleanOperation.args[1].type).isEqualTo(Date::class.java)
+        assertThat(booleanOperation.args[1]).extracting("mixin").extracting("constant").isEqualTo(startOfDay)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
+    }
+
+    @Test
     fun lessThanOrEquals() {
         val expr = mock<Expression<*>>()
         val value = 123
@@ -562,6 +599,29 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(value)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
+    }
+
+    @Test
+    fun lessThanOrEquals_with_current_date() {
+        val startOfDay = Date.from(LocalDate.now().atTime(LocalTime.MIN).atZone(MongoQueryBuilder.DEFAULT_TIME_ZONE.toZoneId()).toInstant())
+
+        val expr = mock<Expression<*>>()
+        val value = "CURRENT_DATE"
+        val predicate = mongoQueryBuilder.lessThanOrEquals(expr, value)
+
+        assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
+
+        val booleanOperation = predicate as BooleanOperation
+        assertThat(booleanOperation.operator).isEqualTo(Ops.LOE)
+        assertThat(booleanOperation.args).hasSize(2)
+        assertThat(booleanOperation.args[0]).isSameAs(expr)
+        assertThat(booleanOperation.args[1]).isInstanceOf(DateExpression::class.java)
+        assertThat(booleanOperation.args[1].type).isEqualTo(Date::class.java)
+        assertThat(booleanOperation.args[1]).extracting("mixin").extracting("constant").isEqualTo(startOfDay)
 
         verifyZeroInteractions(query)
         verifyZeroInteractions(searchyContext)
@@ -588,6 +648,29 @@ internal class MongoQueryBuilderTest {
     }
 
     @Test
+    fun greaterThan_with_current_date() {
+        val endOfDay = Date.from(LocalDate.now().atTime(LocalTime.MAX).atZone(MongoQueryBuilder.DEFAULT_TIME_ZONE.toZoneId()).toInstant())
+
+        val expr = mock<Expression<*>>()
+        val value = "CURRENT_DATE"
+        val predicate = mongoQueryBuilder.greaterThan(expr, value)
+
+        assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
+
+        val booleanOperation = predicate as BooleanOperation
+        assertThat(booleanOperation.operator).isEqualTo(Ops.GT)
+        assertThat(booleanOperation.args).hasSize(2)
+        assertThat(booleanOperation.args[0]).isSameAs(expr)
+        assertThat(booleanOperation.args[1]).isInstanceOf(DateExpression::class.java)
+        assertThat(booleanOperation.args[1].type).isEqualTo(Date::class.java)
+        assertThat(booleanOperation.args[1]).extracting("mixin").extracting("constant").isEqualTo(endOfDay)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
+    }
+
+    @Test
     fun greaterThanOrEquals() {
         val expr = mock<Expression<*>>()
         val value = 123
@@ -600,6 +683,29 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(value)
+
+        verifyZeroInteractions(query)
+        verifyZeroInteractions(searchyContext)
+        verifyZeroInteractions(qEntityRoot)
+    }
+
+    @Test
+    fun greaterThanOrEquals_with_current_date() {
+        val endOfDay = Date.from(LocalDate.now().atTime(LocalTime.MAX).atZone(MongoQueryBuilder.DEFAULT_TIME_ZONE.toZoneId()).toInstant())
+
+        val expr = mock<Expression<*>>()
+        val value = "CURRENT_DATE"
+        val predicate = mongoQueryBuilder.greaterThanOrEquals(expr, value)
+
+        assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
+
+        val booleanOperation = predicate as BooleanOperation
+        assertThat(booleanOperation.operator).isEqualTo(Ops.GOE)
+        assertThat(booleanOperation.args).hasSize(2)
+        assertThat(booleanOperation.args[0]).isSameAs(expr)
+        assertThat(booleanOperation.args[1]).isInstanceOf(DateExpression::class.java)
+        assertThat(booleanOperation.args[1].type).isEqualTo(Date::class.java)
+        assertThat(booleanOperation.args[1]).extracting("mixin").extracting("constant").isEqualTo(endOfDay)
 
         verifyZeroInteractions(query)
         verifyZeroInteractions(searchyContext)
