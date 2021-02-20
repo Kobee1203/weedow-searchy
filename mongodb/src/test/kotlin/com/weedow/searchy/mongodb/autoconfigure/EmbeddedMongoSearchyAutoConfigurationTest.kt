@@ -24,12 +24,14 @@ internal class EmbeddedMongoSearchyAutoConfigurationTest {
         val attacheStderr = false
         val tty = false
         val cmd = listOf("--replSet", "docker-rs")
-        val env = mapOf("MONGO_MAJOR" to "4.4", "MONGO_VERSION" to "4.4.3")
+        val env = mapOf("MONGO_MAJOR" to "4.4", "MONGO_VERSION" to "4.4.4")
         val hostPort = 27017
         val containerExposedPort = 27017
         val privilegedMode = false
 
-        val propertyValues = emptyArray<String>()
+        val propertyValues = arrayOf(
+            "weedow.mongodb.embedded.container.imagePullPolicy=always-pull"
+        )
 
         verifyMongoDBContainer(
             propertyValues,

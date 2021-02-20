@@ -50,6 +50,7 @@ class EmbeddedMongoSearchyAutoConfiguration {
 
         val container = MongoDBContainer(embeddedMongoProperties.mongoImage)
         container.withReuse(embeddedMongoProperties.containerReusable)
+        container.withImagePullPolicy(embeddedMongoProperties.getImagePullPolicy())
         container.withCreateContainerCmdModifier { cmd: CreateContainerCmd ->
             cmd
                 .withName(embeddedMongoProperties.containerName)

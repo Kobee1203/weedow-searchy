@@ -4,6 +4,8 @@ import com.weedow.searchy.utils.klogger
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
+import org.testcontainers.images.ImagePullPolicy
+import org.testcontainers.images.PullPolicy
 import org.testcontainers.utility.TestcontainersConfiguration
 
 /**
@@ -23,6 +25,9 @@ data class EmbeddedMongoProperties(
     val containerName: String = "weedow-mongo",
     /** Whether the container should be reused if it already exists. Default is false */
     val containerReusable: Boolean = false,
+
+    /** Whether the container image should be pulled or should be retrieved from the local Docker images cache. Default is 'default' (retrieved from the local Docker images cache) */
+    val imagePullPolicy: String = "default",
 
     /** Attach standard streams to a TTY, including stdin if it is not closed. Default is false */
     val tty: Boolean = false,
@@ -48,7 +53,7 @@ data class EmbeddedMongoProperties(
     val privilegedMode: Boolean = false,
 
     @NestedConfigurationProperty
-    val ryuk: Ryuk = Ryuk(),
+    val ryuk: Ryuk = Ryuk()
 ) {
 
     companion object {
@@ -62,6 +67,8 @@ data class EmbeddedMongoProperties(
         /** Run the container in privileged mode. Default is false */
         val privilegedMode: Boolean = false
     )
+
+    fun getImagePullPolicy(): ImagePullPolicy = if ("always-pull" == imagePullPolicy) PullPolicy.alwaysPull() else PullPolicy.defaultPolicy()
 
     fun updateTestcontainersConfig(configuration: TestcontainersConfiguration) {
         configuration.updateUserConfig("testcontainers.reuse.enable", containerReusable.toString())
