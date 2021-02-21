@@ -174,7 +174,9 @@ class MongoQueryBuilder<T>(
 
     override fun ilike(x: Expression<String>, value: String): Predicate {
         val expressionValue = Expressions.constant(value.replace("*", "%").toLowerCase())
-        return Expressions.predicate(Ops.LIKE_IC, x, expressionValue)
+        // TODO Replace the line below by 'return Expressions.predicate(Ops.LIKE_IC, x, expressionValue)' when Ops.LIKE_IC will be supported natively by querydsl-mongodb
+        // see: https://github.com/querydsl/querydsl/pull/2775
+        return Expressions.predicate(Ops.MATCHES_IC, x, ExpressionUtils.likeToRegex(expressionValue))
     }
 
     override fun lessThan(x: Expression<*>, value: Any): Predicate {

@@ -534,10 +534,10 @@ internal class MongoQueryBuilderTest {
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
         val booleanOperation = predicate as BooleanOperation
-        assertThat(booleanOperation.operator).isEqualTo(Ops.LIKE_IC)
+        assertThat(booleanOperation.operator).isEqualTo(Ops.MATCHES_IC)
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isSameAs(expr)
-        assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo("myvalue%")
+        assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo("^myvalue.*")
 
         verifyZeroInteractions(query)
         verifyZeroInteractions(searchyContext)
