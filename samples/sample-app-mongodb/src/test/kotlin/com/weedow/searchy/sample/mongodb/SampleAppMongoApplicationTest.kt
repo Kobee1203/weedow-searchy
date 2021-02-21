@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.get
 @DirtiesContext
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SampleAppMongoDbApplicationTest {
+class SampleAppMongoApplicationTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
