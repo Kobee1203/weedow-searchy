@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.util.*
 
+
 @Configuration
 class TimeZoneConfig {
 
@@ -17,6 +18,7 @@ class TimeZoneConfig {
 
     @Bean
     fun timeZone(@Value("\${spring.jpa.properties.hibernate.jdbc.time_zone:$DEFAULT_TIME_ZONE}") timeZone: String): TimeZone {
+        System.setProperty("user.timezone", timeZone);
         val defaultTimeZone = TimeZone.getTimeZone(timeZone)
         TimeZone.setDefault(defaultTimeZone)
         log.info("Spring boot application running in '$timeZone' timezone :" + Date())

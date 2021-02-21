@@ -1292,6 +1292,9 @@ Contributions are what make the open source community such an amazing place to b
 ## How to make a new Release
 Page to describe the process of creating a new release: [Make a new release](./docs/release.md)
 
+## How to add a new module
+Page to describe the process of adding a new module: [Add a new module](./docs/new-module.md)
+
 ## Contact
 
 Nicolas Dos Santos - [@Kobee1203](https://twitter.com/Kobee1203)

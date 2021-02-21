@@ -7,6 +7,9 @@ import com.querydsl.jpa.JPQLTemplates
 import org.apache.commons.lang3.reflect.MethodUtils
 import java.lang.reflect.Method
 
+/**
+ * Hack method to add additional JPQL Templates.
+ */
 fun JPQLTemplates.addMissingTemplates() {
     val addMethod = getMethod(this::class.java, "add", Operator::class.java, String::class.java)
     // val addWithPreMethod = getMethod(this::class.java, "add", Operator::class.java, String::class.java, Int::class.java)

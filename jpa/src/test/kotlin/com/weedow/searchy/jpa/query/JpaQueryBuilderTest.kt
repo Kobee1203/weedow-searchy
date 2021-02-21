@@ -10,6 +10,7 @@ import com.querydsl.jpa.JPAQueryMixin
 import com.querydsl.jpa.JPQLOps
 import com.querydsl.jpa.impl.AbstractJPAQuery
 import com.weedow.searchy.context.SearchyContext
+import com.weedow.searchy.jpa.query.querytype.QEntityJoinImpl
 import com.weedow.searchy.query.querytype.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -275,13 +276,13 @@ internal class JpaQueryBuilderTest {
     }
 
     @Test
-    fun or_with_no_predicates() {
-        val predicate = jpaQueryBuilder.or()
+    fun and_with_no_predicates() {
+        val predicate = jpaQueryBuilder.and()
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
         val booleanOperation = predicate as BooleanOperation
-        assertThat(booleanOperation.operator).isEqualTo(Ops.OR)
+        assertThat(booleanOperation.operator).isEqualTo(Ops.AND)
         assertThat(booleanOperation.args).isEmpty()
     }
 
@@ -312,18 +313,18 @@ internal class JpaQueryBuilderTest {
     }
 
     @Test
-    fun and_with_no_predicates() {
-        val predicate = jpaQueryBuilder.and()
+    fun or_with_no_predicates() {
+        val predicate = jpaQueryBuilder.or()
 
         assertThat(predicate).isInstanceOf(BooleanOperation::class.java)
 
         val booleanOperation = predicate as BooleanOperation
-        assertThat(booleanOperation.operator).isEqualTo(Ops.AND)
+        assertThat(booleanOperation.operator).isEqualTo(Ops.OR)
         assertThat(booleanOperation.args).isEmpty()
     }
 
     @Test
-    operator fun not() {
+    fun not() {
         val expr = mock<Expression<Boolean>>()
         val predicate = jpaQueryBuilder.not(expr)
 

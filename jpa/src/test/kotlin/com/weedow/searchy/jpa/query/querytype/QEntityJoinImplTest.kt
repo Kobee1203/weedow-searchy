@@ -1,4 +1,4 @@
-package com.weedow.searchy.query.querytype
+package com.weedow.searchy.jpa.query.querytype
 
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.querydsl.core.types.*
 import com.querydsl.core.types.dsl.SimplePath
 import com.weedow.searchy.common.model.Person
+import com.weedow.searchy.query.querytype.*
 import com.weedow.searchy.utils.MAP_KEY
 import com.weedow.searchy.utils.MAP_VALUE
 import org.assertj.core.api.Assertions.assertThat

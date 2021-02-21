@@ -10,7 +10,7 @@
 
     <artifactId>weedow-searchy-jpa</artifactId>
     <name>weedow-searchy-jpa</name>
-    <description>Searchy JPA implementation</description>
+    <description>The Searchy JPA module provides integration with the JPA 2 persistence API.</description>
 
     <dependencies>
         <dependency>

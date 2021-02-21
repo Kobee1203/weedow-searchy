@@ -1,5 +1,7 @@
 package com.weedow.searchy.sample
 
+import net.javacrumbs.jsonunit.spring.jsonContent
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -22,22 +24,19 @@ class SampleApplicationWithCustomBasePathTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @Value("classpath:data/result.json")
-    private lateinit var jsonResult: Resource
-
     @Test
-    fun search_with_custom_base_path() {
+    @DisplayName("Search with custom base path: GET /api/person?firstName=John")
+    fun search_with_custom_base_path(@Value("classpath:data/result_john_doe.json") result: Resource) {
         val basePath = "/api"
 
-        val firstName = "John"
         val searchyDescriptorId = "person"
 
         mockMvc.get("$basePath/$searchyDescriptorId") {
-            param("firstName", firstName)
+            this.param("firstName", "John")
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            content { json(jsonResult.file.readText()) }
+            jsonContent { isEqualTo(result.file.readText()) }
         }
     }
 

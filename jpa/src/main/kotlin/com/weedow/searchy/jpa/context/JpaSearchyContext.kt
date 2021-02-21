@@ -34,4 +34,6 @@ class JpaSearchyContext : AbstractConfigurableSearchyContext() {
     override val joinAnnotations: List<Class<out Annotation>>
         get() = JOIN_ANNOTATIONS
 
+    override val isUnknownAsEmbedded: Boolean = false
+
 }

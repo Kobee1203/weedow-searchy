@@ -4,6 +4,7 @@ import com.neovisionaries.i18n.CountryCode
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
+import com.nhaarman.mockitokotlin2.whenever
 import com.querydsl.core.types.Path
 import com.querydsl.core.types.PathType
 import com.querydsl.core.types.dsl.*
@@ -253,7 +254,25 @@ internal class QEntityImplTest {
             on { this.type }.thenReturn(fieldType)
         }
 
-        processAndVerify(propertyInfos, fieldName, pathClass, fieldType, elementType, emptyList())
+        val isUnknownAsEmbedded = false
+        processAndVerify(propertyInfos, fieldName, pathClass, fieldType, elementType, emptyList(), isUnknownAsEmbedded)
+    }
+
+    @Test
+    fun qentity_with_unknown_embedded_field() {
+        val fieldName = "myfield"
+        val elementType = ElementType.SIMPLE
+        val pathClass = QEntityImpl::class.java
+        val fieldType = Any::class.javaObjectType
+
+        val propertyInfos = mock<PropertyInfos> {
+            on { this.fieldName }.thenReturn(fieldName)
+            on { this.elementType }.thenReturn(elementType)
+            on { this.type }.thenReturn(fieldType)
+        }
+
+        val isUnknownAsEmbedded = true
+        processAndVerify(propertyInfos, fieldName, pathClass, fieldType, elementType, emptyList(), isUnknownAsEmbedded)
     }
 
     /** This test check ElementType.ENTITY and checks if there is no infinite loop thanks to PathInits */
@@ -333,7 +352,8 @@ internal class QEntityImplTest {
         pathClass: Class<out Path<*>>,
         fieldType: Class<*>,
         elementType: ElementType,
-        parameterTypes: List<Class<*>>
+        parameterTypes: List<Class<*>>,
+        isUnknownAsEmbedded: Boolean? = null
     ) {
         val variable = "any"
         val entityClass = Any::class.java
@@ -341,6 +361,9 @@ internal class QEntityImplTest {
             on { this.getAllPropertyInfos(entityClass) }.thenReturn(
                 listOf(propertyInfos)
             )
+        }
+        if(isUnknownAsEmbedded != null) {
+            whenever(searchyContext.isUnknownAsEmbedded).thenReturn(isUnknownAsEmbedded)
         }
 
         val qEntity = QEntityImpl(searchyContext, entityClass, variable)

@@ -27,4 +27,9 @@ internal class JpaSearchyContextTest {
             ManyToOne::class.java
         )
     }
+
+    @Test
+    fun isUnknownAsEmbedded() {
+        assertThat(JpaSearchyContext().isUnknownAsEmbedded).isFalse
+    }
 }

@@ -39,6 +39,12 @@
 
                 <dependency>
                     <groupId>com.weedow</groupId>
+                    <artifactId>weedow-searchy-mongodb</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>com.weedow</groupId>
                     <artifactId>weedow-searchy-sample-app-kotlin</artifactId>
                     <version>${project.version}</version>
                 </dependency>
@@ -52,6 +58,12 @@
                 <dependency>
                     <groupId>com.weedow</groupId>
                     <artifactId>weedow-searchy-sample-app-reactive</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>com.weedow</groupId>
+                    <artifactId>weedow-searchy-sample-app-mongodb</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
