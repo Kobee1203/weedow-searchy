@@ -105,7 +105,6 @@
         <module>core</module>
         <module>jpa</module>
         <module>mongodb</module>
-        <!--<module>collections</module>-->
         <module>samples/sample-app-kotlin</module>
         <module>samples/sample-app-java</module>
         <module>samples/sample-app-mongodb</module>
