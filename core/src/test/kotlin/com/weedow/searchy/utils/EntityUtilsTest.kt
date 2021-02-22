@@ -39,6 +39,10 @@ internal class EntityUtilsTest {
         val field4 = MyObject::class.java.getDeclaredField("field4")
         val parameterizedTypes4 = EntityUtils.getParameterizedTypes(field4)
         assertThat(parameterizedTypes4).isEmpty()
+
+        val field5 = MyObject::class.java.getDeclaredField("field5")
+        val parameterizedTypes5 = EntityUtils.getParameterizedTypes(field5)
+        assertThat(parameterizedTypes5).containsExactly(Number::class.java)
     }
 
     open class Parent(
@@ -57,7 +61,14 @@ internal class EntityUtilsTest {
         val field3: Array<Double>,
 
         @Column
-        val field4: String
+        val field4: String,
+
+        /**
+         * Field to test [java.lang.reflect.WildcardType] parameterized types.
+         * Declaring a field with generic types as 'var' causes the parameterized types to be WildcardType.
+         */
+        @Column
+        var field5: List<Number>
     ) : Parent(0)
 
 }

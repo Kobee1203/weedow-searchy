@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.weedow</groupId>
         <artifactId>weedow-searchy-parent</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>weedow-searchy-report</artifactId>
@@ -26,6 +26,11 @@
         <dependency>
             <groupId>com.weedow</groupId>
             <artifactId>weedow-searchy-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.weedow</groupId>
+            <artifactId>weedow-searchy-mongodb</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

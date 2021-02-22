@@ -22,6 +22,8 @@ import javax.persistence.EntityManager
 /**
  * JPA [SpecificationExecutor] implementation.
  *
+ * _Inspired by the class [org.springframework.data.jpa.repository.support.QuerydslJpaPredicateExecutor]._
+ *
  * @param searchyContext [SearchyContext]
  * @param entityInformation [JpaEntityInformation]
  * @param entityManager [EntityManager]
@@ -62,11 +64,11 @@ open class JpaSpecificationExecutor<T>(
      * @param specification
      * @return the Querydsl [JPQLQuery].
      */
-    protected fun createQuery(specification: Specification<T>?): JPQLQuery<*> {
-        val query: AbstractJPAQuery<*, *> = doCreateQuery(specification)
+    protected fun createQuery(specification: Specification<T>?): JPQLQuery<T> {
+        val query: AbstractJPAQuery<T, *> = doCreateQuery(specification)
         val metadata: CrudMethodMetadata = getRepositoryMethodMetadata() ?: return query
         val type = metadata.lockModeType
-        return if (type == null) query else query.setLockMode(type)
+        return if (type == null) query else query.setLockMode(type) as AbstractJPAQuery<T, *>
     }
 
     @Suppress("UNCHECKED_CAST")

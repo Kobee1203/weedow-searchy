@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.weedow</groupId>
         <artifactId>weedow-searchy-parent</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>weedow-searchy-jpa</artifactId>
     <name>weedow-searchy-jpa</name>
-    <description>Searchy JPA implementation</description>
+    <description>The Searchy JPA module provides integration with the JPA 2 persistence API.</description>
 
     <dependencies>
         <dependency>

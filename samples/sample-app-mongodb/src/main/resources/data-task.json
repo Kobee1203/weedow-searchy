@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "_class": "com.weedow.searchy.sample.mongodb.model.Task",
+    "description": "Go shopping with the family",
+    "name": "Go shopping"
+  },
+  {
+    "id": 2,
+    "_class": "com.weedow.searchy.sample.mongodb.model.Task",
+    "description": "Go to the doctor's appointment next Monday",
+    "name": "Go to the doctor's appointment"
+  },
+  {
+    "id": 3,
+    "_class": "com.weedow.searchy.sample.mongodb.model.Task",
+    "description": null,
+    "name": "Clean up the garage"
+  }
+]

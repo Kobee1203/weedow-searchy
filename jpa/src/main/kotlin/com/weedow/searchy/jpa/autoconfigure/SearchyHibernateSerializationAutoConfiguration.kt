@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+/**
+ * Auto-Configuration to handle lazy-loading when the entities are directly serialized to JSON and they contain lazy-loading fields.
+ */
 @Configuration
 @ConditionalOnClass(Hibernate5Module::class)
 internal class SearchyHibernateSerializationAutoConfiguration {

@@ -1,0 +1,237 @@
+[
+  {
+    "id": "60198caf62c3701a6a97404b",
+    "_class": "com.weedow.searchy.sample.mongodb.model.Person",
+    "age": 39,
+    "birthday": "1981-03-12T10:36:00",
+    "characteristics": {
+      "eyes": "blue",
+      "hair": "brown",
+      "shoe-size": "42"
+    },
+    "createdOn": "2021-02-02T17:32:31.012Z",
+    "email": "john.doe@acme.com",
+    "firstName": "John",
+    "height": 174,
+    "jobEntity": "11111111111111111111111111111",
+    "lastName": "Doe",
+    "mainAddress": {
+      "street": "Rue des Peupliers",
+      "zipCode": "78370",
+      "country": "FR",
+      "city": {
+        "name": "Plaisir",
+        "latitude": 48.8167,
+        "longitude": 1.95
+      },
+      "roomDescription": {
+        "kitchen" : {
+          "area": 15.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "KITCHEN"
+        },
+        "diningroom" : {
+          "area": 25.0,
+          "floor": "ground-floor",
+          "windows": 3,
+          "type": "DININGROOM"
+        },
+        "bedroom1" : {
+          "area": 12.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "BEDROOM"
+        },
+        "bathroom1" : {
+          "area": 12.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "BATHROOM"
+        },
+        "restroom1" : {
+          "area": 7.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "RESTROOM"
+        },
+        "bedroom2" : {
+          "area": 15.0,
+          "floor": "first-floor",
+          "windows": 1,
+          "type": "BEDROOM"
+        },
+        "bathroom2" : {
+          "area": 12.0,
+          "floor": "first-floor",
+          "windows": 1,
+          "type": "BATHROOM"
+        },
+        "restroom2" : {
+          "area": 7.0,
+          "floor": "first-floor",
+          "windows": 0,
+          "type": "RESTROOM"
+        },
+        "office" : {
+          "area": 12.0,
+          "floor": "first-floor",
+          "windows": 1,
+          "type": "OFFICE"
+        }
+      }
+    },
+    "nickNames": ["Joe", "Johnny"],
+    "otherAddresses": [
+      {
+        "street": "Rue des Petits Pois",
+        "zipCode": "17051",
+        "country": "FR",
+        "city": {
+          "name": "Le-Bois-Plage-En-Ré",
+          "latitude": 46.1833,
+          "longitude": -1.3833
+        },
+        "roomDescription": {
+          "kitchen" : {
+            "area": 17.0,
+            "floor": "ground-floor",
+            "windows": 1,
+            "type": "KITCHEN"
+          },
+          "diningroom" : {
+            "area": 23.0,
+            "floor": "ground-floor",
+            "windows": 3,
+            "type": "DININGROOM"
+          },
+          "bedroom1" : {
+            "area": 12.5,
+            "floor": "ground-floor",
+            "windows": 1,
+            "type": "BEDROOM"
+          },
+          "bathroom1" : {
+            "area": 11.5,
+            "floor": "ground-floor",
+            "windows": 1,
+            "type": "BATHROOM"
+          },
+          "restroom1" : {
+            "area": 6.5,
+            "floor": "ground-floor",
+            "windows": 0,
+            "type": "RESTROOM"
+          }
+        }
+      },
+      {
+        "street": "Allée du sable fin",
+        "zipCode": "20166",
+        "country": "FR",
+        "city": {
+          "name": "Porticcio",
+          "latitude": 41.8833,
+          "longitude": 8.7833
+        }
+      }
+    ],
+    "phoneNumbers": ["+33612345678"],
+    "sex": "MALE",
+    "tasks": {
+      "{\"description\":\"Go shopping with the family\",\"id\":1,\"name\":\"Go shopping\"}": "60198cb062c3701a6a974055",
+      "{\"description\":\"Go to the doctor's appointment next Monday\",\"id\":2,\"name\":\"Go to the doctor's appointment\"}": "60198cb062c3701a6a974056",
+      "{\"id\":3,\"name\":\"Clean up the garage\"}": "60198cb062c3701a6a974057"
+    },
+    "updatedOn": "2021-02-02T17:32:32.674Z",
+    "vehicles": [1,2],
+    "weight": 70.5
+  },
+  {
+    "id": "60198cb062c3701a6a97404c",
+    "_class": "com.weedow.searchy.sample.mongodb.model.Person",
+    "age": 39,
+    "birthday": "1981-11-26T12:30:00",
+    "characteristics": {
+      "eyes": "green",
+      "hair": "blond",
+      "hair-length": "long"
+    },
+    "createdOn": "2021-02-02T17:32:32.048Z",
+    "email": "jane.doe@acme.com",
+    "firstName": "Jane",
+    "height": 165,
+    "jobEntity": "22222222222222222222222222222",
+    "lastName": "Doe",
+    "mainAddress": {
+      "street": "10 Mathew St",
+      "zipCode": "L2 6RE",
+      "country": "UK",
+      "city": {
+        "name": "Liverpool",
+        "latitude": 53.4167,
+        "longitude": -3
+      },
+      "roomDescription": {
+        "kitchen" : {
+          "area": 15.0,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "KITCHEN"
+        },
+        "diningroom" : {
+          "area": 21.5,
+          "floor": "ground-floor",
+          "windows": 2,
+          "type": "DININGROOM"
+        },
+        "bedroom1" : {
+          "area": 11.5,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "BEDROOM"
+        },
+        "bathroom1" : {
+          "area": 10.5,
+          "floor": "ground-floor",
+          "windows": 1,
+          "type": "BATHROOM"
+        },
+        "restroom1" : {
+          "area": 5,
+          "floor": "ground-floor",
+          "windows": 0,
+          "type": "RESTROOM"
+        }
+      }
+    },
+    "otherAddresses": [
+      {
+        "street": "Westermarkt 20",
+        "zipCode": "1016 GV",
+        "country": "NL",
+        "city": {
+          "name": "Amsterdam",
+          "latitude": 52.3676,
+          "longitude": 4.9041
+        }
+      }
+    ],
+    "phoneNumbers": ["+33687654321"],
+    "sex": "FEMALE",
+    "tasks": {
+      "{\"description\":\"Go shopping with the family\",\"id\":1,\"name\":\"Go shopping\"}": "60198cb062c3701a6a974055"
+    },
+    "updatedOn": "2021-02-02T17:32:32.760Z",
+    "vehicles": [3],
+    "weight": 68
+  },
+  {
+    "id": "60198cb062c3701a6a97404d",
+    "_class": "com.weedow.searchy.sample.mongodb.model.Person",
+    "firstName": "Bob",
+    "lastName": "Nullos",
+    "createdOn": "2021-02-02T17:32:31.450Z",
+    "updatedOn": "2021-02-02T17:32:32.048Z"
+  }
+]

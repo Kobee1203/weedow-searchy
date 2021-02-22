@@ -3,7 +3,7 @@ package com.weedow.searchy.jpa.autoconfigure
 import com.nhaarman.mockitokotlin2.mock
 import com.weedow.searchy.context.SearchyContext
 import com.weedow.searchy.query.specification.SpecificationExecutorFactory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
@@ -23,8 +23,8 @@ internal class JpaSearchyAutoConfigurationTest {
                 )
             )
             .run { context ->
-                Assertions.assertThat(context).hasBean("jpaSpecificationExecutorFactory")
-                Assertions.assertThat(context).hasBean("jpaSearchyContext")
+                assertThat(context).hasBean("jpaSpecificationExecutorFactory")
+                assertThat(context).hasBean("jpaSearchyContext")
             }
     }
 
@@ -39,10 +39,10 @@ internal class JpaSearchyAutoConfigurationTest {
             )
             .withUserConfiguration(TestCustomJpaConfiguration::class.java)
             .run { context ->
-                Assertions.assertThat(context).doesNotHaveBean("jpaSpecificationExecutorFactory")
-                Assertions.assertThat(context).doesNotHaveBean("jpaSearchyContext")
-                Assertions.assertThat(context).hasBean("customJpaSpecificationExecutorFactory")
-                Assertions.assertThat(context).hasBean("customJpaSearchyContext")
+                assertThat(context).doesNotHaveBean("jpaSpecificationExecutorFactory")
+                assertThat(context).doesNotHaveBean("jpaSearchyContext")
+                assertThat(context).hasBean("customJpaSpecificationExecutorFactory")
+                assertThat(context).hasBean("customJpaSearchyContext")
             }
     }
 

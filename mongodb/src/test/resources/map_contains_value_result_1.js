@@ -1,0 +1,3 @@
+function(){
+var deepIterate=function(obj,path,value){var pathSplit=path.split(".");var part=pathSplit[0];if(Array.isArray(obj)){for(var i=0;i<obj.length;i++){if(deepIterate(obj[i],path,value)){return true;}}}else if(pathSplit.length>1){var newPath=pathSplit.slice(1).join(".");if(part!="value"){if(obj.hasOwnProperty(part)&&deepIterate(obj[part],newPath,value)){return true;}}else{for(var field in obj){if(obj.hasOwnProperty(field)&&deepIterate(obj[field],newPath,value)){return true;}}}}else{if(part!="value"){return obj[part]==value;}else{for(var field in obj){if(obj.hasOwnProperty(field)&&obj[field]==value){return true;}}}}
+return false;};return deepIterate(this,"expr_name","myvalue");}

@@ -3,6 +3,7 @@ package com.weedow.searchy.utils
 import org.apache.commons.lang3.reflect.FieldUtils
 import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
+import java.lang.reflect.WildcardType
 
 /**
  * Entity utility methods.
@@ -34,7 +35,7 @@ object EntityUtils {
         val genericType = field.genericType
         return when {
             type.isArray -> listOf(type.componentType)
-            genericType is ParameterizedType -> genericType.actualTypeArguments.map { it as Class<*> }
+            genericType is ParameterizedType -> genericType.actualTypeArguments.map { (if (it is WildcardType) it.upperBounds[0] else it) as Class<*> }
             else -> emptyList()
         }
     }

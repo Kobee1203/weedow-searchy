@@ -1,0 +1,210 @@
+[
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@acme.com",
+    "birthday": "1981-03-12T10:36:00",
+    "height": 174.0,
+    "weight": 70.5,
+    "nickNames": [
+      "Joe",
+      "Johnny"
+    ],
+    "phoneNumbers": [
+      "+33612345678"
+    ],
+    "addressEntities": [
+      {
+        "street": "Rue des Peupliers",
+        "city": "Plaisir",
+        "zipCode": "78370",
+        "country": "FR",
+        "id": 1,
+        "createdOn": "2020-03-12T10:36:00Z",
+        "updatedOn": "2020-04-17T12:00:00Z"
+      },
+      {
+        "street": "Allée du sable fin",
+        "city": "Porticcio",
+        "zipCode": "20166",
+        "country": "FR",
+        "id": 2,
+        "createdOn": "2020-03-12T09:36:00Z",
+        "updatedOn": "2020-04-17T11:00:00Z"
+      }
+    ],
+    "jobEntity": {
+      "active": true,
+      "title": "Lab Technician",
+      "company": "Acme",
+      "salary": 50000,
+      "hireDate": "2019-09-01T09:00:00Z",
+      "id": 1,
+      "createdOn": "2020-03-12T10:36:00Z",
+      "updatedOn": "2020-04-17T12:00:00Z"
+    },
+    "vehicles": [
+      {
+        "vehicleType": "CAR",
+        "brand": "Renault",
+        "model": "Clio E-Tech",
+        "features": {
+          "gps": {
+            "name": "gps",
+            "description": "Connected navigation with cartography and connected navigation services (3 years): Google search for addresses and points of interest, real-time traffic information, fuel prices, warning zones.",
+            "metadata": {},
+            "id": 1,
+            "createdOn": "2020-03-12T10:36:00Z",
+            "updatedOn": "2020-03-12T10:36:00Z"
+          },
+          "airbag": {
+            "name": "airbag",
+            "description": "Dual deployment driver front airbag and passenger front airbag. Front seat side airbags and front and rear side curtain airbags for optimum safety of all occupants.",
+            "metadata": {},
+            "id": 2,
+            "createdOn": "2020-03-12T10:36:00Z",
+            "updatedOn": "2020-03-12T10:36:00Z"
+          },
+          "overspeed": {
+            "name": "overspeed",
+            "description": "Your vehicle is on watch at all times: its camera reads traffic signs and informs you of the latest speed limits. In the event of overspeeding, your dashboard and navigation system will give you a visual warning when you exceed the speed limit.",
+            "metadata": {},
+            "id": 3,
+            "createdOn": "2020-03-12T10:36:00Z",
+            "updatedOn": "2020-03-12T10:36:00Z"
+          }
+        },
+        "id": 1,
+        "createdOn": "2020-03-12T10:36:00Z",
+        "updatedOn": "2020-04-17T12:00:00Z"
+      },
+      {
+        "vehicleType": "MOTORBIKE",
+        "brand": "Harley-Davidson",
+        "model": "Livewire",
+        "features": {},
+        "id": 2,
+        "createdOn": "2020-03-12T10:36:00Z",
+        "updatedOn": "2020-04-17T12:00:00Z"
+      }
+    ],
+    "characteristics": {
+      "hair": "brown",
+      "eyes": "blue"
+    },
+    "tasks": {
+      "{\"description\":\"Go shopping with the family\",\"name\":\"Go shopping\",\"createdOn\":\"2020-12-06T12:00Z\",\"id\":1,\"updatedOn\":\"2020-12-06T12:00Z\"}": "${json-unit.regex}2020-12-24T[0-9]{2}:00:00",
+      "{\"description\":\"Go to the doctor's appointment next Monday\",\"name\":\"Go to the doctor's appointment\",\"createdOn\":\"2020-12-06T12:00Z\",\"id\":2,\"updatedOn\":\"2020-12-06T12:00Z\"}": "${json-unit.regex}2020-12-28T[0-9]{2}:00:00",
+      "{\"description\":null,\"name\":\"Clean up the garage\",\"createdOn\":\"2020-12-06T12:00Z\",\"id\":3,\"updatedOn\":\"2020-12-06T12:00Z\"}": "${json-unit.regex}2020-12-30T[0-9]{2}:00:00"
+    },
+    "id": 1,
+    "createdOn": "2020-03-12T10:36:00Z",
+    "updatedOn": "2020-04-17T12:00:00Z"
+  },
+  {
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "email": "jane.doe@acme.com",
+    "birthday": "1981-11-26T12:30:00",
+    "height": 165.0,
+    "weight": 68.0,
+    "nickNames": [],
+    "phoneNumbers": [
+      "+33687654321"
+    ],
+    "addressEntities": [
+      {
+        "street": "Rue des Peupliers",
+        "city": "Plaisir",
+        "zipCode": "78370",
+        "country": "FR",
+        "id": 1,
+        "createdOn": "2020-03-12T10:36:00Z",
+        "updatedOn": "2020-04-17T12:00:00Z"
+      },
+      {
+        "street": "Rue des Petits Pois",
+        "city": "Le-Bois-Plage-En-Ré",
+        "zipCode": "17051",
+        "country": "FR",
+        "id": 3,
+        "createdOn": "2020-03-12T09:36:00Z",
+        "updatedOn": "2020-04-17T11:00:00Z"
+      }
+    ],
+    "jobEntity": {
+      "active": true,
+      "title": "Commercial Fisherman",
+      "company": "Fishing & Co",
+      "salary": 60000,
+      "hireDate": "2019-09-01T09:00:00Z",
+      "id": 2,
+      "createdOn": "2020-03-12T10:36:00Z",
+      "updatedOn": "2020-04-17T12:00:00Z"
+    },
+    "vehicles": [
+      {
+        "vehicleType": "CAR",
+        "brand": "Porsche",
+        "model": "911 Carrera S",
+        "features": {
+          "airConditioning": {
+            "name": "airConditioning",
+            "description": "Automatic air conditioning: select your temperature and the system will then manage the other parameters for your comfort.",
+            "metadata": {},
+            "id": 5,
+            "createdOn": "2020-03-12T10:36:00Z",
+            "updatedOn": "2020-03-12T10:36:00Z"
+          },
+          "eba": {
+            "name": "eba",
+            "description": "Emergency Brake Assist (EBA) applies maximum braking power when it detects a sudden braking maneuver by the driver. This helps reduce braking distances.",
+            "metadata": {},
+            "id": 4,
+            "createdOn": "2020-03-12T10:36:00Z",
+            "updatedOn": "2020-03-12T10:36:00Z"
+          },
+          "backCamera": {
+            "name": "backCamera",
+            "description": "",
+            "metadata": {},
+            "id": 6,
+            "createdOn": "2020-03-12T10:36:00Z",
+            "updatedOn": "2020-03-12T10:36:00Z"
+          }
+        },
+        "id": 3,
+        "createdOn": "2020-03-12T10:36:00Z",
+        "updatedOn": "2020-04-17T12:00:00Z"
+      }
+    ],
+    "characteristics": {
+      "hair": "blond",
+      "eyes": "green"
+    },
+    "tasks": {
+      "{\"description\":\"Go shopping with the family\",\"name\":\"Go shopping\",\"createdOn\":\"2020-12-06T12:00Z\",\"id\":1,\"updatedOn\":\"2020-12-06T12:00Z\"}": "${json-unit.regex}2020-12-24T[0-9]{2}:00:00"
+    },
+    "id": 2,
+    "createdOn": "2020-03-07T10:36:00Z",
+    "updatedOn": "2020-04-07T12:00:00Z"
+  },
+  {
+    "firstName": "Bob",
+    "lastName": "Nullos",
+    "email": null,
+    "birthday": null,
+    "height": null,
+    "weight": null,
+    "nickNames": [],
+    "phoneNumbers": [],
+    "addressEntities": [],
+    "jobEntity": null,
+    "vehicles": [],
+    "characteristics": {},
+    "tasks": {},
+    "id": 3,
+    "createdOn": "2020-03-08T10:36:00Z",
+    "updatedOn": "2020-04-08T12:00:00Z"
+  }
+]

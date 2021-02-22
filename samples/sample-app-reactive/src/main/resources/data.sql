@@ -35,12 +35,13 @@ INSERT INTO FEATURE_MAPPING (vehicle_id, feature_id) VALUES (3, 5);
 INSERT INTO FEATURE_MAPPING (vehicle_id, feature_id) VALUES (3, 6);
 
 INSERT INTO ADDRESS (id, created_on, updated_on, city, country, street, zip_code) VALUES (1, '2020-03-12T10:36:00Z', '2020-04-17T12:00:00Z', 'Plaisir', 'FR', 'Rue des Peupliers', '78370');
-INSERT INTO ADDRESS (id, created_on, updated_on, city, country, street, zip_code) VALUES (2, '2020-03-12T09:36:00Z', '2020-04-17T11:00:00Z', 'Le-Bois-Plage-En-Ré', 'FR', 'Rue des Petits Pois', '17051');
+INSERT INTO ADDRESS (id, created_on, updated_on, city, country, street, zip_code) VALUES (2, '2020-03-12T09:36:00Z', '2020-04-17T11:00:00Z', 'Porticcio', 'FR', 'Allée du sable fin', '20166');
+INSERT INTO ADDRESS (id, created_on, updated_on, city, country, street, zip_code) VALUES (3, '2020-03-12T09:36:00Z', '2020-04-17T11:00:00Z', 'Le-Bois-Plage-En-Ré', 'FR', 'Rue des Petits Pois', '17051');
 
 INSERT INTO PERSON_ADDRESS(person_id, address_id) VALUES (1, 1);
 INSERT INTO PERSON_ADDRESS(person_id, address_id) VALUES (1, 2);
 INSERT INTO PERSON_ADDRESS(person_id, address_id) VALUES (2, 1);
-INSERT INTO PERSON_ADDRESS(person_id, address_id) VALUES (2, 2);
+INSERT INTO PERSON_ADDRESS(person_id, address_id) VALUES (2, 3);
 
 INSERT INTO JOB(id, person_id, created_on, updated_on, active, title, company, salary, hire_date) VALUES (1, 1, '2020-03-12T10:36:00Z', '2020-04-17T12:00:00Z', true, 'Lab Technician', 'Acme', '50000', '2019-09-01T09:00:00Z');
 INSERT INTO JOB(id, person_id, created_on, updated_on, active, title, company, salary, hire_date) VALUES (2, 2, '2020-03-12T10:36:00Z', '2020-04-17T12:00:00Z', true, 'Commercial Fisherman', 'Fishing & Co', '60000', '2019-09-01T09:00:00Z');

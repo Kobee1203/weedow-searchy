@@ -7,11 +7,15 @@
 </p>
 
 ## About
-Searchy is a Spring-based library that allows to automatically expose endpoints in order to search for data related to Entities.
+Searchy is a Spring-based library that allows to automatically expose endpoints in order to search for data related to Entities, whatever the database used.
 
 Searchy provides an advanced search engine that does not require the creation of Repositories with custom methods needed to search on different fields of Entities.
 
-We can search on any field, combine multiple criteria to refine the search, and even search on nested fields. 
+We can search on any field, combine multiple criteria to refine the search, and even search on nested fields.
+
+It supports the following data access layers:
+* [JPA](./jpa)
+* [MongoDB](./mongodb)
 
 ![Query GIF](./docs/images/query.gif)
 
@@ -84,16 +88,30 @@ The library provides a query language that allows to create queries on any field
 
 * You can download the [latest release](https://github.com/Kobee1203/weedow-searchy/releases).
 * If you have a [Maven](https://maven.apache.org/) project, you can add the following dependency in your `pom.xml` file:
+  * JPA:
   ```xml
   <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>weedow-searchy-jpa</artifactId>
-      <version>0.0.1</version>
+      <version>0.1.0</version>
+  </dependency>
+  ```
+  * MongoDB:
+  ```xml
+  <dependency>
+      <groupId>com.weedow</groupId>
+      <artifactId>weedow-searchy-mongodb</artifactId>
+      <version>0.1.0</version>
   </dependency>
   ```
 * If you have a [Gradle](https://gradle.org/) project, you can add the following dependency in your `build.gradle` file:
+  * JPA:  
   ```groovy
-  implementation "com.weedow:weedow-searchy-jpa:0.0.1"
+  implementation "com.weedow:weedow-searchy-jpa:0.1.0"
+  ```
+  * MongoDB:
+  ```groovy
+  implementation "com.weedow:weedow-searchy-mongodb:0.1.0"
   ```
 
 ### Getting Started in 5 minutes
@@ -110,12 +128,12 @@ The library provides a query language that allows to create queries on any field
     <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>weedow-searchy-jpa</artifactId>
-      <version>0.0.1</version>
+      <version>0.1.0</version>
     </dependency>
     ```
     * For [Gradle](https://gradle.org/) project, add the dependency in the `build.gradle` file:
     ```groovy
-    implementation "com.weedow:weedow-searchy-jpa:0.0.1"
+    implementation "com.weedow:weedow-searchy-jpa:0.1.0"
     ```
 * Create a new file `Person.java` to add a new JPA Entity `Person` with the following content:
     ```java
@@ -572,7 +590,7 @@ The value types are the following:
 | Persons who are actively employed                                   | /person?query=`job.active=true`                                          |
 | Persons who have brown hair<br/>_It uses a field of `Map` type_     | /person?query=`characteristics.key=hair AND characteristics.value=brown` |
 
-1. <a name="not-equals-operator"></a> Not Equals operator `!=`
+2. <a name="not-equals-operator"></a> Not Equals operator `!=`
 
 | What you want to query                                              | Example                                               |
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
@@ -584,7 +602,7 @@ The value types are the following:
 | Persons who are not 1,74 m tall                                     | /person?query=`height!=174`                           |
 | Persons who are not actively employed                               | /person?query=`job.active!=true`                      |
 
-1. <a name="less-than-operator"></a> Less than operator `<`
+3. <a name="less-than-operator"></a> Less than operator `<`
 
 | What you want to query                                              | Example                                               |
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
@@ -593,7 +611,7 @@ The value types are the following:
 | Persons who are hired before current datetime                       | /person?query=`job.hireDate<CURRENT_DATE_TIME`        |
 | Persons who are smaller than 1,74 m                                 | /person?query=`height<174`                            |
 
-1. <a name="less-than-or-equals-operator"></a> Less than or equals operator `<=`
+4. <a name="less-than-or-equals-operator"></a> Less than or equals operator `<=`
 
 | What you want to query                                              | Example                                               |
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
@@ -602,7 +620,7 @@ The value types are the following:
 | Persons who are hired before or on current datetime                 | /person?query=`job.hireDate<=CURRENT_DATE_TIME`       |
 | Persons who are smaller than or equal to 1,74 m                     | /person?query=`height<=174`                           |
 
-1. <a name="greater-than-operator"></a> Greater than operator `>`
+5. <a name="greater-than-operator"></a> Greater than operator `>`
 
 | What you want to query                                              | Example                                               |
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
@@ -611,7 +629,7 @@ The value types are the following:
 | Persons who are hired after the current datetime                    | /person?query=`job.hireDate>CURRENT_DATE_TIME`        |
 | Persons who are taller than 1,74 m                                  | /person?query=`height>174`                            |
 
-1. <a name="greater-than-or-equals-operator"></a> Greater than or equals operator `>=`
+6. <a name="greater-than-or-equals-operator"></a> Greater than or equals operator `>=`
 
 | What you want to query                                              | Example                                               |
 | ------------------------------------------------------------------- | ----------------------------------------------------- |
@@ -620,7 +638,7 @@ The value types are the following:
 | Persons who are hired after or on current datetime                  | /person?query=`job.hireDate>=CURRENT_DATE_TIME`       |
 | Persons who are taller than or equal to 1,74 m                      | /person?query=`height>=174`                           |
 
-1. <a name="matches-operator"></a> Matches operator `MATCHES`
+7. <a name="matches-operator"></a> Matches operator `MATCHES`
 
 _Use the wildcard character `*` to match any string with zero or more characters._
 
@@ -631,7 +649,7 @@ _Use the wildcard character `*` to match any string with zero or more characters
 | Persons with the first name containing 'oh'                         | /person?query=`firstName MATCHES '*oh*'`              |
 | Persons with the first name that does not start with 'Jo'           | /person?query=`firstName NOT MATCHES 'Jo*'`           |
 
-1. <a name="imatches-operator"></a> Case-insensitive matches operator `IMATCHES`
+8. <a name="imatches-operator"></a> Case-insensitive matches operator `IMATCHES`
 
 This operator has the same behaviour as ['MATCHES'](#matches-operator) except that it is not case-sensitive.
 
@@ -644,7 +662,7 @@ _Use the wildcard character `*` to match any string with zero or more characters
 | Persons with the first name containing 'OH', ignoring case-sensitive               | /person?query=`firstName IMATCHES '*OH*'`             |
 | Persons with the first name that does not start with 'JO', ignoring case-sensitive | /person?query=`firstName NOT IMATCHES 'JO*'`          |
 
-1. <a name="in-operator"></a> `ÌN` operator
+9. <a name="in-operator"></a> `ÌN` operator
 
 | What you want to query                                                  | Example                                                              |
 | ----------------------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -653,7 +671,7 @@ _Use the wildcard character `*` to match any string with zero or more characters
 | Persons who own one of the given vehicle types (VehicleType is an Enum) | /person?query=`vehicle.vehicleType IN ('CAR', 'MOTORBIKE', 'TRUCK')` |
 | Persons who are not named 'John' or 'Jane'                              | /person?query=`firstName NOT IN ('John', 'Jane')`                    |
 
-1. <a name="date-comparison"></a> Date comparison
+10. <a name="date-comparison"></a> `Date` comparison
 
 The fields representing a date, time, or datetime can be compared with a string having a valid format according to the type of the field.
 
@@ -676,7 +694,7 @@ Also, the fields representing a date, time, or datetime can be compared with the
 | Persons with the birthday is before current datetime        | /person?query=`birthday<CURRENT_DATE_TIME`  |
 | Persons with the birthday is before or at current datetime  | /person?query=`birthday<=CURRENT_DATE_TIME` |
 
-1. <a name="null-comparison"></a> `NULL` comparison
+11. <a name="null-comparison"></a> `NULL` comparison
 
 | What you want to query                                  | Example                                                                 |
 | ------------------------------------------------------- | ----------------------------------------------------------------------- |
@@ -685,13 +703,13 @@ Also, the fields representing a date, time, or datetime can be compared with the
 | Persons who don't have jobs                             | /person?query=`job=null`<br/>/person?query=`job IS NULL`                |
 | Persons who have jobs                                   | /person?query=`job!=null`<br/>/person?query=`job IS NOT NULL`           |
 
-1. <a name="and-logical-operator"></a> `AND` logical operator
+12. <a name="and-logical-operator"></a> `AND` logical operator
 
 | What you want to query                                                                                                                                         | Example                                                                                                                                                                  |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Persons with the first name 'John', with blue eyes, with a height greater than 1,60 m, the birthday is the given `LocalDateTime` and who are actively employed | /person?query=`firstName='John' AND characteristics.key='eyes' AND characteristics.value='blue' AND height > 160 and birthday='1981-03-12T10:36:00' AND job.active=true` |
 
-1. <a name="or-logical-operator"></a> `OR` logical operator
+13. <a name="or-logical-operator"></a> `OR` logical operator
 
 | What you want to query                                                  | Example                                                                      |
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
@@ -699,7 +717,7 @@ Also, the fields representing a date, time, or datetime can be compared with the
 | Persons with the height is 1,68 m, 1,74 m or 1,85 m                     | /person?query=`height=168 OR height=174 OR height=185`                       |
 | Persons who own a car or a motorbike (VehicleType is an Enum)           | /person?query=`vehicle.vehicleType='CAR' OR vehicle.vehicleType='MOTORBIKE'` |
 
-1. <a name="not-operator"></a> `NOT` operator
+14. <a name="not-operator"></a> `NOT` operator
 
 | What you want to query                                                  | Example                                                                      |
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
@@ -707,7 +725,7 @@ Also, the fields representing a date, time, or datetime can be compared with the
 | Persons who don't live in France and is not actively employed           | /person?query=`NOT (address.country='FR' AND job.active=true`                |
 | Persons who don't own a car (VehicleType is an Enum)                    | /person?query=`NOT vehicle.vehicleType='CAR'`                                |
 
-1. <a name="parentheses"></a> Parentheses
+15. <a name="parentheses"></a> Parentheses
 
 The precedence of operators determines the order of evaluation of terms in an expression.
 
@@ -719,7 +737,7 @@ To override this order and group terms explicitly, you can use parentheses.
 | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Persons who are named 'John' or 'Jane', and own a car or a motorbike             | /person?query=`(firstName='John' OR firstName='Jane') AND (vehicle.vehicleType='CAR' OR vehicle.vehicleType='MOTORBIKE')` |
 
-1. Nested fields
+16. Nested fields
 
 To search on nested fields, you must concatenate the deep fields separated by the dot '`.`'.\
 _Example: The `Person` Entity contains a property of the `Address` Entity that is named `addressEntities`, and we search for Persons who live in 'Paris'_:\
@@ -734,10 +752,11 @@ _Example: The `Person` Entity contains a property of the `Address` Entity that i
 ## Features
 
 ### Javadoc
-| Module       | Javadoc                                                                                                                                                |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Core         | [![javadoc-core](https://javadoc.io/badge2/com.weedow/weedow-searchy-core/javadoc.svg)](https://javadoc.io/doc/com.weedow/weedow-searchy-core) |
-| JPA          | [![javadoc-jpa](https://javadoc.io/badge2/com.weedow/weedow-searchy-jpa/javadoc.svg)](https://javadoc.io/doc/com.weedow/weedow-searchy-jpa)    |
+| Module       | Javadoc                                                                                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Core         | [![javadoc-core](https://javadoc.io/badge2/com.weedow/weedow-searchy-core/javadoc.svg)](https://javadoc.io/doc/com.weedow/weedow-searchy-core)          |
+| JPA          | [![javadoc-jpa](https://javadoc.io/badge2/com.weedow/weedow-searchy-jpa/javadoc.svg)](https://javadoc.io/doc/com.weedow/weedow-searchy-jpa)             |
+| MongoDB      | [![javadoc-mongodb](https://javadoc.io/badge2/com.weedow/weedow-searchy-mongodb/javadoc.svg)](https://javadoc.io/doc/com.weedow/weedow-searchy-mongodb) |
 
 ### Search Descriptor
 The Search Descriptors allow exposing automatically search endpoints for Entities.\
@@ -1289,6 +1308,12 @@ Contributions are what make the open source community such an amazing place to b
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+## How to make a new Release
+Page to describe the process of creating a new release: [Make a new release](./docs/release.md)
+
+## How to add a new module
+Page to describe the process of adding a new module: [Add a new module](./docs/new-module.md)
+
 ## Contact
 
 Nicolas Dos Santos - [@Kobee1203](https://twitter.com/Kobee1203)
@@ -1301,6 +1326,8 @@ Project Link: <https://github.com/Kobee1203/weedow-searchy>
 [![GitHub forks](https://img.shields.io/github/forks/Kobee1203/weedow-searchy?style=social)]()
 [![GitHub stars](https://img.shields.io/github/stars/Kobee1203/weedow-searchy?style=social)]()
 [![GitHub watchers](https://img.shields.io/github/watchers/Kobee1203/weedow-searchy?style=social)]()
+
+[![Join the chat at https://gitter.im/weedow-searchy/community](https://badges.gitter.im/weedow-searchy/community.svg)](https://gitter.im/weedow-searchy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## License
 

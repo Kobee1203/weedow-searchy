@@ -1,0 +1,23 @@
+[
+  {
+    "id": "60198cb062c3701a6a974055",
+    "_class": "com.weedow.searchy.sample.mongodb.model.TaskTime",
+    "createdOn": "2021-02-02T17:32:32.587Z",
+    "time": "2020-12-24T12:00:00.000Z",
+    "updatedOn": "2021-02-02T17:32:32.587Z"
+  },
+  {
+    "id": "60198cb062c3701a6a974056",
+    "_class": "com.weedow.searchy.sample.mongodb.model.TaskTime",
+    "createdOn": "2021-02-02T17:32:32.658Z",
+    "time": "2020-12-28T12:00:00.000Z",
+    "updatedOn": "2021-02-02T17:32:32.658Z"
+  },
+  {
+    "id": "60198cb062c3701a6a974057",
+    "_class": "com.weedow.searchy.sample.mongodb.model.TaskTime",
+    "createdOn": "2021-02-02T17:32:32.663Z",
+    "time": "2020-12-30T12:00:00.000Z",
+    "updatedOn": "2021-02-02T17:32:32.663Z"
+  }
+]

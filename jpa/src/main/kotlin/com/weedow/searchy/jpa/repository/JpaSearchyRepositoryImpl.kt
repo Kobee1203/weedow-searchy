@@ -14,7 +14,7 @@ import java.io.Serializable
 import javax.persistence.EntityManager
 
 /**
- * Default Data Search JPA Repository implementation.
+ * Default JPA Searchy Repository implementation.
  *
  * @param entityInformation must not be null
  * @param entityManager must not be null
@@ -31,7 +31,7 @@ class JpaSearchyRepositoryImpl<T, ID : Serializable>(
     SearchyBaseRepository<T, ID> {
 
     private val factory: SpecificationExecutorFactory = JpaSpecificationExecutorFactory(entityManager, searchyContext)
-    private val specificationExecutor: SpecificationExecutor<T> = factory.getSpecificationExecutor(domainClass)
+    private val specificationExecutor: SpecificationExecutor<T> = factory.getSpecificationExecutor(entityInformation.javaType)
 
     constructor(
         domainClass: Class<T>,
