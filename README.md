@@ -93,7 +93,7 @@ The library provides a query language that allows to create queries on any field
   <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>weedow-searchy-jpa</artifactId>
-      <version>0.0.1</version>
+      <version>0.1.0</version>
   </dependency>
   ```
   * MongoDB:
@@ -101,17 +101,17 @@ The library provides a query language that allows to create queries on any field
   <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>weedow-searchy-mongodb</artifactId>
-      <version>0.0.1</version>
+      <version>0.1.0</version>
   </dependency>
   ```
 * If you have a [Gradle](https://gradle.org/) project, you can add the following dependency in your `build.gradle` file:
   * JPA:  
   ```groovy
-  implementation "com.weedow:weedow-searchy-jpa:0.0.1"
+  implementation "com.weedow:weedow-searchy-jpa:0.1.0"
   ```
   * MongoDB:
   ```groovy
-  implementation "com.weedow:weedow-searchy-mongodb:0.0.1"
+  implementation "com.weedow:weedow-searchy-mongodb:0.1.0"
   ```
 
 ### Getting Started in 5 minutes
@@ -128,12 +128,12 @@ The library provides a query language that allows to create queries on any field
     <dependency>
       <groupId>com.weedow</groupId>
       <artifactId>weedow-searchy-jpa</artifactId>
-      <version>0.0.1</version>
+      <version>0.1.0</version>
     </dependency>
     ```
     * For [Gradle](https://gradle.org/) project, add the dependency in the `build.gradle` file:
     ```groovy
-    implementation "com.weedow:weedow-searchy-jpa:0.0.1"
+    implementation "com.weedow:weedow-searchy-jpa:0.1.0"
     ```
 * Create a new file `Person.java` to add a new JPA Entity `Person` with the following content:
     ```java

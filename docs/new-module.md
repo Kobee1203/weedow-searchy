@@ -37,7 +37,7 @@ This page describes how to add a new module in the project.
       <parent>
           <groupId>com.weedow</groupId>
           <artifactId>weedow-searchy-parent</artifactId>
-          <version>0.0.2-SNAPSHOT</version> <!-- Specify the current version from the pom parent -->
+          <version>0.1.0-SNAPSHOT</version> <!-- Specify the current version from the pom parent -->
       </parent>
   
       <artifactId>weedow-searchy-mymodule</artifactId>
