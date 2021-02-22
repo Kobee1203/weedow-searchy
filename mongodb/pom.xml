@@ -10,10 +10,10 @@
 
     <artifactId>weedow-searchy-mongodb</artifactId>
     <name>weedow-searchy-mongodb</name>
-    <description>The Searchy MongoDB module provides integration with the Mongodb API.</description>
+    <description>The Searchy MongoDB module provides integration with the MongoDB API.</description>
 
     <properties>
-        <testcontainers.mongodb.version>1.15.1</testcontainers.mongodb.version>
+        <testcontainers.mongodb.version>1.15.2</testcontainers.mongodb.version>
     </properties>
 
     <dependencies>
