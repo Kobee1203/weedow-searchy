@@ -7,11 +7,15 @@
 </p>
 
 ## About
-Searchy is a Spring-based library that allows to automatically expose endpoints in order to search for data related to Entities.
+Searchy is a Spring-based library that allows to automatically expose endpoints in order to search for data related to Entities, whatever the database used.
 
 Searchy provides an advanced search engine that does not require the creation of Repositories with custom methods needed to search on different fields of Entities.
 
-We can search on any field, combine multiple criteria to refine the search, and even search on nested fields. 
+We can search on any field, combine multiple criteria to refine the search, and even search on nested fields.
+
+It supports the following data access layers:
+* [JPA](./jpa)
+* [MongoDB](./mongodb)
 
 ![Query GIF](./docs/images/query.gif)
 
@@ -84,6 +88,7 @@ The library provides a query language that allows to create queries on any field
 
 * You can download the [latest release](https://github.com/Kobee1203/weedow-searchy/releases).
 * If you have a [Maven](https://maven.apache.org/) project, you can add the following dependency in your `pom.xml` file:
+  * JPA:
   ```xml
   <dependency>
       <groupId>com.weedow</groupId>
@@ -91,9 +96,22 @@ The library provides a query language that allows to create queries on any field
       <version>0.0.1</version>
   </dependency>
   ```
+  * MongoDB:
+  ```xml
+  <dependency>
+      <groupId>com.weedow</groupId>
+      <artifactId>weedow-searchy-mongodb</artifactId>
+      <version>0.0.1</version>
+  </dependency>
+  ```
 * If you have a [Gradle](https://gradle.org/) project, you can add the following dependency in your `build.gradle` file:
+  * JPA:  
   ```groovy
   implementation "com.weedow:weedow-searchy-jpa:0.0.1"
+  ```
+  * MongoDB:
+  ```groovy
+  implementation "com.weedow:weedow-searchy-mongodb:0.0.1"
   ```
 
 ### Getting Started in 5 minutes
