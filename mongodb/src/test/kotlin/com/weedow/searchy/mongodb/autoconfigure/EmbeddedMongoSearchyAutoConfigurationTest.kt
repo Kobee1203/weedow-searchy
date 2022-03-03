@@ -24,7 +24,7 @@ internal class EmbeddedMongoSearchyAutoConfigurationTest {
         val attacheStderr = false
         val tty = false
         val cmd = listOf("--replSet", "docker-rs")
-        val env = mapOf("MONGO_MAJOR" to "4.4", "MONGO_VERSION" to "4.4.4")
+        val env = mapOf("MONGO_MAJOR" to "5.0", "MONGO_VERSION" to "5.0.6")
         val hostPort = 27017
         val containerExposedPort = 27017
         val privilegedMode = false
