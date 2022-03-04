@@ -19,8 +19,9 @@ internal class JSResourceUtilsTest {
         val jsResource = DefaultResourceLoader().getResource("classpath:map_contains_value.js")
         val result = JSResourceUtils.load(jsResource)
 
-        assertThat(result)
-            .isEqualTo(String(javaClass.getResourceAsStream(resultResource).readAllBytes(), StandardCharsets.UTF_8))
+        val jsFunction = String(javaClass.getResourceAsStream(resultResource).readAllBytes(), StandardCharsets.UTF_8)
+
+        assertThat(result).isEqualToNormalizingNewlines(jsFunction)
     }
 
     companion object {

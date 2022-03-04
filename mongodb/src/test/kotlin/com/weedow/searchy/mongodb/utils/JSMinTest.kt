@@ -236,7 +236,7 @@ internal class JSMinTest {
     fun minimizeFullJsFile() {
         val inputStream = javaClass.getResourceAsStream("/map_contains_value.js")
         JsMinAssertions.assertThat(inputStream)
-            .isEqualTo(String(javaClass.getResourceAsStream("/map_contains_value.min.js").readAllBytes(), StandardCharsets.UTF_8))
+            .isEqualToNormalizingNewlines(String(javaClass.getResourceAsStream("/map_contains_value.min.js").readAllBytes(), StandardCharsets.UTF_8))
     }
 
     private class JsMinAssertions(private val inputStream: InputStream) {

@@ -385,7 +385,7 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.operator).isEqualTo(Ops.EQ)
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isInstanceOf(StringPath::class.java).isEqualTo(Expressions.stringPath("\$where"))
-        val jsFunction = String(javaClass.getResourceAsStream("/map_contains_value_result_1.js").readAllBytes(), StandardCharsets.UTF_8)
+        val jsFunction = loadResourceAndNormalizeNewlines("/map_contains_value_result_1.js", javaClass)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(BsonJavaScript(jsFunction))
 
         verifyZeroInteractions(query)
@@ -421,7 +421,7 @@ internal class MongoQueryBuilderTest {
         assertThat(booleanOperation.operator).isEqualTo(Ops.EQ)
         assertThat(booleanOperation.args).hasSize(2)
         assertThat(booleanOperation.args[0]).isInstanceOf(StringPath::class.java).isEqualTo(Expressions.stringPath("\$where"))
-        val jsFunction = String(javaClass.getResourceAsStream("/map_contains_value_result_2.js").readAllBytes(), StandardCharsets.UTF_8)
+        val jsFunction = loadResourceAndNormalizeNewlines("/map_contains_value_result_2.js", javaClass)
         assertThat(booleanOperation.args[1]).extracting("constant").isEqualTo(BsonJavaScript(jsFunction))
 
         verifyZeroInteractions(query)
@@ -766,6 +766,12 @@ internal class MongoQueryBuilderTest {
                     on { this.metadata }.thenReturn(pathMetadata)
                 })
             )
+        }
+
+        @JvmStatic
+        private fun loadResourceAndNormalizeNewlines(resource: String, clazz: Class<*>): String {
+            val bytes = clazz.getResourceAsStream(resource)!!.readAllBytes()
+            return String(bytes, StandardCharsets.UTF_8).replace("\r\n", "\n")
         }
     }
 }
