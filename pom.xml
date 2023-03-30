@@ -61,7 +61,7 @@
         <dokka-maven-plugin.version>1.6.10</dokka-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.12</nexus-staging-maven-plugin.version>
-        <versions-maven-plugin.version>2.9.0</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.15.0</versions-maven-plugin.version>
 
         <!-- Set the default Java character encoding with the same value as ${project.build.sourceEncoding} to prevent encoding errors while running tests -->
         <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
